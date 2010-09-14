@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<head>
+<title>简单字数统计工具</title>
+
+<script language="javascript">
+//计算类
+var tools={
+	
+	//得到统计的字数
+	wordcount:0,
+	price:0,
+	//统计字数使用此方法
+	stat:function(id,is_b)
+	{
+		this.wordcount=0;
+		var _len=0;
+		var _text=document.getElementById(id).value;
+		var _zifu=document.getElementById("nozifu").value;
+		if(_text.length>0)
+		{
+			
+			for(var i=0;i<_text.length;i++)
+			{
+				
+				if(_text.charCodeAt(i)>255)
+				{
+					if(_zifu)
+					{
+						//alert(_zifu.charAt(i));
+						if((_zifu.search(_text.charAt(i)))>-1)
+						{
+						}
+						else
+						{
+							if(_text.charCodeAt(i)==8226||_text.charCodeAt(i)==61548)
+							{
+							}
+							else
+							{
+							_len++;
+							}
+						}
+					}
+					else
+					{
+						if(_text.charCodeAt(i)==8226||_text.charCodeAt(i)==61548)
+						{
+						}
+						else
+						{
+						_len++;
+						}
+					}
+				}
+			}
+			//lengthWord(_text);
+			this.wordcount=_len;document.getElementById("list").innerHTML="";
+			document.getElementById("list").innerHTML="中文字符和朝鲜语单词(包括中文标点):"+this.wordcount+"字";
+		}
+		else
+		{
+			this.wordcount=0;
+			alert("请输入文本字数");
+			document.getElementById(id).focus();
+		}
+
+
+	},
+	//计算总价使用此方法
+	calculate:function(w_id,j_id)
+	{
+		var _jiage=document.getElementById(j_id).value;
+		if(_jiage=="")
+		{
+			alert("请输入价格");
+			document.getElementById("jiage").focus();
+		}
+		else
+		{
+			if(!/^[-\+]?\d+(\.\d+)?$/.test(_jiage))
+			{
+				alert("输入的价格格式错误");
+			}
+			else
+			{
+
+			this.stat(w_id,false);
+			var count=(Math.floor(((this.wordcount*_jiage)/1000)*100))/100;
+			document.getElementById("list").innerHTML+="<br>总价格为(按千字计算):"+count+"元";
+			}
+			//alert(count);
+		}
+	}
+	
+
+}
+function lengthWord(word,char)
+		{
+	var cArr = word.match(/[^\x00-\xff]/ig);
+	var p= word.length + (cArr == null ? 0 : cArr.length*char);
+	alert(p);
+	}
+
+</script>
+
+</head>
+<style>
+body,td,th {
+	font-size: 12px;
+	font-family: "Arial","宋体","PMingLiU";
+	height: 16px;
+
+}
+.SearchTable {
+	text-decoration: none;
+	background-position: left top;
+	vertical-align: top;
+	border: 1px solid #666666;
+	text-align: center;
+	line-height: 20px;
+	text-indent: 10pt;
+	display: table;
+	width: 98%;
+	clear: both;
+	margin-right: auto;
+	margin-left: auto;
+}
+</style>
+<body>
+<center>
+<table border="0" cellpadding="1" align="center" width="90%" cellspacing="1">
+<tr>
+<td>
+<textarea id="wenben" rows="20" cols="80" >
+</textarea>
+</td>
+</tr>
+<tr>
+<td>
+请在此列出不需要统计的字符[默认统计](全角标点或中文格式字符):<br/>
+<input type="text" id="nozifu" size="50">&nbsp;
+</td>
+
+</tr>
+<tr>
+<td>
+<input type="button" value="统计字数" onclick="tools.stat('wenben',true)">
+&nbsp;&nbsp;&nbsp;&nbsp;请输入价格：<input type="text" id="jiage" size="6">元/千字&nbsp;&nbsp;
+<input type="button" value="计算总价" onclick="tools.calculate('wenben','jiage')">&nbsp;&nbsp;
+
+</td>
+</tr>
+
+<tr>
+<td>
+<br>
+<div id="list">
+</div>
+
+</td>
+</tr>
+</table>
+
+</center>
+</body>
+</html>

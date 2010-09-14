@@ -1,10 +1,15 @@
 <?
 /**
  * 简单Om对象
+ * 注意字段名称都用小写字母
  * 
  * @author y31
  * @version 0.8.2
- * lastupdate Sat Aug 02 22:48:56 CST 2008
+ * 
+ * [Tue Jul 20 14:00:37 CST 2010]
+ * Add common db
+ * 
+ * [Sat Aug 02 22:48:56 CST 2008]
  */
 class Pft_Om_BaseObject{
 	
@@ -27,8 +32,14 @@ class Pft_Om_BaseObject{
 	 */
 	protected $_db = null;
 
-	public function __construct(){
-		$this->_db = Pft_Db::getDb();
+	public function __construct($db=null){
+		if( $db ){
+			$this->_db = $db;
+		}elseif(is_object(self::$_common_db)){
+			$this->_db = self::$_common_db;
+		}else{
+			$this->_db = Watt_Db::getDbx();
+		}
 
 		//初始化数据存储数组
 		foreach ( $this->_fields as $field ){
@@ -51,9 +62,9 @@ class Pft_Om_BaseObject{
 
 	public function autoGetRequestVar( $fieldList='' ){
 		if( $fieldList ){
-			$array = r( $fieldList, false );
+			$array = self::r( $fieldList, true );
 		}else{
-			$array = r( $this->_fields, false );
+			$array = self::r( $this->_fields, true );
 		}
 		$this->populateFromArray( $array );
 	}
@@ -224,13 +235,13 @@ class Pft_Om_BaseObject{
 		foreach ( $data as $key => $value ) {
 			if( !$modifiedFields || key_exists( $key, $modifiedFields ) ){
 				$arrKey[] = $key;
-				$arrValue[] = "'".chks($value)."'";				
+				$arrValue[] = "'".self::chks($value)."'";				
 			}
 		}
 		
 		if( isset( $arrKey ) ){
 			$sql = "insert into ".$this->_tableName."(".implode(',', $arrKey ).") values(".implode( ',', $arrValue ).")";
-			return $this->_db->execute( $sql );			
+			return $this->_execute( $sql );	
 		}else{
 			return 0;	
 		}
@@ -246,14 +257,14 @@ class Pft_Om_BaseObject{
 				if( is_null( $value ) ){
 					$strUpdate[] = $key.'='."null";
 				}else{
-					$strUpdate[] = $key.'='."'".chks($value)."'";
+					$strUpdate[] = $key.'='."'".self::chks($value)."'";
 				}
 			}
 		}
 		
 		if( isset( $strUpdate ) ){
-			$sql = "update ".$this->_tableName." set ".implode(',', $strUpdate )." where ".$this->_pkName."='".chks($pk)."'";
-			return $this->_db->execute( $sql );
+			$sql = "update ".$this->_tableName." set ".implode(',', $strUpdate )." where ".$this->_pkName."='".self::chks($pk)."'";
+			return $this->_execute( $sql );
 		}else{
 			return 0;
 		}
@@ -268,39 +279,39 @@ class Pft_Om_BaseObject{
 			if( is_null( $value ) ){
 				$strUpdate[] = $key.'='."null";
 			}else{
-				$strUpdate[] = $key.'='."'".chks($value)."'";				
+				$strUpdate[] = $key.'='."'".self::chks($value)."'";				
 			}
 		}
 		$sql = "update ".$this->_tableName." set ".implode(',', $strUpdate ).($condition?" where $condition":'');
-		return $this->_db->execute( $sql );
+		return $this->_execute( $sql );
 	}
 	
 	public function deleteByPk( $pk ){
-		$sql = "delete from ".$this->_tableName." where ".$this->_pkName."='".chks($pk)."'";
-		return $this->_db->execute( $sql );
+		$sql = "delete from ".$this->_tableName." where ".$this->_pkName."='".self::chks($pk)."'";
+		return $this->_execute( $sql );
 	}
 
 	public function deleteByPks( $pks ){
 		if( is_array( $pks ) ){
 			$newPks = array();
 			foreach ( $pks as $pk ){
-				$newPks[] = "'".chks($pk)."'";
+				$newPks[] = "'".self::chks($pk)."'";
 			}
 			$strPks = implode( ',', $newPks );
 		}else{
-			$strPks = "'".chks($pks)."'";
+			$strPks = "'".self::chks($pks)."'";
 		}
 		
 		if( $strPks ){
 			$sql = "delete from ".$this->_tableName." where ".$this->_pkName." in (".$strPks.")";
-			return $this->_db->execute( $sql );
+			return $this->_execute( $sql );
 		}else{
 			return false;
 		}
 	}
 	
 	public function getDataByPk( $pk ){
-		$sql = "select * from ".$this->_tableName." where ".$this->_pkName."='".chks($pk)."'";
+		$sql = "select * from ".$this->_tableName." where ".$this->_pkName."='".self::chks($pk)."'";
 		return $this->_db->getRow( $sql );
 	}
 	
@@ -345,5 +356,88 @@ class Pft_Om_BaseObject{
 			return '';
 		}
 	}
+	
+	// by terry at Tue Jun 22 17:04:57 CST 2010
+	
+	/**
+	 * @param string $sql
+	 * @return boolean
+	 */
+	private function _execute($sql){
+		if(method_exists($this->_db,'execute')){
+			return $this->_execute( $sql );
+		}else{
+			return $this->_db->query( $sql );
+		}
+	}
+
+	/**
+	 * 单元测试方法
+	 * @author terry
+	 * Tue Aug 03 15:27:59 CST 2010
+	 * @return boolean
+	 */
+	public function test(){
+		return true;
+	}
+	
+	/**
+	 * 设置所有类所用的默认的DB对象
+	 * @author terry
+	 * Tue Jul 20 13:53:56 CST 2010
+	 */
+	private static $_common_db = null;
+	public function setCommonDb($db){
+		self::$_common_db = $db;
+	}
+	
+	public static function chks($str){
+		return mysql_escape_string($str);
+	}
+	
+	/**
+	 * 获得 $_REQUEST 变量
+	 * 如果传入多个参数，则返回数组
+	 *
+	 * @param string|array|string(,) $fieldList
+	 * @param boolean $ignoreUnexist 如果key在$_REQUEST不存在，在返回数组中不产生该key的值
+	 * @return mixer
+	 */
+	public static function r( $fieldList, $ignoreUnexist=false ){
+		//如果 $fieldList 为空，则返回null
+		if( $fieldList == "" ){
+			return null;
+		}elseif ( is_array( $fieldList ) ){
+			//因为输入的 $fieldList 是在数组的 value 中
+			//且后面需要在 key 中
+			//所以要 flip 到数组 key中
+			$fields = array_flip( $fieldList );
+		}else{
+			//因为输入的 $fieldList 是在数组的 value 中
+			//且后面需要在 key 中
+			//所以要 flip 到数组 key中
+			$fields = array_flip( explode ( ",", $fieldList ) );
+		}
+
+		$rev = array();
+		foreach( $fields as $key => $field ){
+			if( key_exists( $key, $_REQUEST ) ){
+				$rev[$key] = $_REQUEST[$key];
+			}else{
+				if(!$ignoreUnexist){
+					$rev[$key] = null;					
+				}
+			}
+		}
+		if( count( $rev ) > 1 ){
+			return $rev;
+		}else{
+			return current( $rev );
+		}
+	}
+}
+
+if(isset($GLOBALS['db']) && is_object($GLOBALS['db'])){
+	Pft_Om_BaseObject::setCommonDb($GLOBALS['db']);	
 }
 ?>
