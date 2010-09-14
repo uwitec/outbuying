@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Web Tools</title>
+<script>
+function $(id){
+	return document.getElementById(id);
+}
+function toggleLeft(){
+	if( $('toollist').style.display == "none" ){
+		showLeft();
+	}else{
+		hideLeft();
+	}
+}
+function hideLeft(){
+	$('toollist').style.display = "none";
+	$('main_content').style.width = "99%";
+}
+function showLeft(){
+	$('toollist').style.display = "";
+	$('main_content').style.width = "84%";
+}
+</script>
+<style>
+body{
+	margin:0 0 0 0;
+	padding: 0 0 0 0;
+	overflow: hidden;
+	background-color:ButtonFace;
+	border:none;
+}
+#mainbody{
+	background-color:#EFEFEF;
+	border:1px solid #ccc;
+}
+#toollist{
+	float:left;
+	width:15%;
+	height:600px;
+	font-size:14px;
+	line-height:135%;
+	overflow:auto;
+}
+#toollist ul{
+	margin:0 0 0 18px;
+}
+#toollist ul a{
+	text-decoration:none;
+}
+#toollist ul a:hover{
+	text-decoration:underline;
+}
+
+#spliter{
+	float:left;
+	width:6px;
+	font-size:10px;
+	background-color:#666;
+	height:600px;
+	cursor:hand;
+}
+#spliter a{
+	display:block;
+	height:600px;
+	text-decoration:none;
+}
+#spliter a:hover{
+	background-color:#996;
+}
+
+#main_content{
+	float:left;
+	width:84%;
+	height:600px;
+}
+.cls{
+	clear: both;
+}
+</style>
+</head>
+<body scroll="no">
+<div id="mainbody">
+	<div id="toollist">
+		<ul>
+			<li>---- Common ----</li>
+			<li><a href="base64encode.php" target="frame_tools">base64encode.php</a></li>
+			<li><a href="countwords.html" target="frame_tools" title="快速统计中朝字数，与Word有误差">countwords.html</a></li>
+			<li><a href="js_screen.php" target="frame_tools">js_screen.php</a></li>
+			<li><a href="jsonencode.php" target="frame_tools">jsonencode.php</a></li>
+			<li><a href="preg_match.php" target="frame_tools">preg_match.php</a></li>
+			<li><a href="serialize.php" target="frame_tools">serialize.php</a></li>
+			<li><a href="testpost.php" target="frame_tools">testpost.php</a></li>
+			<li><a href="time2str.php" target="frame_tools">time2str.php</a></li>
+			<li><a href="timezone.php" target="frame_tools">timezone.php</a></li>
+			<li><a href="urlencode.php" target="frame_tools">urlencode.php</a></li>
+			<li>---- TPM ----</li>
+			<li><a href="searchString.php" target="frame_tools">多语字串查询</a></li>
+			<li><a href="createBk.php" target="frame_tools">数据备份(Only Dev)</a></li>
+		</ul>
+	</div>
+	<div id="spliter" onclick="toggleLeft()"><a href="#" onclick="return false;">&nbsp;</a></div>
+	<div id="main_content">
+		<iframe name="frame_tools" width="100%" height="600" src="about:blank" frameborder="0" style="overflow-x:hidden;"></iframe>
+	</div>
+	<div class="cls"></div>
+</div>
+</body>
+</html>
