@@ -125,7 +125,7 @@ $allTables = $db->getAllAsCol("show tables");
 </head>
 <body>
 <div>
-<form method="POST">
+<form method="post">
 <table>
 	<tr>
 		<td valign="top">
@@ -139,7 +139,7 @@ $allTables = $db->getAllAsCol("show tables");
 			</fieldset>
 		</td>
 		<td>
-			<!--button onclick="" title="功能尚未实现" disabled>&gt;&gt;</button-->
+			<!--button onclick="" title="鍔熻兘灏氭湭瀹炵幇" disabled>&gt;&gt;</button-->
 		</td>
 		<td valign="top">
 			<fieldset>
@@ -151,7 +151,7 @@ $allTables = $db->getAllAsCol("show tables");
 	<tr>
 		<td colspan="2" valign="top">
 			<input type="hidden" name="cmd" value="backup">
-			<input type="submit" value="开始备份">
+			<input type="submit" value="寮�濮嬪浠�">
 		</td>
 	</tr>
 </table>
