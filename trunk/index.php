@@ -109,7 +109,7 @@ try{
 	/**
 	 * 分发
 	 */
-	$dispatch = new Watt_Dispatcher();
+	$dispatch = new Pft_Dispatcher();
 	$dispatch->dispatch();
 }catch (Exception $e){
 	$code = $e->getCode();

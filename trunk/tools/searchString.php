@@ -53,10 +53,10 @@ td{background-color:#EEE;}
 </style>
 </head>
 <body>
-<form method="POST">
+<form method="post">
 	<label for="search_string">请输入中文文字或KEY中可能出现的文字：</label>
 	<input type="text" id="search_string" name="s" value="<?=@$s?>">
-	<input type="submit">
+	<input type="submit"/>
 </form>
 <?
 if(isset($results) && count($results)>0){
