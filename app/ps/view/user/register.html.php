@@ -1,55 +1,156 @@
 <?
-include( Pft_Config::getCfg('PATH_ROOT').'inc/view/header.inc.php' );
-?>
-<?php
 /**
- * UCenter 应用程序开发 Example
- *
- * 应用程序无数据库，用户注册的 Example 代码
- * 使用到的接口函数：
- * uc_user_register()	必须，注册用户数据
- * uc_authcode()	可选，借用用户中心的函数加解密 Cookie
+ * 用户注册
  */
-
-if(empty($_POST['submit'])) {
-	//注册表单
 ?>
-	<form method="post" action="">
-	注册:
-	<dl><dt>用户名</dt><dd><input name="username"></dd>
-	<dt>密码</dt><dd><input name="password" type="password"></dd>
-	<dt>Email</dt><dd><input name="email"></dd></dl>
-	<input name="submit" type="submit">
-	</form>
-<?
-} else {
-	//在UCenter注册用户信息
-	$uid = Ofh_Interface_Uc::register($_POST['username'], $_POST['password'], $_POST['email']);
-	//var_dump($uid);
-	if($uid <= 0) {
-		if($uid == -1) {
-			echo '用户名不合法';
-		} elseif($uid == -2) {
-			echo '包含要允许注册的词语';
-		} elseif($uid == -3) {
-			echo '用户名已经存在';
-		} elseif($uid == -4) {
-			echo 'Email 格式有误';
-		} elseif($uid == -5) {
-			echo 'Email 不允许注册';
-		} elseif($uid == -6) {
-			echo '该 Email 已经被注册';
-		} else {
-			echo '未定义';
-		}
-	} else {
-		//注册成功，设置 Cookie，加密直接用 uc_authcode 函数，用户使用自己的函数
-		setcookie('Example_auth', uc_authcode($uid."\t".$_POST['username'], 'ENCODE'));
-		echo '注册成功<br><a href="'.$_SERVER['PHP_SELF'].'">继续</a>';
+<style>
+.uDiv{margin:0,0,5px,0;}
+.uSpan{float:left;margin:0,0,0,5px}
+label{color:red}
+</style>
+<script>
+function checkForm()
+{
+	var u_name=document.getElementById("u_name");
+	if(u_name.value=="")
+	{
+		alert("<?=Watt_I18n::trans("请输入姓名")?>");
+		u_name.focus();
+		return false;
+	}
+	var u_nickname=document.getElementById("u_nickname");
+	if(u_nickname.value=="")
+	{
+		alert("<?=Watt_I18n::trans("请输入昵称")?>");
+		u_nickname.focus();
+		return false;
+	}
+	var u_pwd=document.getElementById("u_pwd");
+	if(u_pwd.value=="")
+	{
+		alert("<?=Watt_I18n::trans("请输入密码")?>");
+		u_pwd.focus();
+		return false;
+	}
+	var u_pwd_1=document.getElementById("u_pwd_1");
+	if(u_pwd_1.value=="")
+	{
+		alert("<?=Watt_I18n::trans("请输入密码重复")?>");
+		u_pwd_1.focus();
+		return false;
+	}
+	if(u_pwd.value!=u_pwd_1.value)
+	{
+		alert("<?=Watt_I18n::trans("两次输入的密码不相同")?>");
+		u_pwd_1.value='';
+		u_pwd_1.focus();
+		return false;
+	}
+	var u_mobile=document.getElementById("u_mobile");
+	if(u_mobile.value=="")
+	{
+		alert("<?=Watt_I18n::trans("请输入手机")?>");
+		u_mobile.focus();
+		return false;
+	}
+	var u_address=document.getElementById("u_address");
+	if(u_address.value=="")
+	{
+		alert("<?=Watt_I18n::trans("请输入地址")?>");
+		u_address.focus();
+		return false;
 	}
 }
-
-?>
-<?
-include( Pft_Config::getCfg('PATH_ROOT').'inc/view/footer.inc.php' );
-?>
+</script>
+<form action="" method="POST" onsubmit="return checkForm();">
+<center>
+<div  style="width:300px">
+<fieldset>
+     <legend><?=Watt_I18n::trans("用户注册")?></legend>
+         <br>
+          <div class="uDiv">
+              <span class="uSpan">
+                  　　<label>*</label><?=Watt_I18n::trans("姓名")?>:
+              </span>
+              <span>
+                  <input type="text" name="u_name" id="u_name">
+              </span>
+          </div>
+          <div class="uDiv">
+              <span class="uSpan">
+                  　　<label>*</label><?=Watt_I18n::trans("昵称")?>:
+              </span>
+              <span>
+                  <input type="text" name="u_nickname" id="u_nickname">
+              </span>
+          </div>
+           <div class="uDiv">
+              <span class="uSpan">
+                  　　&nbsp;<?=Watt_I18n::trans("称谓")?>:
+              </span>
+              <span>
+                  <input type="radio" name="u_sex" id="u_sex" value="1" checked><?=Watt_I18n::trans("先生")?>
+                  <input type="radio" name="u_sex" id="u_sex" value="2"><?=Watt_I18n::trans("女士")?>
+              </span>
+          </div>
+          <div class="uDiv">
+              <span class="uSpan">
+                  　　<label>*</label><?=Watt_I18n::trans("密码")?>:
+              </span>
+              <span>
+                  <input type="password" name="u_pwd" id="u_pwd">
+              </span>
+          </div>
+           <div class="uDiv">
+              <span class="uSpan" >
+                  <label>*</label><?=Watt_I18n::trans("密码重复")?>:
+              </span>
+              <span>
+                  <input type="password" name="u_pwd_1" id="u_pwd_1">
+              </span>
+          </div>
+          <div class="uDiv">
+              <span class="uSpan" >
+                  　　&nbsp;&nbsp;<?=Watt_I18n::trans("电话")?>
+              </span>
+              <span>
+                  <input type="text" name="u_phone" id="u_phone">
+              </span>
+          </div>
+          <div class="uDiv">
+              <span class="uSpan" >
+                  　　<label>*</label><?=Watt_I18n::trans("手机")?>
+              </span>
+              <span>
+                  <input type="text" name="u_mobile" id="u_mobile">
+              </span>
+          </div>
+          <div class="uDiv">
+              <span class="uSpan" >
+                  　　<label>*</label><?=Watt_I18n::trans("地址")?>
+              </span>
+              <span>
+                  <input type="text" name="u_address" id="u_address">
+              </span>
+          </div>
+          <div class="uDiv">
+              <span class="uSpan" >
+                  　　&nbsp;<?=Watt_I18n::trans("邮箱")?>
+              </span>
+              <span>
+                  <input type="text" name="u_email" id="u_email">
+              </span>
+          </div>
+          <div align="center" class="uDiv">
+          <span>
+          <input type="submit" value="<?=Watt_I18n::trans("注册")?>">
+          　
+          <input type="reset" value="<?=Watt_I18n::trans("取消")?>">
+          <input type="hidden" name="op" value="1">
+          </span>
+          </div>
+         
+</fieldset>
+</div>
+</center>
+</form>
