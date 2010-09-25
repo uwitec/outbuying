@@ -30,7 +30,7 @@ class PsUserController extends Pft_Controller_Action{
 		{
 			if($users->save())
 			{
-				
+				  
 			}
 		}
 	}
