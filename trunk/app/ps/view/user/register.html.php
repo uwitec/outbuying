@@ -285,7 +285,7 @@ td{height:31px}
 	<tr id="emailTr">
 	<td><?=Watt_I18n::trans("验证码")?>:</td>
 	<td><input type="text" name="u_yanzhengma" id="u_yanzhengma" onfocus="viewtixing('email')" onblur="checkvalue('u_yanzhengma')">&nbsp;<img src='' id="yanzhengmaImg" style="display:none"/>
-	<img src="?do=ps_user_yanzhengma"  id="safecode" onclick="reloadcode();"/>
+	<!--<img src="?do=ps_user_yanzhengma"  id="safecode" onclick="reloadcode();"/>-->
 	</td>
 	<td><div class='infoDiv' id="yanzhengmaDiv" style="display:none">&nbsp;请输入您的邮箱且必须符合邮箱的格式</div></td>
 	</tr>
