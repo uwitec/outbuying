@@ -38,7 +38,7 @@ class Pft_Om_BaseObject{
 		}elseif(is_object(self::$_common_db)){
 			$this->_db = self::$_common_db;
 		}else{
-			$this->_db = Watt_Db::getDbx();
+			$this->_db = Pft_Db::getDb();
 		}
 
 		//初始化数据存储数组

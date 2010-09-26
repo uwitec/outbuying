@@ -14,5 +14,7 @@ class IndexController extends Pft_Controller_Action{
 		}
 		*/
 		//$this->_needView = false;
+		//$rev = Pft_Db::getDb()->getAll("show tables;");
+		//var_dump($rev);
 	}
 }
