@@ -1,6 +1,6 @@
 <?
 if( !isset( $title ) ){
-	$title = '欢迎来到ofoho生活服务中心';
+	$title = '方便快捷的订餐平台';
 }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -8,11 +8,12 @@ if( !isset( $title ) ){
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>快乐生活-<?=$title?></title>
+<title>易订100-<?=$title?></title>
 <!-- InstanceEndEditable -->
 <!-- InstanceBeginEditable name="head" -->
 <!-- InstanceEndEditable -->
 <link href="css/default/pft.css" rel="stylesheet" type="text/css" />
+<script src="js/jquery.min.js"></script>
 </head>
 <body>
 <div id="top">
@@ -23,8 +24,6 @@ if( !isset( $title ) ){
 	<li><a href="/">主页</a></li>
 	<li>|</li>
 	<li><a href="?do=ps_user_index">用户中心</a></li>	
-	<li>|</li>
-	<li><a href="http://pft99.com/hexie/" target="_blank">讨论区</a></li>
 	</ul>
 </div>
 <div id="mainbody">

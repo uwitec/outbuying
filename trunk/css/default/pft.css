@@ -49,7 +49,8 @@ th,td,span{font-size: 14px;}
 	clear: both;
 	background: #FFF;
 	padding:10px 50px 10px 50px;
-	height: 300px;
+	_height: 300px;
+	min-height: 300px;
 }
 
 #footer{
