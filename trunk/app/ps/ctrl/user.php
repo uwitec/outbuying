@@ -34,18 +34,23 @@ class PsUserController extends Pft_Controller_Action{
 			}
 		}
 	}
+	function register1Action()
+	{
+		
+	}
 	/**
 	**
 	**生成验证码
 	**/
 	function yanzhengmaAction()
 	{
-		session_start();
-		session_register('SafeCode');
+		
+		//session_register('SafeCode');
 		$type = 'png';
 		$width= 50;
 		$height= 20;
-		header("Content-type: image/".$type);
+		//header("Content-type: image/".$type);
+		@ob_end_clean();
 		srand((double)microtime()*1000000);
 		$randval = randStr(4,"");
 		if($type!='png' && function_exists('imagecreatetruecolor')){ 
@@ -79,7 +84,13 @@ class PsUserController extends Pft_Controller_Action{
 			 @ImageDestroy($im);
 			 $_SESSION['SafeCode'] = $randval;
 			//产生随机字符串
-			function randStr($len=6,$format='ALL') { 
+			@flush();
+			@ob_flush();
+			exit();
+	}
+
+}
+function randStr($len=6,$format='ALL') { 
 					   switch($format) { 
 							 case 'ALL':
 							 $chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'; break;
@@ -96,7 +107,4 @@ class PsUserController extends Pft_Controller_Action{
 				 $string.=substr($chars,(mt_rand()%strlen($chars)),1);
 				 return $string;
 			}
-	
-	}
-}
 ?>
