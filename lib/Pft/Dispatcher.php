@@ -102,7 +102,7 @@ class Pft_Dispatcher
 		//exit( $doFile . "|" . $doAction );
 
 		//使用 ob_start 是为了Controller里的 redirect 可以正常使用
-		ob_start();
+		//ob_start();
 
 		$theCtrl = Pft_Controller_Action::factory( $controller, $action );
 
@@ -134,12 +134,12 @@ class Pft_Dispatcher
 		if( defined("DEBUG") && DEBUG )
 		{
 			//调试阶段才显示Controller里输出的信息
-			echo ob_get_clean();
+			//echo ob_get_clean();
 		}
 		else
 		{
 			//用户使用阶段不允许 action 里输出显示数据
-			ob_clean();
+			//ob_clean();
 		}
 
 		if( $theCtrl->isNeedView() )
