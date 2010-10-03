@@ -10,19 +10,19 @@
 
 class Pft_Util_TestGrid
 {
-	const GRID_SCHEMA_SEARCHS = "searchs";
-	const GRID_SCHEMA_COLS    = "cols";
-	const GRID_SCHEMA_DATAS   = "datas";
-	const GRID_SCHEMA_PAGER   = "pager";
+	const GRID_SEARCHS = "searchs";
+	const GRID_COLS    = "cols";
+	const GRID_DATAS   = "datas";
+	const GRID_PAGER   = "pager";
 
 	protected $_gridData = array();
 	
 	function __construct( $data = null )
 	{
-		$this->_gridData[self::GRID_SCHEMA_SEARCHS] = array();
-		$this->_gridData[self::GRID_SCHEMA_COLS]    = array();
-		$this->_gridData[self::GRID_SCHEMA_DATAS]   = array();
-		$this->_gridData[self::GRID_SCHEMA_PAGER]   = array();
+		$this->_gridData[self::GRID_SEARCHS] = array();
+		$this->_gridData[self::GRID_COLS]    = array();
+		$this->_gridData[self::GRID_DATAS]   = array();
+		$this->_gridData[self::GRID_PAGER]   = array();
 		
 		if( $data )
 		{
@@ -85,7 +85,7 @@ class Pft_Util_TestGrid
 			throw (new Exception("ERR_INVALID_DATA"));
 		}
 		//这种方式仿佛还不如下面的快..
-		//$this->_gridData[self::GRID_SCHEMA_DATAS] = $dataArr;
+		//$this->_gridData[self::GRID_DATAS] = $dataArr;
 		/*要求输入必须是 array，所以不用一行一行增加了*/
 		foreach ( $dataArr as $row )
 		{

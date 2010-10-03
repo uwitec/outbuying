@@ -27,25 +27,20 @@ class Pft_Debug{
 	 * @var Pft_Debug
 	 */
 	protected static $_defaultDebug;
-	
-	function __construct()
-	{
-		$this->begin();
-	}
 
 	/**
 	 * 获得默认的Debuger
 	 *
 	 * @return Pft_Debug
 	 */
-	public static function getDefaultDebug()
-	{
-		if( !self::$_defaultDebug )
-		{
-			self::$_defaultDebug = new Pft_Debug();
+	public static function getDefaultDebug(){
+		if( !self::$_defaultDebug ){
+			$theDebuger = new Pft_Debug();
 			if( defined( 'APP_START_TIME' ) ){
-				self::$_defaultDebug->setStartTime( (int) ( APP_START_TIME * 1000 ) );
+				$theDebuger->setStartTime( (int) ( APP_START_TIME * 1000 ) );
 			}
+			$theDebuger->begin();
+			self::$_defaultDebug = $theDebuger;
 		}
 		return self::$_defaultDebug;
 	}
@@ -56,10 +51,8 @@ class Pft_Debug{
 	 * @param string $source 发生源
 	 * @param string $info 信息
 	 */
-	public function addInfo($source="", $info="")
-	{
-		if( defined("DEBUG") && DEBUG )
-		{
+	public function addInfo($source="", $info=""){
+		if( defined("DEBUG") && DEBUG ){
 			$now_time = $this->_microtime_float();
 			$aDebugInfo = array( $now_time, $this->_lastStepTime, $source, $info );
 			if( function_exists( 'memory_get_usage' ) ){
@@ -79,10 +72,8 @@ class Pft_Debug{
 	 * @param String $source
 	 * @param String $info
 	 */
-	public static function addInfoToDefault( $source="", $info="" )
-	{
-		if( defined("DEBUG") && DEBUG )
-		{
+	public static function addInfoToDefault( $source="", $info="" ){
+		if( defined("DEBUG") && DEBUG ){
 			self::getDefaultDebug()->addInfo( $source, $info );
 		}
 		//Pft_Log::addLog($info, Pft_Log::LEVEL_DEBUG);		
@@ -97,11 +88,11 @@ class Pft_Debug{
 	 * 本操作将重新设置调试器的开始时间
 	 *
 	 */
-	public function begin()
-	{
-		if( defined("DEBUG") && DEBUG )
-		{
-			$this->_startTime = $this->_microtime_float();				
+	public function begin(){
+		if( defined("DEBUG") && DEBUG ){
+			if(!$this->_startTime){
+				$this->_startTime = $this->_microtime_float();		
+			}
 			$this->_lastStepTime = $this->_startTime;
 		}		
 	}
@@ -114,10 +105,8 @@ class Pft_Debug{
 	 * 输出调试信息
 	 *
 	 */
-	public function output()
-	{
-		if( defined("DEBUG") && DEBUG && count( $this->_debugInfo ) > 0 )
-		{
+	public function output(){
+		if( defined("DEBUG") && DEBUG && count( $this->_debugInfo ) > 0 ){
 			//echo "<pre>";
 			$lastTime = $this->_startTime;
 			$endTime = $this->_microtime_float();
@@ -149,8 +138,7 @@ class Pft_Debug{
 	 *
 	 * @return int
 	 */
-	private function _microtime_float()
-	{
+	private function _microtime_float(){
 	    //list($usec, $sec) = explode(" ", microtime());
 	    //return ceil( ((float)$usec + (float)$sec) * 1000 );
 	    //return (int)( ((float)$usec + (float)$sec) * 1000 );

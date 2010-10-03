@@ -86,8 +86,7 @@ class Pft_Dispatcher
 	 * @param string $do
 	 * @return string $goToDo
 	 */
-	protected function processDo( $do, $defaultView = "Html" )
-	{
+	protected function processDo( $do, $defaultView = "Html" ){
 		if( $do == "" ){
 			$e = new Pft_Exception(Pft_I18n::trans("ERR_DISPATCH_NODO"));
 			throw $e;
@@ -99,7 +98,6 @@ class Pft_Dispatcher
 		$action = $arrCtrlAndAction[1];
 		$doFile = $arrCtrlAndAction[2];
 		$doAction = $arrCtrlAndAction[3];
-		//exit( $doFile . "|" . $doAction );
 
 		//使用 ob_start 是为了Controller里的 redirect 可以正常使用
 		//ob_start();
@@ -118,7 +116,7 @@ class Pft_Dispatcher
 			if( !$theCtrl->getTitle() )$theCtrl->setTitle( Pft_I18n::trans( $privilege->getQxMingcheng() ) );
 		}
 		
-		Pft_Debug::addInfoToDefault( '', 'Pre do action..' );
+		Pft_Debug::addInfoToDefault( '', 'Pre do action.' );
 		
 		if( method_exists( $theCtrl, $doAction ) ){
 			//执行controller中的action
@@ -131,29 +129,21 @@ class Pft_Dispatcher
 		
 		$goToDo = $theCtrl->getGoToDo();
 		$data = $theCtrl->getData();
-		if( defined("DEBUG") && DEBUG )
-		{
+		if( defined("DEBUG") && DEBUG ){
 			//调试阶段才显示Controller里输出的信息
 			//echo ob_get_clean();
-		}
-		else
-		{
+		}else{
 			//用户使用阶段不允许 action 里输出显示数据
 			//ob_clean();
 		}
 
-		if( $theCtrl->isNeedView() )
-		{
+		if( $theCtrl->isNeedView() ){
 			Pft_Debug::addInfoToDefault( '', 'Pre load view..' );
 			
 			if( $theCtrl->getViewType() ){
 				$defaultView = $theCtrl->getViewType();
 			}
-			
-			/**
-			 * 创建一个View。将来可以用不同的View代替此View
-			 */
-			//$view = Pft_View::factory( "Html", Pft_Config::getViewPath() );
+
 			$view = Pft_View::factory( $defaultView, Pft_Config::getViewPath() );
 			$view->setHeader( $theCtrl->getHeader() );
 
@@ -163,24 +153,10 @@ class Pft_Dispatcher
 			 * 如果用户已登录，读取菜单信息
 			 * @todo 未登录可能也可以有菜单
 			 */
-			if( $user_id = Pft_Session::getSession()->getUserId() )
-			{
-//				if( $user_id == '189ce619-fe31-802c-369a-45b450b81a5b' )
-//				{
-//					//这个id是系统管理员
-//					$c = new Criteria();
-//					$c->addAscendingOrderByColumn( TpmCaidanPeer::CD_SHANGJI_ID );
-//					$c->addAscendingOrderByColumn( TpmCaidanPeer::CD_PAIXU );
-//					$tpmCaidans = TpmCaidanPeer::doSelect( $c );
-//				}
-//				else
-//				{
-					//$tpmCaidans = TpmCaidanPeer::getZhucaidan(Pft_Session::getSession()->getUserId());
-					$tpmCaidans = TpmCaidanPeer::getJueseCaidan(Pft_Session::getSession()->getRoleId());
-//				}
+			if( $user_id = Pft_Session::getSession()->getUserId() ){
 
-				if( count( $tpmCaidans ) )
-				{
+				$tpmCaidans = TpmCaidanPeer::getJueseCaidan(Pft_Session::getSession()->getRoleId());
+				if( count( $tpmCaidans ) ){
 					$view->setHeader( $tpmCaidans, "menu" );
 
 //					$menus = array();
@@ -209,8 +185,7 @@ class Pft_Dispatcher
 	 * @param string $do
 	 * @return array array[0] = controller,array[1] = action
 	 */
-	protected function _analyzeDoToControllerAndAction( $do )
-	{
+	protected function _analyzeDoToControllerAndAction( $do ){
 		/**
 		 * 将 do 进行分解
 		 * 根据Pft 的规则进行分解，获得一个 Action 的路径
@@ -221,8 +196,7 @@ class Pft_Dispatcher
 		$action = array_pop($arrDo);
 		// $controller 是一个带 路径的String
 		$controller = implode( DIRECTORY_SEPARATOR , $arrDo );
-		if( trim($controller) == "" )
-		{
+		if( trim($controller) == "" ){
 			//这是只有一个单词的do的情况
 			//那么这时 这个单词是 controller
 			//把 action 里的值转给 controller action 变为index
@@ -255,8 +229,7 @@ class Pft_Dispatcher
 	 * @param string $controller
 	 * @param string $action
 	 */
-	protected function _getDefaultViewFileOfAction( $controller, $action )
-	{
+	protected function _getDefaultViewFileOfAction( $controller, $action ){
 		return ltrim( $controller, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR . $action;
 	}
 }

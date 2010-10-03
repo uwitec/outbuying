@@ -11,17 +11,17 @@
 
 class Pft_Util_Grid
 {
-	const GRID_SCHEMA_SEARCHS  = "searchs";
-	const GRID_SCHEMA_SEARCHGROUP = "searchgroup";
-	const GRID_SCHEMA_ORDERBYS = "orderbys";
-	const GRID_SCHEMA_COLS     = "cols";
-	const GRID_SCHEMA_DATAS    = "grid_datas";
-	const GRID_SCHEMA_PAGER    = "pager";
-	const GRID_SCHEMA_EXPORT   = "export";
-	const GRID_SCHEMA_EXPORTFILE = "exportfile";
-	const GRID_SCHEMA_EXPORTFILE_NAME = "exportfile_name";
-	const GRID_SCHEMA_EXPORT_COL = 'export_col';
-	const GRID_SCHEMA_EXPORT_FORMAT='exportfile_format';
+	const GRID_SEARCHS  = "searchs";
+	const GRID_SEARCHGROUP = "searchgroup";
+	const GRID_ORDERBYS = "orderbys";
+	const GRID_COLS     = "cols";
+	const GRID_DATAS    = "grid_datas";
+	const GRID_PAGER    = "pager";
+	const GRID_EXPORT   = "export";
+	const GRID_EXPORTFILE = "exportfile";
+	const GRID_EXPORTFILE_NAME = "exportfile_name";
+	const GRID_EXPORT_COL = 'export_col';
+	const GRID_EXPORT_FORMAT='exportfile_format';
 	
 	protected $_gridData = array();
 	private $_id = "";
@@ -35,22 +35,22 @@ class Pft_Util_Grid
 	function __construct( $data = null, $id = "" )
 	{
 		
-//		$this->_gridData[self::GRID_SCHEMA_SEARCHS]  = array();
-//		$this->_gridData[self::GRID_SCHEMA_ORDERBYS] = array();
-//		$this->_gridData[self::GRID_SCHEMA_COLS]     = array();
-//		$this->_gridData[self::GRID_SCHEMA_DATAS]    = array();
-//		$this->_gridData[self::GRID_SCHEMA_PAGER]    = array();
+//		$this->_gridData[self::GRID_SEARCHS]  = array();
+//		$this->_gridData[self::GRID_ORDERBYS] = array();
+//		$this->_gridData[self::GRID_COLS]     = array();
+//		$this->_gridData[self::GRID_DATAS]    = array();
+//		$this->_gridData[self::GRID_PAGER]    = array();
 
-		$this->_gridData[self::GRID_SCHEMA_SEARCHS]  = null;
-		$this->_gridData[self::GRID_SCHEMA_ORDERBYS] = null;
-		$this->_gridData[self::GRID_SCHEMA_COLS]     = null;
-		$this->_gridData[self::GRID_SCHEMA_DATAS]    = null;
-		$this->_gridData[self::GRID_SCHEMA_PAGER]    = null;
-		$this->_gridData[self::GRID_SCHEMA_EXPORT]    = false;
-		$this->_gridData[self::GRID_SCHEMA_EXPORTFILE]    = null;
-		$this->_gridData[self::GRID_SCHEMA_EXPORTFILE_NAME]    = null;
-		$this->_gridData[self::GRID_SCHEMA_EXPORT_COL]    = null;
-		$this->_gridData[self::GRID_SCHEMA_EXPORT_FORMAT]    = 'csv';//默认是csv格式
+		$this->_gridData[self::GRID_SEARCHS]  = null;
+		$this->_gridData[self::GRID_ORDERBYS] = null;
+		$this->_gridData[self::GRID_COLS]     = null;
+		$this->_gridData[self::GRID_DATAS]    = null;
+		$this->_gridData[self::GRID_PAGER]    = null;
+		$this->_gridData[self::GRID_EXPORT]    = false;
+		$this->_gridData[self::GRID_EXPORTFILE]    = null;
+		$this->_gridData[self::GRID_EXPORTFILE_NAME]    = null;
+		$this->_gridData[self::GRID_EXPORT_COL]    = null;
+		$this->_gridData[self::GRID_EXPORT_FORMAT]    = 'csv';//默认是csv格式
 
 		if( $data instanceof Pft_Util_Grid ){
 			$this->setData( $data->getGridData() );
@@ -158,7 +158,7 @@ class Pft_Util_Grid
 		/**
 		 * 如果是标准的数据定义，则将各定义复制过来
 		 */
-		if( key_exists( self::GRID_SCHEMA_DATAS, $dataArr ) ){
+		if( key_exists( self::GRID_DATAS, $dataArr ) ){
 			/**
 			 * @todo 改为直接循环自己的数据数组,将对方的key复制过来
 			 */
@@ -168,36 +168,36 @@ class Pft_Util_Grid
 			* 作者：John
 			* 时间：Tue Sep 23 15:00:35 CST 2008
 			*/
-//			$datas = $dataArr[self::GRID_SCHEMA_DATAS];
-//			if( key_exists( self::GRID_SCHEMA_SEARCHS, $dataArr ) && is_array( $dataArr[self::GRID_SCHEMA_SEARCHS] ) ){
-//				$this->_gridData[self::GRID_SCHEMA_SEARCHS] = $dataArr[self::GRID_SCHEMA_SEARCHS];
+//			$datas = $dataArr[self::GRID_DATAS];
+//			if( key_exists( self::GRID_SEARCHS, $dataArr ) && is_array( $dataArr[self::GRID_SEARCHS] ) ){
+//				$this->_gridData[self::GRID_SEARCHS] = $dataArr[self::GRID_SEARCHS];
 //			}
-//			if( key_exists( self::GRID_SCHEMA_ORDERBYS, $dataArr ) && is_array( $dataArr[self::GRID_SCHEMA_ORDERBYS] ) ){
-//				$this->_gridData[self::GRID_SCHEMA_ORDERBYS] = $dataArr[self::GRID_SCHEMA_ORDERBYS];
+//			if( key_exists( self::GRID_ORDERBYS, $dataArr ) && is_array( $dataArr[self::GRID_ORDERBYS] ) ){
+//				$this->_gridData[self::GRID_ORDERBYS] = $dataArr[self::GRID_ORDERBYS];
 //			}
-//			if( key_exists( self::GRID_SCHEMA_COLS, $dataArr ) && is_array( $dataArr[self::GRID_SCHEMA_COLS] ) ){
-//				$this->_gridData[self::GRID_SCHEMA_COLS] = $dataArr[self::GRID_SCHEMA_COLS];
+//			if( key_exists( self::GRID_COLS, $dataArr ) && is_array( $dataArr[self::GRID_COLS] ) ){
+//				$this->_gridData[self::GRID_COLS] = $dataArr[self::GRID_COLS];
 //			}
-//			if( key_exists( self::GRID_SCHEMA_PAGER, $dataArr ) && is_array( $dataArr[self::GRID_SCHEMA_PAGER] ) ){
-//				$this->_gridData[self::GRID_SCHEMA_PAGER] = $dataArr[self::GRID_SCHEMA_PAGER];
+//			if( key_exists( self::GRID_PAGER, $dataArr ) && is_array( $dataArr[self::GRID_PAGER] ) ){
+//				$this->_gridData[self::GRID_PAGER] = $dataArr[self::GRID_PAGER];
 //			}
 //
-//			if( key_exists( self::GRID_SCHEMA_EXPORT, $dataArr )){
-//				$this->_gridData[self::GRID_SCHEMA_EXPORT] = $dataArr[self::GRID_SCHEMA_EXPORT];
+//			if( key_exists( self::GRID_EXPORT, $dataArr )){
+//				$this->_gridData[self::GRID_EXPORT] = $dataArr[self::GRID_EXPORT];
 //			}
-//			if( key_exists( self::GRID_SCHEMA_EXPORTFILE, $dataArr )){
-//				$this->_gridData[self::GRID_SCHEMA_EXPORTFILE] = $dataArr[self::GRID_SCHEMA_EXPORTFILE];
+//			if( key_exists( self::GRID_EXPORTFILE, $dataArr )){
+//				$this->_gridData[self::GRID_EXPORTFILE] = $dataArr[self::GRID_EXPORTFILE];
 //			}
-//			if( key_exists( self::GRID_SCHEMA_EXPORT_COL, $dataArr )){
-//				$this->_gridData[self::GRID_SCHEMA_EXPORT_COL] = $dataArr[self::GRID_SCHEMA_EXPORT_COL];
+//			if( key_exists( self::GRID_EXPORT_COL, $dataArr )){
+//				$this->_gridData[self::GRID_EXPORT_COL] = $dataArr[self::GRID_EXPORT_COL];
 //			}
-//			$this->_gridData[self::GRID_SCHEMA_DATAS] = $datas;
+//			$this->_gridData[self::GRID_DATAS] = $datas;
 			
 			$this->_gridData = $dataArr;
 		}else{
 			$datas = $dataArr;
 			//这种方式仿佛还不如下面的快..其实几乎没差距
-			$this->_gridData[self::GRID_SCHEMA_DATAS] = $datas;
+			$this->_gridData[self::GRID_DATAS] = $datas;
 		}
 		
 		/*要求输入必须是 array，所以不用一行一行增加了*/
@@ -223,7 +223,7 @@ class Pft_Util_Grid
 	}
 	function setExportFormat($eFormat)
 	{
-		$this->_gridData[self::GRID_SCHEMA_EXPORT_FORMAT]=$eFormat;
+		$this->_gridData[self::GRID_EXPORT_FORMAT]=$eFormat;
 	}
 	/**
 	 * 增加一行
@@ -252,9 +252,9 @@ class Pft_Util_Grid
 	 * 分段获取grid的输出数据
 	 * 
 	 * 包括:
-	 * $rev[Pft_Util_Grid::GRID_SCHEMA_SEARCHS]
-	 * $rev[Pft_Util_Grid::GRID_SCHEMA_DATAS]
-	 * $rev[Pft_Util_Grid::GRID_SCHEMA_PAGER]
+	 * $rev[Pft_Util_Grid::GRID_SEARCHS]
+	 * $rev[Pft_Util_Grid::GRID_DATAS]
+	 * $rev[Pft_Util_Grid::GRID_PAGER]
 	 *
 	 * @return array
 	 */
@@ -293,36 +293,36 @@ class Pft_Util_Grid
 
 	public function setSearchs( $searchs ){
 		if( is_array( $searchs ) ){
-			$this->_gridData[self::GRID_SCHEMA_SEARCHS] = $searchs;
+			$this->_gridData[self::GRID_SEARCHS] = $searchs;
 		}
 	}
 	public function setSearchgroup( $v ){
 		if( is_array( $v ) ){
-			$this->_gridData[self::GRID_SCHEMA_SEARCHGROUP] = $v;
+			$this->_gridData[self::GRID_SEARCHGROUP] = $v;
 		}
 	}
 	
 	public function setPager( $pager ){
 		if( is_array( $pager ) ){
-			$this->_gridData[self::GRID_SCHEMA_PAGER] = $pager;
+			$this->_gridData[self::GRID_PAGER] = $pager;
 		}
 	}
 	public function setExport( $v ){		
-		$this->_gridData[self::GRID_SCHEMA_EXPORT] = $v;
+		$this->_gridData[self::GRID_EXPORT] = $v;
 	}
 	public function setExportfile( $v ){		
-		$this->_gridData[self::GRID_SCHEMA_EXPORTFILE] = $v;
+		$this->_gridData[self::GRID_EXPORTFILE] = $v;
 	}
 	public function setExportfileName( $v ){
-		$this->_gridData[self::GRID_SCHEMA_EXPORTFILE_NAME] = $v;
+		$this->_gridData[self::GRID_EXPORTFILE_NAME] = $v;
 	}
 	public function setExportCol( $v ){
-		$this->_gridData[self::GRID_SCHEMA_EXPORT_COL] = $v;
+		$this->_gridData[self::GRID_EXPORT_COL] = $v;
 	}
 	public function setOrderBys( $orderBys )
 	{
 		if( is_array( $orderBys ) ){
-			$this->_gridData[self::GRID_SCHEMA_ORDERBYS] = $orderBys;
+			$this->_gridData[self::GRID_ORDERBYS] = $orderBys;
 		}
 	}
 	
