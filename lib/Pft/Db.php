@@ -17,8 +17,7 @@
  * @author Terry
  * @package Pft
  */
-class Pft_Db
-{
+class Pft_Db{
 	/**
 	 * A database connection
 	 *
@@ -59,8 +58,7 @@ class Pft_Db
 	 *
 	 * @param string $con_name
 	 */
-	protected function __construct( $con_name )
-	{
+	protected function __construct( $con_name ){
 		$this->reconnect( $con_name );
 	}
 	
@@ -69,8 +67,7 @@ class Pft_Db
 	 *
 	 * @return Pft_Db
 	 */
-	public static function getDb( $con_name = "propel" )
-	{
+	public static function getDb( $con_name = "propel" ){
 		if( !self::$_db )		{
 			self::$_db = new Pft_Db( $con_name );
 		}else{
@@ -86,7 +83,7 @@ class Pft_Db
 	 */
 	public static function getDbx( $con_name = "propel" )
 	{
-		if( !self::$_dbx )		{
+		if( !self::$_dbx ){
 			self::$_dbx = new Pft_Dbx( $con_name );
 		}else{
 			self::$_dbx->reconnect( $con_name );
@@ -118,8 +115,7 @@ class Pft_Db
 */	
 			$this->setConnName( $con_name );
 
-			if( defined("DEBUG") && DEBUG )
-			{
+			if( defined("DEBUG") && DEBUG ){
 				Pft_Debug::addInfoToDefault( "Pft", "After connect [$con_name] use Pft_Db." );
 			}
 		}
@@ -135,8 +131,7 @@ class Pft_Db
 			mysql_query( "set names 'utf8'" );
 			
 			$this->setConnName( $con_name );
-			if( defined("DEBUG") && DEBUG )
-			{
+			if( defined("DEBUG") && DEBUG ){
 				Pft_Debug::addInfoToDefault( "Pft", "After connect [$con_name] use Pft_Db." );
 			}			
 		}
@@ -169,8 +164,7 @@ class Pft_Db
 	 * @param string $sql
 	 * @return array | null
 	 */
-	public function getAllAsCol( $sql )
-	{
+	public function getAllAsCol( $sql ){
 		$dbAll = $this->getAll( $sql );
 		
 		if ( !$dbAll )
@@ -180,8 +174,7 @@ class Pft_Db
 		
 		//Pft_Log::addLog( "dbAll=" . print_r($dbAll, true) );
 	
-		foreach( $dbAll as $row )
-		{
+		foreach( $dbAll as $row ){
 			$row = array_values( $row );
 			$result[] = $row[0];
 		}
@@ -195,13 +188,7 @@ class Pft_Db
 	 * @param string $sql
 	 * @return array|null
 	 */
-	public function getAll( $sql )
-	{
-		/*
-		$rs = $this->_conn->executeQuery( $sql );
-		var_dump( $rs->getRecordCount() );
-		$result = $rs->getResult();
-		*/
+	public function getAll( $sql ){
 		$return = null;
 		$result = $this->_query( $sql );
 
@@ -214,18 +201,7 @@ class Pft_Db
 			//这是不转换为 phpname 的代码
 			$return[] = $row;
 		}
-		//var_dump ( $return );
 		return $return;
-
-		/*
-		这是 propel 用 Rs 获得数据的方法
-		while( $row = $rs->getRow() ) {
-			$return[] = $row;
-			$rs->next();
-   		}
-   		return $return;
-   		var_dump( $return );
-   		*/
 	}
 	
 	/**
@@ -234,8 +210,7 @@ class Pft_Db
 	 * @param string $sql
 	 * @return array|null
 	 */
-	public function getRow( $sql )
-	{
+	public function getRow( $sql ){
 		//$rs = $this->_conn->executeQuery( $sql );
 		$rs = $this->_query( $sql );
 		//
@@ -284,8 +259,7 @@ class Pft_Db
 	 * @param String $sql
 	 * @return resource
 	 */
-	public function query( $sql )
-	{
+	public function query( $sql ){
 		$this->_latestRs = $this->_query( $sql );
 		return $this->_latestRs;
 	}
@@ -303,12 +277,10 @@ class Pft_Db
 	 *
 	 * @param array $row
 	 */
-	private function _getBlankArrFieldNameToPhpName( $row )
-	{
+	private function _getBlankArrFieldNameToPhpName( $row ){
 		if( !is_array( $row ) ) return null;
-		//foreach ()
 		$blankArr = array();
-		while ( list($key) = each($row) ) {
+		while ( list($key) = each($row) ){
 			$blankArr[implode( array_map( "ucfirst", split( "_", $key ) ) )] = null;
 		}
 		reset( $row );
@@ -321,13 +293,11 @@ class Pft_Db
 	 * @param array $sourceArray
 	 * @param array $targetArray
 	 */
-	private function _copyDataArrayToArrayByOrder( $sourceArray, $targetArray )
-	{
+	private function _copyDataArrayToArrayByOrder( $sourceArray, $targetArray ){
 //		reset( $sourceArray );
 //		reset( $targetArray );				
 
-		while ( list( $key ) = each( $targetArray ) )
-		{
+		while ( list( $key ) = each( $targetArray ) ){
 			$targetArray[$key] = current( $sourceArray );
 			next( $sourceArray );
 		}
@@ -339,8 +309,7 @@ class Pft_Db
 	 * @param String $sql
 	 * @return resource
 	 */
-	private function _query( $sql, $logSql = true )
-	{
+	private function _query( $sql, $logSql = true ){
 		Pft_Debug::addInfoToDefault( '', "Pre execute sql" );
 
 		//self::autoSelectDbBySql( $sql );
@@ -434,8 +403,7 @@ class Pft_Db
 	 * 
 	 * @author bobit
 	 */
-	public static function superUpdateConnection()
-	{
+	public static function superUpdateConnection(){
 		$tempDb = self::getDb();	// 这个 $tempDb 其实不做任何数据库查询操作，只是为了更改一次数据库连接
 
 		if ( self::needUseReadonlyDb() ){
@@ -450,8 +418,7 @@ class Pft_Db
 	 * 对应的x版本
 	 * @author y31x
 	 */
-	public static function superUpdateConnectionX()
-	{
+	public static function superUpdateConnectionX(){
 		$tempDb = self::getDbx();	// 这个 $tempDb 其实不做任何数据库查询操作，只是为了更改一次数据库连接
 
 		if ( self::needUseReadonlyDb() ){
@@ -467,8 +434,7 @@ class Pft_Db
 	 * @author bobit
 	 * Mon Sep 24 16:37:49 CST 200716:37:49
 	 */
-	public function useReadWriteDb()
-	{	
+	public function useReadWriteDb(){	
 		//Pft_Log::addLog("[{$this->_getDbConnectionHost()}-{$this->_conn}]Prepare change connection to READ_WRITE DB server", Pft_Log::LEVEL_DEBUG, 'DB_CONTROL', '', '', __FILE__.__LINE__);
 		$this->reconnect('propel');
 		//Pft_Log::addLog("[{$this->_getDbConnectionHost()}-{$this->_conn}]Connection was changed", Pft_Log::LEVEL_DEBUG, 'DB_CONTROL', '', '', __FILE__.__LINE__);
@@ -482,12 +448,10 @@ class Pft_Db
 	 * @author bobit
 	 * Mon Sep 24 16:37:49 CST 200716:37:49
 	 */
-	public function useReadonlyDb()
-	{
+	public function useReadonlyDb(){
 		$old_db_host = $this->_getDbConnectionHost();
 		
-		if( !self::$_readDbServerNameOfThisSession )
-		{
+		if( !self::$_readDbServerNameOfThisSession ){
 			$int = mt_rand( 1, 3 );
 			self::$_readDbServerNameOfThisSession = 'read'.$int;
 		}
@@ -509,8 +473,7 @@ class Pft_Db
 	 * @author bobit
 	 * Mon Sep 24 16:37:49 CST 200716:37:49
 	 */
-	public static function needUseReadonlyDb()
-	{
+	public static function needUseReadonlyDb(){
 		return self::$_need_use_readonly_db;
 	}
 	
@@ -520,8 +483,7 @@ class Pft_Db
 	 * @author bobit
 	 * Mon Sep 24 16:37:49 CST 200716:37:49
 	 */
-	public static function startUseReadonlyDb()
-	{
+	public static function startUseReadonlyDb(){
 		self::$_need_use_readonly_db = 1;
 		Pft_Debug::addInfoToDefault('', 'Set use READONLY DB server');
 	}
@@ -532,8 +494,7 @@ class Pft_Db
 	 * @author bobit
 	 * Mon Sep 24 16:37:49 CST 200716:37:49
 	 */
-	public static function endUseReadonlyDb()
-	{
+	public static function endUseReadonlyDb(){
 		self::$_need_use_readonly_db = 0;
 		Pft_Debug::addInfoToDefault('', 'Unset use READONLY DB server');
 	}
@@ -557,16 +518,26 @@ class Pft_Db
 	}
 	
 	/**
-	 * 获得查询结果中第一条第一个字段的值
+	 * 获得查询结果集，用于fetch
 	 *
 	 * @param string $sql
 	 * @return Pft_Db_Result
 	 */
-	public function getResult( $sql )
-	{
+	public function getResult( $sql ){
 		$aNewResult = new Pft_Db_Result();
 		$aNewResult->setResult( $this->_query( $sql ) );
 		return $aNewResult;
+	}
+
+	/**
+	 * 
+	 * @param $tbname
+	 * @return string
+	 * @author yan
+	 * @date 2010-10-3下午06:25:08
+	 */
+	public static function getTbName($tbname){
+		return Pft_Config::getCfg('DB_TB_PREFIX').$tbname;
 	}
 }
 

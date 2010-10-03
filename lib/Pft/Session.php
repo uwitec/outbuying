@@ -17,7 +17,7 @@
  * Wed Jun 06 14:27:31 CST 2007
  */
 class Pft_Session{
-	const SESSION_KEY_PREFIX = "SESS_";
+	const SESSION_KEY_PREFIX = "PFTS_";
 	
 	private static $_ses = null;
 
@@ -34,8 +34,8 @@ class Pft_Session{
 	private $_groupId  = null;
 	private $_departmentId = 0;		//部门ID
 	private $_subDepartmentIds = array();
-	private $_isTq;
-	private $_tqVersion;
+	private $_isClient;
+	private $_clientVersion;
 	private $_sessionData = array(); //其他session数据
 
 	private $_mobilePhone;		//自己的手机
@@ -72,14 +72,14 @@ class Pft_Session{
 	public function setMobilePhone( $v ){$this->_mobilePhone = $v;}
 	public function getMobilePhone(){return $this->_mobilePhone;}
 	
-	public function setTqVersion( $v ){
-		$this->_tqVersion = $v;
+	public function setClientVersion( $v ){
+		$this->_clientVersion = $v;
 	}
 	/**
 	 * @return string
 	 */
-	public function getTqVersion(){
-		return $this->_tqVersion;
+	public function getClientVersion(){
+		return $this->_clientVersion;
 	}
 	
 	/**
@@ -91,16 +91,16 @@ class Pft_Session{
 	 * @author terry
 	 * Sat Jun 23 12:52:34 CST 2007
 	 */
-	public function compareCurrentVersionToTqVersion( $toCompareVersion ){
-		if( $this->getTqVersion() == $toCompareVersion ){
+	public function compareCurrentVersionToClientVersion( $toCompareVersion ){
+		if( $this->getClientVersion() == $toCompareVersion ){
 			return 0;
 		}else{
-			if( !$this->getTqVersion() ){
-				//如果没有注册TqVersion， currentVersion < 任何有值的 version $toCompareVersion
+			if( !$this->getClientVersion() ){
+				//如果没有注册ClientVersion， currentVersion < 任何有值的 version $toCompareVersion
 				return -1;
 			}else{
 				$toVersionArr      = explode( '.', $toCompareVersion );
-				$currentVersionArr = explode( '.', $this->getTqVersion() );
+				$currentVersionArr = explode( '.', $this->getClientVersion() );
 				for ( $i = 0; $i < count( $toVersionArr ); $i++ ){
 					if( $currentVersionArr[$i] != $toVersionArr[$i] ){
 						return intval( $currentVersionArr[$i] ) - intval( $toVersionArr[$i] ) ;
@@ -116,17 +116,14 @@ class Pft_Session{
 	 *
 	 * @return Pft_Session
 	 */
-	public static final function getSession()
-	{
-		if( !self::$_ses )
-		{
+	public static final function getSession(){
+		if( !self::$_ses ){
 			self::$_ses = new Pft_Session();				
 		}
 		return self::$_ses;
 	}
 	
-	function __construct()
-	{
+	function __construct(){
 		$this->_loadSessionInfo();
 		$lang = r('lang');
 		if( $lang ){
@@ -134,8 +131,7 @@ class Pft_Session{
 		}
 	}
 	
-	function __destruct()
-	{
+	function __destruct(){
 		$this->_saveSessionInfo();
 	}
 	
@@ -144,8 +140,7 @@ class Pft_Session{
 	 *
 	 * @return int
 	 */
-	public function getUserId()
-	{
+	public function getUserId(){
 		//return isset( $_SESSION["userId"] )?$_SESSION["userId"]:null;
 		return $this->_userId;
 	}
@@ -162,18 +157,18 @@ class Pft_Session{
 	/**
 	 * 获取Session用户对应的用户对象
 	 * @return TpmYonghu
+	 * @todo change obj
 	 */
 	public function getUserObj(){
-		return TpmYonghuPeer::retrieveByPK( $this->_userId );
+		//return TpmYonghuPeer::retrieveByPK( $this->_userId );
+		return null;
 	}
 	
 	/**
 	 * 获取当前Session的组ID
 	 *
 	 */
-	public function getGroupId()
-	{
-		//return "189ce619-fe31-802c-369a-45b450b81a5b";
+	public function getGroupId(){
 		$rev = $this->_groupId;
 		if( !$rev ){
 			$rev = r('zu_id');							//如果当前会话没有组ID，使用 URL 指定的组ID
@@ -229,9 +224,7 @@ class Pft_Session{
 	 *
 	 * @return string
 	 */
-	public function getUserName()
-	{
-		//return isset( $_SESSION["userName"] )?$_SESSION["userName"]:null;
+	public function getUserName(){
 		$username = $this->_userName;
 		
 		if ( ($this->_obj_real_user) && ($this->_obj_real_user->getYhZhanghu() != $this->_userName) )	// 当存在岗位时将岗位的用户名和真实用户的用户名拼接返回
@@ -243,16 +236,14 @@ class Pft_Session{
 	/**
 	 * 获得用户角色id
 	 */
-	public function getRoleId()
-	{
+	public function getRoleId(){
 		return $this->_roleId;
 	}
 
 	/**
 	 * 获得用户角色名称
 	 */
-	public function getRoleName()
-	{
+	public function getRoleName(){
 		return $this->_roleName;
 	}
 
@@ -261,13 +252,11 @@ class Pft_Session{
 	 *
 	 * @return string
 	 */
-	public function getRoleShortname()
-	{
+	public function getRoleShortname(){
 		return $this->_roleShortname;
 	}
 	
-	public function getRoleCount()
-	{
+	public function getRoleCount(){
 		return $this->_roleCount;
 	}
 	
@@ -284,8 +273,7 @@ class Pft_Session{
 	 * @param TpmYonghu $user
 	 * @param GUID $roleid
 	 */
-	public function setRealUser( $user, $roleid="" )
-	{
+	public function setRealUser( $user, $roleid="" ){
 		$this->_obj_real_user = $user;
 	}
 	
@@ -294,8 +282,7 @@ class Pft_Session{
 	 *
 	 * @return TpmYonghu
 	 */
-	public function getRealUser()
-	{
+	public function getRealUser(){
 		return $this->_obj_real_user;
 	}
 	
@@ -310,6 +297,7 @@ class Pft_Session{
 	 * 设置用户信息
 	 *
 	 * @param TpmYonghu $user
+	 * @todo update set user function
 	 */
 	//public function setUser( $userId, $userName )
 	public function setUser( $user, $roleid = "" )
@@ -394,30 +382,17 @@ class Pft_Session{
 	 *
 	 * @return Pft_I18n::I18N_LANGUAGE_*
 	 */
-	public function getLanguage()
-	{
+	public function getLanguage(){
 		return $this->_language?$this->_language:Pft_I18n::I18N_LANGUAGE_DEFAULT;
-	}
-	
-	public function getLanguageTqCode(){
-		$arrLangCode2TqLang = array(
-			'cn_jt' => 2052,
-			'en' => 1033
-		);
-		if( key_exists( $this->_language, $arrLangCode2TqLang ) ){
-			return $arrLangCode2TqLang[$this->_language];	
-		}else{
-			return 2052;
-		}
 	}
 	
 	/**
 	 * 设置会话的语言
 	 *
 	 * @param Pft_I18n::I18N_LANGUAGE_* $langCode
+	 * @todo 改为iso 639-2
 	 */
-	public function setLanguage( $langCode )
-	{
+	public function setLanguage( $langCode ){
 		if( intval( $langCode ) > 0 ){
 			$tqLang2LangCode = array(
 				2052 => 'cn_jt',
@@ -434,36 +409,31 @@ class Pft_Session{
 	}
 	
 	/**
-	 * 设置是否是 tq 
+	 * 设置是否是 客户端 
 	 *
 	 * @param boolean $isTq
 	 */
-	public function setIsTq( $isTq )
-	{
-		$this->_isTq = $isTq;
+	public function setIsClient( $isClient ){
+		$this->_isClient = $isClient;
 	}
 	
 	/**
-	 * 是否使用TQ登录
+	 * 是否使用 客户端 登录
 	 * @return boolean
 	 */
-	public function isTq()
-	{
-		return $this->_isTq;
+	public function isClient(){
+		return $this->_isClient;
 	}
 	
 	/**
 	 * 记录最近访问页
 	 *
 	 */
-	public function recordCurrentVisitPage()
-	{
-		//$_SESSION["lastVisitPage"] = $_SERVER["REQUEST_URI"];
+	public function recordCurrentVisitPage(){
 		$this->_lastVisitPage = $_SERVER["REQUEST_URI"];
 	}
 
-	public function recordRefererPage()
-	{
+	public function recordRefererPage(){
 		$this->_lastRefererPage = @$_SERVER["HTTP_REFERER"];
 	}
 	
@@ -483,14 +453,8 @@ class Pft_Session{
 	 *
 	 * @return false
 	 */
-	public function restoreLastVisitPage()
-	{
-		//if( isset( $_SESSION["lastVisitPage"] ) && trim( $_SESSION["lastVisitPage"] ) != "" )
-		if( trim( $this->_lastVisitPage ) != "" )
-		{
-//			$to_uri = $_SESSION["lastVisitPage"];
-//			unset( $_SESSION["lastVisitPage"] );
-
+	public function restoreLastVisitPage(){
+		if( trim( $this->_lastVisitPage ) != "" ){
 			$to_uri = $this->_lastVisitPage;
 			$this->_lastVisitPage = null;
 			header( "Location:".$to_uri );
@@ -503,8 +467,7 @@ class Pft_Session{
 	 * 活动一下，记录 session 的活动信息
 	 *
 	 */
-	public function active()
-	{
+	public function active(){
 		//这里考虑用数据库存储
 	}
 	
@@ -513,15 +476,8 @@ class Pft_Session{
 	 * 仅是清除与用户会话相关的信息，而不销毁Session
 	 * 
 	 */
-	public function clearUserSessionInfo()
-	{
+	public function clearUserSessionInfo(){
 		// lastVisitPage 不能unset
-//		
-//		$this->_userId = null;
-//		$this->_userName = null;
-//		$this->_roleId = null;
-//		$this->_roleName = null;
-		
 		$lastVisitPage = $this->_lastVisitPage;
 		$arrVars = get_class_vars(get_class($this));
 		foreach ( $arrVars as $key => $val )
@@ -529,32 +485,22 @@ class Pft_Session{
 			$this->$key = $val;
 		}
 		$this->_lastVisitPage = $lastVisitPage;
-
-		//清除存在内存中的tq消息
-		Tpm_Message_Sender_Tq::clearTqMsg();
 	}
 	
-	public function setData( $key, $data )
-	{
+	public function setData( $key, $data ){
 		$this->_sessionData[$key] = $data;
 	}
 	
-	public function getData( $key )
-	{
-		if( key_exists( $key , $this->_sessionData ) )
-		{
+	public function getData( $key ){
+		if( key_exists( $key , $this->_sessionData ) ){
 			return $this->_sessionData[$key];
-		}
-		else
-		{
+		}else{
 			return null;
 		}
 	}
 	
-	public function delData( $key )
-	{
-		if( key_exists( $key , $this->_sessionData ) )
-		{
+	public function delData( $key ){
+		if( key_exists( $key , $this->_sessionData ) ){
 			unset($this->_sessionData[$key]);
 		}
 	}
@@ -563,13 +509,11 @@ class Pft_Session{
 	 * 销毁会话信息
 	 *
 	 */
-	public function destory()
-	{
+	public function destory(){
 		session_destroy();
 	}
 	
-	private function _loadSessionInfo()
-	{
+	private function _loadSessionInfo(){
 /*这里考虑用复制信息的方式从 session 中读取数据
 		if( isset( $_SESSION["theSession"] )
 		 && is_object( $_SESSION["theSession"] )
@@ -579,10 +523,8 @@ class Pft_Session{
 		}*/
 		if( !isset($_SESSION) )session_start();
 		$arrVars = get_object_vars($this);
-		foreach ( $arrVars as $key => $val )
-		{
-			if( key_exists( self::SESSION_KEY_PREFIX.$key, $_SESSION ) )
-			{
+		foreach ( $arrVars as $key => $val ){
+			if( key_exists( self::SESSION_KEY_PREFIX.$key, $_SESSION ) ){
 				if ( ereg('^_obj_', $key) )
 					$this->$key = unserialize($_SESSION[self::SESSION_KEY_PREFIX.$key]);
 				else
@@ -591,15 +533,20 @@ class Pft_Session{
 		}
 	}
 
-	private function _saveSessionInfo()
-	{
+	private function _saveSessionInfo(){
 		$arrVars = get_object_vars($this);
-		foreach ( $arrVars as $key => $val )
-		{
+		foreach ( $arrVars as $key => $val ){
 			if ( ereg('^_obj_', $key) )
 				$_SESSION[self::SESSION_KEY_PREFIX.$key] = serialize($val);
 			else
 				$_SESSION[self::SESSION_KEY_PREFIX.$key] = $val;
 		}
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function isLogin(){
+		return $this->getUserId() > 0;
 	}
 }

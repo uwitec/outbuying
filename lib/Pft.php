@@ -519,4 +519,8 @@ function r( $fieldList, $returnNullVal=true ){
 		return current( $rev );
 	}
 }
+
+function i18ntrans($str){
+	return $str;
+}
 ?>
