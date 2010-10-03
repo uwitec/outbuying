@@ -1,3 +1,5 @@
+	<!--content-->
+	</div>
 <!--mainbody-->
 </div>
 <div id="admin_footer">
@@ -7,6 +9,6 @@
 <?
 $endTime = microtime( true );
 ?>
-<div style="text-align:center;font-size:11px;">Used times (<i><?=( $endTime - APP_START_TIME ) * 1000?></i>) ms</div>
+<div id="app_info">Used times (<i><?=( $endTime - APP_START_TIME ) * 1000?></i>) ms</div>
 </body>
 </html>

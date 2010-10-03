@@ -4,5 +4,5 @@
 
 $cfg['VERSION']	=	"0.0.1";
 
-$cfg['DB_TB_PREFIX'] = "yd_";
+$cfg['DB_TB_PREFIX'] = "";
 return $cfg;
