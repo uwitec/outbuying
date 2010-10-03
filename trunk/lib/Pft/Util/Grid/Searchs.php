@@ -1566,6 +1566,8 @@ class Pft_Util_Grid_Criteria{
 	private $_offset;
 	private $_limit;
 	private $_map = array();
+	private $_orderBy = array();
+	
 	public function getMap(){
 		return $this->_map;
 	}
@@ -1588,6 +1590,14 @@ class Pft_Util_Grid_Criteria{
 
 	public function getNewCriterion( $colName, $val, $op ){
 		return new Pft_Util_Grid_Criterion( $colName, $val, $op );
+	}
+	
+	public function addAscendingOrderByColumn( $colName ){
+		$this->_orderBy[] = $colName. " ASC";
+	}
+	
+	public function addDescendingOrderByColumn( $colName ){
+		$this->_orderBy[] = $colName. " DESC";
 	}
 }
 

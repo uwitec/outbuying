@@ -15,7 +15,7 @@
  * @version 1.4
  */
 if( !defined("MULTI_SYSPATH_MODE") ){
-	define( "MULTI_SYSPATH_MODE", true );
+	define( "MULTI_SYSPATH_MODE", false );
 }
 
 define('WINDOWS', (substr(PHP_OS, 0, 3) == 'WIN'));
@@ -47,8 +47,7 @@ if( defined( "MULTI_SYSPATH_MODE" ) && MULTI_SYSPATH_MODE ){
 	$arr_path_lib[] = $cfg_pri["PATH_LIB"];
 
 //  路径
-	if( file_exists( $secondaryPathCfgFile ) )
-	{
+	if( file_exists( $secondaryPathCfgFile ) ){
 		$cfg_sec = include( $secondaryPathCfgFile );
 		//var_export( $cfg_sec );
 		
@@ -62,24 +61,21 @@ if( defined( "MULTI_SYSPATH_MODE" ) && MULTI_SYSPATH_MODE ){
 
 	set_include_path(implode(INC_SPLIT,$arr_path_model).INC_SPLIT.implode(INC_SPLIT,$arr_path_lib).INC_SPLIT.get_include_path());
 	//set_include_path( $cfg["PATH_LIB"].INC_SPLIT.PATH_LIB."model/" );	
-}
-else
-{
-	set_include_path($cfg_pri["PATH_LIB"].INC_SPLIT.$cfg_pri["PATH_MODEL"].INC_SPLIT.get_include_path());	
+}else{
+	//set_include_path($cfg_pri["PATH_LIB"].INC_SPLIT.$cfg_pri["PATH_MODEL"].INC_SPLIT.get_include_path());
+	//to reduce system load	
 }
 
 //echo get_include_path();
-
 /**
  * 基本的环境管理和类管理 需PHP5
  */
-require_once 'Pft.php';
+require_once $cfg_pri["PATH_LIB"].'Pft.php';
 //========================================
 /**
 * 实现在创建对象时，自动加载类定义，即不用include Class文件 Only PHP5
 */
 function __autoload($class){Pft::loadClass($class);/*Pft::loadclass2($class);*/}
-
 Pft_Config::setPrimaryConfig( $cfg_pri );
 if( defined( "MULTI_SYSPATH_MODE" ) && isset( $cfg_sec ) ){
 	Pft_Config::setSecondaryConfig( $cfg_sec );

@@ -9,20 +9,16 @@
  * @package Pft_View_Helper
  * @version 2.0.1
  */
-class Pft_View_Helper_Grid
-{
+class Pft_View_Helper_Grid{
 	/**
 	 * 根据符合Watt:Data里的 Grid 的Schema 的数据创建一个HTML的 Grid显示
 	 *
 	 * @param unknown_type $gridData
 	 */
-	public static function buildGrid( $grid, $show=true, $formAttribs="" )
-	{
-		
+	public static function buildGrid( $grid, $show=true, $formAttribs="" ){
 		$outArr = self::buildGridToOutArray( $grid, $formAttribs );
 		$out = "<div>";
-		foreach ( $outArr as $val )	
-		{
+		foreach ( $outArr as $val ){
 			$out .= $val;
 		}
 		$out .= "</div>";
@@ -36,14 +32,12 @@ class Pft_View_Helper_Grid
 	 * @param array $grid
 	 * @param array $params	[formAttribs,id]
 	 */
-	public static function buildGridToOutArray( $grid, $params="", $searchCols=4 )
-	{
+	public static function buildGridToOutArray( $grid, $params="", $searchCols=4 ){
 		/**
 		 * 这里判断数据是否符合规则
 		 * 应该根据 Shema 判断
 		 */
-		if( !is_array( $grid ) )
-		{
+		if( !is_array( $grid ) ){
 			$e = new Pft_Exception(Pft_I18n::trans("ERR_INVALID_DATATYPE"));
 			throw $e;
 		}
@@ -57,42 +51,40 @@ class Pft_View_Helper_Grid
 		}
 		
 		//随机生成一个 search form 的id
-		//$specSearchFormId = mt_rand( 10000, 99999 );
+		$specSearchFormId = mt_rand( 1000, 9999 );
 		
 		/**
 		 * 用来记录orderby了的字段和orderbyorder
 		 */
 		$orderByCols = array();
 		
-		if( isset( $grid[ Pft_Util_Grid::GRID_SCHEMA_COLS ] )
-		 && count( $grid[ Pft_Util_Grid::GRID_SCHEMA_COLS ] ) > 0 )
-		{
+		if( isset( $grid[ Pft_Util_Grid::GRID_COLS ] )
+		 && count( $grid[ Pft_Util_Grid::GRID_COLS ] ) > 0 ){
 			$isDefCols = true;
-			$cols = $grid[ Pft_Util_Grid::GRID_SCHEMA_COLS ];
+			$cols = $grid[ Pft_Util_Grid::GRID_COLS ];
 		}else{
 			$isDefCols = false;
 			$cols = null;
 		}
 
-		$datas = $grid[ Pft_Util_Grid::GRID_SCHEMA_DATAS ];
+		$datas = $grid[ Pft_Util_Grid::GRID_DATAS ];
 		
 		$output_searchs = "";
 		/**
 		 * 开始输出查询信息
 		 */
-		$output_searchs .= '<form method="get" action="'.$_SERVER['PHP_SELF'].'" id="searchform" '.$formAttribs.' onsubmit="if($(\'searchFormPageTotal\')){$(\'searchFormPageTotal\').value=\'\';}">';
+		$output_searchs .= '<form method="get" action="'.$_SERVER['PHP_SELF'].'" id="searchform'.$specSearchFormId.'" '.$formAttribs.' onsubmit="if($(\'searchFormPageTotal\')){$(\'searchFormPageTotal\').value=\'\';}">';
 		//初始化参数
-		$initParams = $grid[Pft_Util_Grid::GRID_SCHEMA_SEARCHS][Pft_Util_Grid_Searchs::DEF_INITPARAMS];
+		$initParams = $grid[Pft_Util_Grid::GRID_SEARCHS][Pft_Util_Grid_Searchs::DEF_INITPARAMS];
 		foreach ( $initParams as $initKey => $initValue ) {
 			$output_searchs .= '<input type="hidden" name="'.$initKey.'" value="'.h($initValue).'">';
 			$output_searchs .= '<input type="hidden" name="'.Pft_Util_Grid_Searchs::INIT_PARAM_NAME.'[]" value="'.h($initKey).'">';
 		}
 
-		if( ( isset( $grid[Pft_Util_Grid::GRID_SCHEMA_SEARCHS] ) && is_array( $grid[Pft_Util_Grid::GRID_SCHEMA_SEARCHS] ) )
-		  ||( isset( $grid[Pft_Util_Grid::GRID_SCHEMA_PAGER] ) && is_array( $grid[Pft_Util_Grid::GRID_SCHEMA_PAGER] ) )
-		  ||( isset( $grid[Pft_Util_Grid::GRID_SCHEMA_ORDERBYS] ) && is_array( $grid[Pft_Util_Grid::GRID_SCHEMA_ORDERBYS] ) )
-		  )
-		{						
+		if( ( isset( $grid[Pft_Util_Grid::GRID_SEARCHS] ) && is_array( $grid[Pft_Util_Grid::GRID_SEARCHS] ) )
+		  ||( isset( $grid[Pft_Util_Grid::GRID_PAGER] ) && is_array( $grid[Pft_Util_Grid::GRID_PAGER] ) )
+		  ||( isset( $grid[Pft_Util_Grid::GRID_ORDERBYS] ) && is_array( $grid[Pft_Util_Grid::GRID_ORDERBYS] ) )
+		  ){						
 			$output_searchs .= '<div class="search_container">'."\n";
 			//$output_searchs .= '<div class="search"><form method="post" id="searchform" '.$formAttribs.'>';
 			
@@ -103,22 +95,20 @@ class Pft_View_Helper_Grid
 			$output_searchs .= '<input type="hidden" name="do" value="'.$_REQUEST['do'].'">';
 			*/
 
-			//var_dump( $grid[Pft_Util_Grid::GRID_SCHEMA_SEARCHS] );
-
-			$SCHEMA_SEARCHS = $grid[Pft_Util_Grid::GRID_SCHEMA_SEARCHS];
+			$SCHEMA_SEARCHS = $grid[Pft_Util_Grid::GRID_SEARCHS];
 			$output_searchs .= '<div class="grid">';
 			
 			//$output_searchs .= '<div style="float:left;width:33%">';
 			//高级搜索
-			//if( isset( $grid[Pft_Util_Grid::GRID_SCHEMA_SEARCHS][Pft_Util_Grid_Searchs::SEARCH_ADV_SIGN] ) ){
+			//if( isset( $grid[Pft_Util_Grid::GRID_SEARCHS][Pft_Util_Grid_Searchs::SEARCH_ADV_SIGN] ) ){
 			if( key_exists( Pft_Util_Grid_Searchs::SEARCH_ADV_SIGN, $SCHEMA_SEARCHS ) ){
 				$advSign = $SCHEMA_SEARCHS[Pft_Util_Grid_Searchs::SEARCH_ADV_SIGN];
 				$output_searchs .= '<input name="'.Pft_Util_Grid_Searchs::SEARCH_ADV_SIGN.'" id="'.Pft_Util_Grid_Searchs::SEARCH_ADV_SIGN.'" value="'.h($advSign).'">';
 			}
 			
-			$searchs = $grid[Pft_Util_Grid::GRID_SCHEMA_SEARCHS][Pft_Util_Grid_Searchs::DEF_SEARCHS];			
-			if(isset($grid[Pft_Util_Grid::GRID_SCHEMA_SEARCHS][Pft_Util_Grid_Searchs::DEF_SEARCHGROUP])){
-			$searchgroup = $grid[Pft_Util_Grid::GRID_SCHEMA_SEARCHS][Pft_Util_Grid_Searchs::DEF_SEARCHGROUP];	
+			$searchs = $grid[Pft_Util_Grid::GRID_SEARCHS][Pft_Util_Grid_Searchs::DEF_SEARCHS];			
+			if(isset($grid[Pft_Util_Grid::GRID_SEARCHS][Pft_Util_Grid_Searchs::DEF_SEARCHGROUP])){
+			$searchgroup = $grid[Pft_Util_Grid::GRID_SEARCHS][Pft_Util_Grid_Searchs::DEF_SEARCHGROUP];	
 			}
 			if(isset($grid[Pft_Util_Grid_Searchs::DEF_EXPORT])){
 				$isexport = $grid[Pft_Util_Grid_Searchs::DEF_EXPORT];	
@@ -198,8 +188,7 @@ class Pft_View_Helper_Grid
 					//$output_searchs .= '<div style="float:left;width:200px;text-align:right;">';
 					$contstr = '';
 					//搜索项
-					if( is_array( $search[Pft_Util_Grid_Search::DEF_ITEM] ) && count($search[Pft_Util_Grid_Search::DEF_ITEM]))
-					{
+					if( is_array( $search[Pft_Util_Grid_Search::DEF_ITEM] ) && count($search[Pft_Util_Grid_Search::DEF_ITEM])){
 						//and or
 						$isviewandor=$search[Pft_Util_Grid_Search::DEF_ISVIEWANDOR];
 						if($isviewandor && $isviewandor == 'Y'){
@@ -218,8 +207,7 @@ class Pft_View_Helper_Grid
 						}
 						
 						$contstr .= '<select name="item_'.$search[Pft_Util_Grid_Search::DEF_COLNAME].'" id="item_'.$search[Pft_Util_Grid_Search::DEF_COLNAME].'">';
-						foreach ( $search[Pft_Util_Grid_Search::DEF_ITEM] as $key=>$value )
-						{
+						foreach ( $search[Pft_Util_Grid_Search::DEF_ITEM] as $key=>$value ){
 							$selSign = ( ($value == $search[Pft_Util_Grid_Search::DEF_TITLE])&&( $search[Pft_Util_Grid_Search::DEF_TITLE] !== '' ) && !is_null( $search[Pft_Util_Grid_Search::DEF_TITLE] ) )?"selected":"";
 							$contstr .= '<option value="'.htmlspecialchars($key).'" '.$selSign.'>'.htmlspecialchars($value).'</option>';
 						}
@@ -231,12 +219,10 @@ class Pft_View_Helper_Grid
 					//$contstr .= '</td><td style="text-align:left">';
 					
 					//搜索条件设置
-					if( is_array( $search[Pft_Util_Grid_Search::DEF_COND] ) && count($search[Pft_Util_Grid_Search::DEF_COND]))
-					{
+					if( is_array( $search[Pft_Util_Grid_Search::DEF_COND] ) && count($search[Pft_Util_Grid_Search::DEF_COND])){
 						//这里用下拉列表显示
 						$contstr .= '<select name="cond_'.$search[Pft_Util_Grid_Search::DEF_COLNAME].'" id="cond_'.$search[Pft_Util_Grid_Search::DEF_COLNAME].'">';
-						foreach ( $search[Pft_Util_Grid_Search::DEF_COND] as $key=>$value )
-						{
+						foreach ( $search[Pft_Util_Grid_Search::DEF_COND] as $key=>$value ){
 							
 							$selSign = ( ($value == $search[Pft_Util_Grid_Search::DEF_OPERATION])&&( $search[Pft_Util_Grid_Search::DEF_OPERATION] !== '' ) && !is_null( $search[Pft_Util_Grid_Search::DEF_OPERATION] ) )?"selected":"";
 							$contstr .= '<option value="'.htmlspecialchars($value).'" '.$selSign.'>'.htmlspecialchars($key).'</option>';
@@ -245,21 +231,17 @@ class Pft_View_Helper_Grid
 						$contstr .= '</select>';
 					}
 					
-					if( is_array( $search[Pft_Util_Grid_Search::DEF_REFERENCE] ) )
-					{
+					if( is_array( $search[Pft_Util_Grid_Search::DEF_REFERENCE] ) ){
 						//这里用下拉列表显示
 						$contstr .= '<select class="search_input" name="'.$search[Pft_Util_Grid_Search::DEF_COLNAME].'" id="'.$search[Pft_Util_Grid_Search::DEF_COLNAME].'">';
 						$contstr .= '<option>               </option>';
-						foreach ( $search[Pft_Util_Grid_Search::DEF_REFERENCE] as $key=>$value )
-						{
+						foreach ( $search[Pft_Util_Grid_Search::DEF_REFERENCE] as $key=>$value ){
 							$selSign = ( ($key == $search[Pft_Util_Grid_Search::DEF_VALUE])&&( $search[Pft_Util_Grid_Search::DEF_VALUE] !== '' ) && !is_null( $search[Pft_Util_Grid_Search::DEF_VALUE] ) )?"selected":"";
 							$contstr .= '<option value="'.htmlspecialchars($key).'" '.$selSign.'>'.htmlspecialchars($value).'</option>';
 						}
 						$contstr .= '';
 						$contstr .= '</select>';
-					}
-					else
-					{
+					}else{
 						switch ( $search[Pft_Util_Grid_Search::DEF_SHOWTYPE] ){
 							case Pft_Util_Grid_Search::SHOW_TYPE_DATE;
 								$dateselector = new Pft_View_Helper_DateSelector();
@@ -311,7 +293,6 @@ class Pft_View_Helper_Grid
 						$table_group .= $joinstr.$contstr."<br>";
 					}else if(isset($group[$groupon]['item']) && $groupdjg ==(count($group[$groupon]['item'])-1)){
 						//分组中最后一个
-
 						if($groupon && (($groupon+1)%$number)==0 && ($groupon != ($groupnum-1)) ){ 
 						 	$contstr .= "</td></tr><tr>";
 						 }else{
@@ -334,7 +315,6 @@ class Pft_View_Helper_Grid
 					$exportstr ='';
 					if(isset($isexport) && $isexport){
 						$exportstr ='&nbsp;<input type="submit" id="searchFormExport"  name="searchFormExport" value="'.Pft_I18n::trans("ec_dd_daochubaobiao").'" class="btn">';
-						
 					}
 										
 					//如果没有修改搜索条件，不会影响总记录的条数
@@ -345,9 +325,7 @@ class Pft_View_Helper_Grid
 					</td>'."\n";	
 				}
 			}else if (!key_exists( Pft_Util_Grid_Searchs::SEARCH_ADV_SIGN, $SCHEMA_SEARCHS )){//普通搜索
-				
-				foreach ( $searchs as $search )
-				{									
+				foreach ( $searchs as $search ){									
 					$opration = $search[Pft_Util_Grid_Search::DEF_OPERATION];
 					if( $opration == Pft_Util_Grid_Searchs::LIKE ){
 						$oprationTip = i18ntrans('#模糊匹配');
@@ -375,12 +353,10 @@ class Pft_View_Helper_Grid
 					}
 						
 					//搜索项
-					if( is_array( $search[Pft_Util_Grid_Search::DEF_ITEM] ) && count($search[Pft_Util_Grid_Search::DEF_ITEM]))
-					{
+					if( is_array( $search[Pft_Util_Grid_Search::DEF_ITEM] ) && count($search[Pft_Util_Grid_Search::DEF_ITEM])){
 						//and or
 						$isviewandor=$search[Pft_Util_Grid_Search::DEF_ISVIEWANDOR];
 						if($isviewandor && $isviewandor == 'Y'){
-							
 							$output_searchs .= '<select name="isor_'.$search[Pft_Util_Grid_Search::DEF_COLNAME].'" id="isor_'.$search[Pft_Util_Grid_Search::DEF_COLNAME].'">';
 							if($search[Pft_Util_Grid_Search::DEF_ISOR]){
 								$output_searchs .= '<option value="0">'.Pft_I18n::trans('并且').'</option>';
@@ -389,23 +365,18 @@ class Pft_View_Helper_Grid
 								$output_searchs .= '<option value="0" selected >'.i18ntrans('#并且').'</option>';
 								$output_searchs .= '<option value="1" >'.i18ntrans('#或者').'</option>';
 							}
-							
-							
 							$output_searchs .= '';
 							$output_searchs .= '</select>';						
 						}else if($isviewandor && $isviewandor != 'Y'){
 							$output_searchs .= '<span>'.htmlspecialchars($isviewandor).'</span>';
 						}
-						
 						$output_searchs .= '<select name="item_'.$search[Pft_Util_Grid_Search::DEF_COLNAME].'" id="item_'.$search[Pft_Util_Grid_Search::DEF_COLNAME].'">';
-						foreach ( $search[Pft_Util_Grid_Search::DEF_ITEM] as $key=>$value )
-						{
+						foreach ( $search[Pft_Util_Grid_Search::DEF_ITEM] as $key=>$value ){
 							$selSign = ( ($value == $search[Pft_Util_Grid_Search::DEF_TITLE])&&( $search[Pft_Util_Grid_Search::DEF_TITLE] !== '' ) && !is_null( $search[Pft_Util_Grid_Search::DEF_TITLE] ) )?"selected":"";
 							$output_searchs .= '<option value="'.htmlspecialchars($key).'" '.$selSign.'>'.htmlspecialchars($value).'</option>';
 						}
 						$output_searchs .= '';
 						$output_searchs .= '</select>';
-						
 					}else{
 						$output_searchs .= '<span class="search_name" title="'.$oprationTip.'">'.$search[Pft_Util_Grid_Search::DEF_TITLE].': </span>';
 					}
@@ -414,13 +385,10 @@ class Pft_View_Helper_Grid
 					//搜索条件设置
 					//Pft_Util_Grid_Search::DEF_OPERATIONVIEW;		
 					//$search['operationview']=array('等于'=>'=','小于'=>'<','包含'=>Pft_Util_Grid_Searchs::LIKE);
-					if( is_array( $search[Pft_Util_Grid_Search::DEF_COND] ) && count($search[Pft_Util_Grid_Search::DEF_COND]))
-					{
+					if( is_array( $search[Pft_Util_Grid_Search::DEF_COND] ) && count($search[Pft_Util_Grid_Search::DEF_COND])){
 						//这里用下拉列表显示
 						$output_searchs .= '<select name="cond_'.$search[Pft_Util_Grid_Search::DEF_COLNAME].'" id="cond_'.$search[Pft_Util_Grid_Search::DEF_COLNAME].'">';
-						foreach ( $search[Pft_Util_Grid_Search::DEF_COND] as $key=>$value )
-						{
-							
+						foreach ( $search[Pft_Util_Grid_Search::DEF_COND] as $key=>$value ){
 							$selSign = ( ($value == $search[Pft_Util_Grid_Search::DEF_OPERATION])&&( $search[Pft_Util_Grid_Search::DEF_OPERATION] !== '' ) && !is_null( $search[Pft_Util_Grid_Search::DEF_OPERATION] ) )?"selected":"";
 							$output_searchs .= '<option value="'.htmlspecialchars($value).'" '.$selSign.'>'.htmlspecialchars($key).'</option>';
 						}
@@ -428,21 +396,17 @@ class Pft_View_Helper_Grid
 						$output_searchs .= '</select>';
 					}
 					
-					if( is_array( $search[Pft_Util_Grid_Search::DEF_REFERENCE] ) )
-					{
+					if( is_array( $search[Pft_Util_Grid_Search::DEF_REFERENCE] ) ){
 						//这里用下拉列表显示
 						$output_searchs .= '<select class="search_input" name="'.$search[Pft_Util_Grid_Search::DEF_COLNAME].'" id="'.$search[Pft_Util_Grid_Search::DEF_COLNAME].'">';
 						$output_searchs .= '<option>               </option>';
-						foreach ( $search[Pft_Util_Grid_Search::DEF_REFERENCE] as $key=>$value )
-						{
+						foreach ( $search[Pft_Util_Grid_Search::DEF_REFERENCE] as $key=>$value ){
 							$selSign = ( ($key == $search[Pft_Util_Grid_Search::DEF_VALUE])&&( $search[Pft_Util_Grid_Search::DEF_VALUE] !== '' ) && !is_null( $search[Pft_Util_Grid_Search::DEF_VALUE] ) )?"selected":"";
 							$output_searchs .= '<option value="'.htmlspecialchars($key).'" '.$selSign.'>'.htmlspecialchars($value).'</option>';
 						}
 						$output_searchs .= '';
 						$output_searchs .= '</select>';
-					}
-					else
-					{
+					}else{
 						switch ( $search[Pft_Util_Grid_Search::DEF_SHOWTYPE] ){
 							case Pft_Util_Grid_Search::SHOW_TYPE_DATE;
 								$dateselector = new Pft_View_Helper_DateSelector();
@@ -502,9 +466,7 @@ class Pft_View_Helper_Grid
 						<li><input type='radio' name='exportformat' id='exportformat' value='xls'>.xls&nbsp;</li>
 						<li><input type='submit' class='btn' id='searchFormExport' name='searchFormExport' value='".i18ntrans('#确定')."'></li>
 						</ul>
-						
 						</div>";
-						
 						//$exportstr ='&nbsp;<input type="submit" id="searchFormExport"  name="searchFormExport" value="'.Pft_I18n::trans("ec_dd_daochubaobiao").'" class="btn">';
 					}
 					//如果没有修改搜索条件，不会影响总记录的条数<tr>
@@ -528,7 +490,6 @@ class Pft_View_Helper_Grid
 						<li><input type='radio' name='exportformat' id='exportformat' value='xls'>.xls&nbsp;</li>
 						<li><input type='submit' class='btn' id='searchFormExport' name='searchFormExport' value='".i18ntrans('#确定')."'></li>
 						</ul>
-						
 						</div>";
 					}
 										
@@ -539,54 +500,57 @@ class Pft_View_Helper_Grid
 					</div>
 					</td>'."\n";	
 			}
-				
-						
 			$output_searchs .= '</tr></table>';
 			//$output_searchs .= '<div style="clear:both">&nbsp;</div>';
 			$output_searchs .= '</div>';
-
 			
 			/**
 			 * 如果有排序定义，输出排序表单域
 			 */
-			if( is_array( $grid[Pft_Util_Grid::GRID_SCHEMA_ORDERBYS] )
-			 && count( $grid[Pft_Util_Grid::GRID_SCHEMA_ORDERBYS][Pft_Util_Grid_Searchs::DEF_ORDERBYS] ) )
-			{
-				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Grid_Searchs::DEF_ORDERBYS.'" id="searchFormOrderBy" value="'.$grid[Pft_Util_Grid::GRID_SCHEMA_ORDERBYS][Pft_Util_Grid_Searchs::DEF_ORDERBYS][0].'">';
-				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Grid_Searchs::DEF_ORDERBYORDERS.'" id="searchFormOrderByOrder" value="'.$grid[Pft_Util_Grid::GRID_SCHEMA_ORDERBYS][Pft_Util_Grid_Searchs::DEF_ORDERBYORDERS][0].'">';
-				$orderByCols[$grid[Pft_Util_Grid::GRID_SCHEMA_ORDERBYS][Pft_Util_Grid_Searchs::DEF_ORDERBYS][0]] 
-				      = $grid[Pft_Util_Grid::GRID_SCHEMA_ORDERBYS][Pft_Util_Grid_Searchs::DEF_ORDERBYORDERS][0]==Pft_Util_Grid_Searchs::DESC?"↓":"↑";
-			}
-			else
-			{
-				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Grid_Searchs::DEF_ORDERBYS.'" id="searchFormOrderBy" value="">'."\n";
-				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Grid_Searchs::DEF_ORDERBYORDERS.'" id="searchFormOrderByOrder" value="">'."\n";
+			if( is_array( $grid[Pft_Util_Grid::GRID_ORDERBYS] )
+			 && count( $grid[Pft_Util_Grid::GRID_ORDERBYS][Pft_Util_Grid_Searchs::DEF_ORDERBYS] ) ){
+				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Grid_Searchs::DEF_ORDERBYS.'" id="searchFormOrderBy'.$specSearchFormId.'" value="'.$grid[Pft_Util_Grid::GRID_ORDERBYS][Pft_Util_Grid_Searchs::DEF_ORDERBYS][0].'">';
+				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Grid_Searchs::DEF_ORDERBYORDERS.'" id="searchFormOrderByOrder'.$specSearchFormId.'" value="'.$grid[Pft_Util_Grid::GRID_ORDERBYS][Pft_Util_Grid_Searchs::DEF_ORDERBYORDERS][0].'">';
+				$orderByCols[$grid[Pft_Util_Grid::GRID_ORDERBYS][Pft_Util_Grid_Searchs::DEF_ORDERBYS][0]] 
+				      = $grid[Pft_Util_Grid::GRID_ORDERBYS][Pft_Util_Grid_Searchs::DEF_ORDERBYORDERS][0]==Pft_Util_Grid_Searchs::DESC?"↓":"↑";
+			}else{
+				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Grid_Searchs::DEF_ORDERBYS.'" id="searchFormOrderBy'.$specSearchFormId.'" value="">'."\n";
+				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Grid_Searchs::DEF_ORDERBYORDERS.'" id="searchFormOrderByOrder'.$specSearchFormId.'" value="">'."\n";
 			}
 			/**
 			 * 这是order by 的js脚本
 			 * //已写到 common.js 里了
 			 */
-//			$descSign = Pft_Util_Grid_Searchs::DESC;
-//			$ascSign  = Pft_Util_Grid_Searchs::ASC;
-//			$output_searchs .= <<<EOT
-//<script>
-//function orderby{$specSearchFormId}(colName){document.getElementById("searchFormOrderBy").value=colName;if(document.getElementById("searchFormOrderByOrder").value=="{$ascSign}"){document.getElementById("searchFormOrderByOrder").value="{$descSign}"}else{document.getElementById("searchFormOrderByOrder").value="{$ascSign}"}document.getElementById("searchform").submit();}
-//</script>
-//EOT;
+			$descSign = Pft_Util_Grid_Searchs::DESC;
+			$ascSign  = Pft_Util_Grid_Searchs::ASC;
+			$output_searchs .= <<<EOT
+<script>
+function orderby{$specSearchFormId}(colName){
+	document.getElementById("searchFormOrderBy{$specSearchFormId}").value=colName;
+	var orderSignObj = document.getElementById("searchFormOrderByOrder{$specSearchFormId}");
+	if(orderSignObj.value=="{$ascSign}"){
+		orderSignObj.value="{$descSign}"
+	}else{
+		orderSignObj.value="{$ascSign}"
+	}
+	document.getElementById("searchform{$specSearchFormId}").submit();}
+</script>
+EOT;
+
 			/**
 			 * 如果有页码定义，输出页码表单域
+			 * @todo page的显示也要带上form id
 			 */
-			if( is_array( $grid[Pft_Util_Grid::GRID_SCHEMA_PAGER] ) )
-			{
+			if( is_array( $grid[Pft_Util_Grid::GRID_PAGER] ) ){
 				//这是翻页的js脚本
 				//已写到 common.js 里了
-//				$output_searchs .= <<<EOT
-//						<script>function gotoPage(pn){document.getElementById("searchFormPageNum").value=pn;document.getElementById("searchform").submit();}</script>
-//EOT;
+				$output_searchs .= <<<EOT
+						<script>function gotoPage(pn){document.getElementById("searchFormPageNum").value=pn;document.getElementById("searchform").submit();}</script>
+EOT;
 				//这里不显示 PAGER_VAR_PAGE_NUM 是为了 按 search 后进入到第1页
 				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Pager::PAGER_VAR_PAGE_NUM.'" id="searchFormPageNum" value="">';
-				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Pager::PAGER_VAR_PAGE_SIZE.'" id="searchFormPageSize" value="'.$grid[Pft_Util_Grid::GRID_SCHEMA_PAGER][Pft_Util_Pager::PAGER_VAR_PAGE_SIZE].'">';
-				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Pager::PAGER_VAR_TOTAL.'" id="searchFormPageTotal" value="'.$grid[Pft_Util_Grid::GRID_SCHEMA_PAGER][Pft_Util_Pager::PAGER_VAR_TOTAL].'">';
+				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Pager::PAGER_VAR_PAGE_SIZE.'" id="searchFormPageSize" value="'.$grid[Pft_Util_Grid::GRID_PAGER][Pft_Util_Pager::PAGER_VAR_PAGE_SIZE].'">';
+				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Pager::PAGER_VAR_TOTAL.'" id="searchFormPageTotal" value="'.$grid[Pft_Util_Grid::GRID_PAGER][Pft_Util_Pager::PAGER_VAR_TOTAL].'">';
 				//var_dump( $output_searchs );				
 			}
 			$output_searchs .= "</div>\n";
@@ -605,17 +569,14 @@ class Pft_View_Helper_Grid
 		 * 输出 header col 头信息
 		 */
 		$output_body .= "<thead>\n";
-		if( $isDefCols )
-		{
+		if( $isDefCols ){
 			$output_body .= "<tr>";
-			foreach ( $cols as $col )
-			{
+			foreach ( $cols as $col ){
 				$col_title = ( is_null( $col["title"] ) )?Pft_I18n::trans($col["colname"]):$col["title"];
 				if( trim($col[Pft_Util_Grid::COL_COLNAME]) != "" && $col["sortable"] ){
 					$orderBySign = ( key_exists( $col[Pft_Util_Grid::COL_COLNAME], $orderByCols ) )?$orderByCols[$col[Pft_Util_Grid::COL_COLNAME]]:"";
 
-					if( $output_searchs )
-					{
+					if( $output_searchs ){
 						//如果在 $col["sortable"] 中不是 boolean，那么就是填写的 order by 的值
 						if( is_bool( $col["sortable"] ) ){
 							$orderByColname = $col["colname"];
@@ -624,29 +585,22 @@ class Pft_View_Helper_Grid
 						}
 						
 						//如果有search信息，则输出order by
-						$output_body .= "<th nowrap=\"true\"><a href=\"javascript:orderby('".addslashes($orderByColname)."')\">".$col_title."</a>".$orderBySign.$col["colext"]."</th>";
-					}
-					else
-					{
+						$output_body .= "<th nowrap=\"true\"><a href=\"javascript:orderby{$specSearchFormId}('".addslashes($orderByColname)."')\">".$col_title."</a>".$orderBySign.$col["colext"]."</th>";
+					}else{
 						//否则不输出order by脚本
 						$output_body .= "<th nowrap=\"true\">".$col_title."</th>";
 					}
-					
 				}else{
 					$output_body .= "<th nowrap=\"true\">".$col_title.$col["colext"]."</th>";					
 				}
 			}
 			$output_body .= "</tr>\n";
-		}
-		else
-		{
+		}else{
 			if( count( $datas ) ){
 				$row = current( $datas );
-				if( is_array( $row ) )
-				{
+				if( is_array( $row ) ){
 					$output_body .= "<tr>";
-					foreach ( $row as $key => $col )
-					{
+					foreach ( $row as $key => $col ){
 						$output_body .= "<th>".Pft_I18n::trans($key)."</th>";
 					}
 					$output_body .= "</tr>\n";
@@ -663,10 +617,9 @@ class Pft_View_Helper_Grid
 			$baobiaodata = array();
 			$biaotou = array();
 			
-			$exportCol = $grid[Pft_Util_Grid::GRID_SCHEMA_EXPORT_COL];
+			$exportCol = $grid[Pft_Util_Grid::GRID_EXPORT_COL];
 			//报头设置
-			if( $isDefCols )
-			{
+			if( $isDefCols ){
 				if( is_array($exportCol) ){
 					foreach ($cols as $colName => $val){
 						if( !in_array($colName,$exportCol) ){
@@ -674,19 +627,14 @@ class Pft_View_Helper_Grid
 						}
 					}
 				}
-				foreach ( $cols as $col )
-				{
+				foreach ( $cols as $col ){
 					$biaotou[] = self::clearHtml( ( is_null( $col["title"] ) )?Pft_I18n::trans($col["colname"]):$col["title"] );
 				}
-			}
-			else
-			{
+			}else{
 				if( count( $datas ) ){
 					$row = current( $datas );
-					if( is_array( $row ) )
-					{
-						foreach ( $row as $key => $col )
-						{
+					if( is_array( $row ) ){
+						foreach ( $row as $key => $col ){
 							$biaotou[] = Pft_I18n::trans($key);
 						}
 					}			
@@ -694,8 +642,7 @@ class Pft_View_Helper_Grid
 			}
 			
 			$baobiaodata[] =$biaotou;
-			if( is_array( $datas ) && count( $datas ) )
-			{
+			if( is_array( $datas ) && count( $datas ) ){
 				$output_arr = self::_getRenderedDataByGridData( $datas, $cols );
 				foreach ( $output_arr as $row ){
 					$therow = array();
@@ -722,22 +669,16 @@ class Pft_View_Helper_Grid
 			//导出报表
 			if($exportfile_name){
 				//$file=Pft_Util_Export::ExporttoCsv($baobiaodata,$exportfile_name,true);
-				if($exportfile_format=='csv')
-				{
+				if($exportfile_format=='csv'){
 					$file=Pft_Util_Export::ExportToCsv($baobiaodata,$exportfile_name,true);
-				}
-				else 
-				{
+				}else{
 					$file=Pft_Util_Export::ExportToXls($baobiaodata,$exportfile_name,true);
 				}
 			}else{
 				//$file=Pft_Util_Export::ExporttoCsv($baobiaodata,"Export");
-				if($exportfile_format=='csv')
-				{
+				if($exportfile_format=='csv'){
 					$file=Pft_Util_Export::ExportToCsv($baobiaodata,"Export");
-				}
-				else 
-				{
+				}else{
 					$file=Pft_Util_Export::ExportToXls($baobiaodata,"Export");
 				}
 			}
@@ -748,15 +689,14 @@ class Pft_View_Helper_Grid
 				//}
 				//$this->_exportfile = $file;
 			}
-			$rev[Pft_Util_Grid::GRID_SCHEMA_DATAS] = $exportfilestr;		
+			$rev[Pft_Util_Grid::GRID_DATAS] = $exportfilestr;		
 			return $rev;
 		}
 		/**
 		 * Body 信息
 		 */
 		$output_body .= "<tbody>\n";
-		if( is_array( $datas ) && count( $datas ) )
-		{
+		if( is_array( $datas ) && count( $datas ) ){
 			$output_arr = self::_getRenderedDataByGridData( $datas, $cols );
 			foreach ( $output_arr as $row ){
 				if( !is_array( $row ) )continue;
@@ -776,12 +716,10 @@ class Pft_View_Helper_Grid
 			}
 			
 //			$showText = "";
-//			foreach ( $datas as $row )
-//			{
+//			foreach ( $datas as $row ){
 //				if( !is_array( $row ) )continue;
 //				$output_body .= "<tr>";
-//				if( $isDefCols )
-//				{
+//				if( $isDefCols ){
 //					reset( $cols );
 //					foreach ( $cols as $col )
 //					{
@@ -800,11 +738,8 @@ class Pft_View_Helper_Grid
 //						}
 //						$output_body .= "<td {$col["coltags"]}>".$showText."</td>";					
 //					}
-//				}
-//				else
-//				{
-//					foreach ( $row as $col )
-//					{
+//				}else{
+//					foreach ( $row as $col ){
 //						$output_body .= "<td>". $col ."</td>";
 //					}
 //				}
@@ -816,410 +751,44 @@ class Pft_View_Helper_Grid
 		$output_body .= "</div>\n";
 
 		$output_page = "";
-		//if( is_array( $grid[Pft_Util_Grid::GRID_SCHEMA_PAGER] ) && $grid[Pft_Util_Grid::GRID_SCHEMA_PAGER][Pft_Util_Pager::PAGER_VAR_PAGE_COUNT] > 1 ){
-		if( is_array( $grid[Pft_Util_Grid::GRID_SCHEMA_PAGER] ) && $grid[Pft_Util_Grid::GRID_SCHEMA_PAGER][Pft_Util_Pager::PAGER_VAR_PAGE_COUNT] > 0 ){	// 只要存在数据就显示 GRID FOOTER，具体显示哪些元素由 toHtml 函数内判断 //bobit Tue Dec 11 10:13:54 CST 200710:13:54
+		//if( is_array( $grid[Pft_Util_Grid::GRID_PAGER] ) && $grid[Pft_Util_Grid::GRID_PAGER][Pft_Util_Pager::PAGER_VAR_PAGE_COUNT] > 1 ){
+		if( is_array( $grid[Pft_Util_Grid::GRID_PAGER] ) && $grid[Pft_Util_Grid::GRID_PAGER][Pft_Util_Pager::PAGER_VAR_PAGE_COUNT] > 0 ){	// 只要存在数据就显示 GRID FOOTER，具体显示哪些元素由 toHtml 函数内判断 //bobit Tue Dec 11 10:13:54 CST 200710:13:54
 			$output_page  = '<div class="search_container">'."\n";
-			$output_page .= Pft_View_Helper_Pager::toHtml( $grid[Pft_Util_Grid::GRID_SCHEMA_PAGER], '"javascript:gotoPage($pg)"' );
+			$output_page .= Pft_View_Helper_Pager::toHtml( $grid[Pft_Util_Grid::GRID_PAGER], '"javascript:gotoPage($pg)"' );
 			$output_page .= '</div>'."\n";
 		}
 		
-		$rev[Pft_Util_Grid::GRID_SCHEMA_SEARCHS] = $output_searchs;
-		$rev[Pft_Util_Grid::GRID_SCHEMA_DATAS] = $output_body;
-		$rev[Pft_Util_Grid::GRID_SCHEMA_PAGER] = $output_page;		
+		$rev[Pft_Util_Grid::GRID_SEARCHS] = $output_searchs;
+		$rev[Pft_Util_Grid::GRID_DATAS] = $output_body;
+		$rev[Pft_Util_Grid::GRID_PAGER] = $output_page;		
 		return $rev;
 	}
-	/**
-	 * buildGridToOutArray副本
-	 *
-	 * @param unknown_type $grid
-	 * @param unknown_type $params
-	 * @param unknown_type $searchCols
-	 * @return unknown
-	 */
-	public static function buildGridToOutArrayBack( $grid, $params="", $searchCols=4 )
-	{
-		/**
-		 * 这里判断数据是否符合规则
-		 * 应该根据 Shema 判断
-		 */
-		if( !is_array( $grid ) )
-		{
-			$e = new Pft_Exception(Pft_I18n::trans("ERR_INVALID_DATATYPE"));
-			throw $e;
-		}
-		
-		if( is_array( $params ) ){
-			$gridId = @$params['id'];
-			$formAttribs = @$params['formAttribs'];
-		}else{
-			$formAttribs = $params;
-			$gridId = null;
-		}
-		
-		//随机生成一个 search form 的id
-		//$specSearchFormId = mt_rand( 10000, 99999 );
-		
-		/**
-		 * 用来记录orderby了的字段和orderbyorder
-		 */
-		$orderByCols = array();
-		
-		if( isset( $grid[ Pft_Util_Grid::GRID_SCHEMA_COLS ] )
-		 && count( $grid[ Pft_Util_Grid::GRID_SCHEMA_COLS ] ) > 0 )
-		{
-			$isDefCols = true;
-			$cols = $grid[ Pft_Util_Grid::GRID_SCHEMA_COLS ];
-		}else{
-			$isDefCols = false;
-			$cols = null;
-		}
 
-		$datas = $grid[ Pft_Util_Grid::GRID_SCHEMA_DATAS ];
-		
-		$output_searchs = "";
-		/**
-		 * 开始输出查询信息
-		 */
-
-		$output_searchs .= '<form method="get" action="'.$_SERVER['PHP_SELF'].'" id="searchform" '.$formAttribs.' onsubmit="if($(\'searchFormPageTotal\')){$(\'searchFormPageTotal\').value=\'\';}">';
-		//初始化参数
-		$initParams = $grid[Pft_Util_Grid::GRID_SCHEMA_SEARCHS][Pft_Util_Grid_Searchs::DEF_INITPARAMS];
-		foreach ( $initParams as $initKey => $initValue ) {
-			$output_searchs .= '<input type="hidden" name="'.$initKey.'" value="'.h($initValue).'">';
-			$output_searchs .= '<input type="hidden" name="'.Pft_Util_Grid_Searchs::INIT_PARAM_NAME.'[]" value="'.h($initKey).'">';
-		}
-
-		if( ( isset( $grid[Pft_Util_Grid::GRID_SCHEMA_SEARCHS] ) && is_array( $grid[Pft_Util_Grid::GRID_SCHEMA_SEARCHS] ) )
-		  ||( isset( $grid[Pft_Util_Grid::GRID_SCHEMA_PAGER] ) && is_array( $grid[Pft_Util_Grid::GRID_SCHEMA_PAGER] ) )
-		  ||( isset( $grid[Pft_Util_Grid::GRID_SCHEMA_ORDERBYS] ) && is_array( $grid[Pft_Util_Grid::GRID_SCHEMA_ORDERBYS] ) )
-		  )
-		{			
-			$output_searchs .= '<div class="search_container">'."\n";
-			//$output_searchs .= '<div class="search"><form method="post" id="searchform" '.$formAttribs.'>';
-			
-			/* 070322 暂时给演示注销*/
-			$output_searchs .= '<div class="search">';
-			
-			/*
-			$output_searchs .= '<input type="hidden" name="do" value="'.$_REQUEST['do'].'">';
-			*/
-
-			//var_dump( $grid[Pft_Util_Grid::GRID_SCHEMA_SEARCHS] );
-
-			$SCHEMA_SEARCHS = $grid[Pft_Util_Grid::GRID_SCHEMA_SEARCHS];
-			$output_searchs .= '<div class="grid">';
-			
-			//$output_searchs .= '<div style="float:left;width:33%">';
-			//高级搜索
-			//if( isset( $grid[Pft_Util_Grid::GRID_SCHEMA_SEARCHS][Pft_Util_Grid_Searchs::SEARCH_ADV_SIGN] ) ){
-			if( key_exists( Pft_Util_Grid_Searchs::SEARCH_ADV_SIGN, $SCHEMA_SEARCHS ) ){
-				$advSign = $SCHEMA_SEARCHS[Pft_Util_Grid_Searchs::SEARCH_ADV_SIGN];
-				$output_searchs .= '<input name="'.Pft_Util_Grid_Searchs::SEARCH_ADV_SIGN.'" id="'.Pft_Util_Grid_Searchs::SEARCH_ADV_SIGN.'" value="'.h($advSign).'">';
-			}
-			
-			$searchs = $grid[Pft_Util_Grid::GRID_SCHEMA_SEARCHS][Pft_Util_Grid_Searchs::DEF_SEARCHS];			
-			
-			//$output_searchs .= '高级</div>';
-			
-			$output_searchs .= '</div>';
-
-			$searchsCounter = 0;
-			$output_searchs .= '<div id="search_searchs" style="clear:both">';
-			$output_searchs .= '<table><tr>';
-			foreach ( $searchs as $search )
-			{				
-				$opration = $search[Pft_Util_Grid_Search::DEF_OPERATION];
-				if( $opration == Pft_Util_Grid_Searchs::LIKE ){
-					$oprationTip = i18ntrans('#模糊匹配');
-				}elseif( $opration == Pft_Util_Grid_Searchs::EQUAL || $opration == Pft_Util_Grid_Searchs::IN ){
-					$oprationTip = i18ntrans('#精确匹配');
-				}else{
-					$oprationTip = sprintf(i18ntrans('#规则为(%s)'),$opration);;
-				}
-				//$output_searchs .= '<div style="float:left;width:200px;text-align:right;">';
-				$output_searchs .= '<td class="search_name">';
-				$output_searchs .= '<span class="search_name" title="'.$oprationTip.'">'.$search[Pft_Util_Grid_Search::DEF_TITLE].': </span>';
-				$output_searchs .= '</td><td style="text-align:left">';
-				
-				if( is_array( $search[Pft_Util_Grid_Search::DEF_REFERENCE] ) )
-				{
-					//这里用下拉列表显示
-					$output_searchs .= '<select class="search_input" name="'.$search[Pft_Util_Grid_Search::DEF_COLNAME].'" id="'.$search[Pft_Util_Grid_Search::DEF_COLNAME].'">';
-					$output_searchs .= '<option>               </option>';
-					foreach ( $search[Pft_Util_Grid_Search::DEF_REFERENCE] as $key=>$value )
-					{
-						$selSign = ( ($key == $search[Pft_Util_Grid_Search::DEF_VALUE])&&( $search[Pft_Util_Grid_Search::DEF_VALUE] !== '' ) && !is_null( $search[Pft_Util_Grid_Search::DEF_VALUE] ) )?"selected":"";
-						$output_searchs .= '<option value="'.htmlspecialchars($key).'" '.$selSign.'>'.htmlspecialchars($value).'</option>';
-					}
-					$output_searchs .= '';
-					$output_searchs .= '</select>';
-				}
-				else
-				{
-					switch ( $search[Pft_Util_Grid_Search::DEF_SHOWTYPE] ){
-						case Pft_Util_Grid_Search::SHOW_TYPE_DATE;
-							$dateselector = new Pft_View_Helper_DateSelector();
-							$output_searchs .=  $dateselector->build($search[Pft_Util_Grid_Search::DEF_COLNAME], $search[Pft_Util_Grid_Search::DEF_VALUE], array('class' => 'dateselector') );
-							break;
-						case Pft_Util_Grid_Search::SHOW_TYPE_TIMESTAMP;
-							$dateselector = new Pft_View_Helper_DateSelector();
-							$dateselector->setShowTimes( true );
-							$output_searchs .=  $dateselector->build($search[Pft_Util_Grid_Search::DEF_COLNAME], $search[Pft_Util_Grid_Search::DEF_VALUE], array('class' => 'dateselector') );
-							break;
-						case Pft_Util_Grid_Search::SHOW_TYPE_TIMESEC ;
-							$dateselector = new Pft_View_Helper_DateSelector();
-							$dateselector->setShowTimeSecs( true );
-							$output_searchs .=  $dateselector->build($search[Pft_Util_Grid_Search::DEF_COLNAME], $search[Pft_Util_Grid_Search::DEF_VALUE], array('class' => 'dateselector') );
-							break;
-						case Pft_Util_Grid_Search::SHOW_TYPE_SELECTOR_PERSON;
-							$dateselector = new Pft_View_Helper_PersonSelector();
-							$output_searchs .=  $dateselector->build($search[Pft_Util_Grid_Search::DEF_COLNAME], $search[Pft_Util_Grid_Search::DEF_VALUE], array('class' => 'personselector') );
-							break;
-						case Pft_Util_Grid_Search::SHOW_TYPE_SELECTOR_DINGDAN;
-							$dateselector = new Pft_View_Helper_DingdanSelector();
-							$output_searchs .=  $dateselector->build($search[Pft_Util_Grid_Search::DEF_COLNAME], $search[Pft_Util_Grid_Search::DEF_VALUE], array('class' => 'dingdanselector') );
-							break;
-						case Pft_Util_Grid_Search::SHOW_TYPE_SEARCHTIP;
-							//此功能尚未完善，暂时屏蔽
-							//$dateselector = new Pft_View_Helper_SearchTip();
-							//$output_searchs .=  $dateselector->build($search[Pft_Util_Grid_Search::DEF_COLNAME],$search[Pft_Util_Grid_Search::DEF_VALUE],  array('class' => 'search_input'),null,$search[Pft_Util_Grid_Search::DEF_EXTEND]);			
-							//break;
-						default:
-							$output_searchs .= '<input class="search_input" name="'.$search[Pft_Util_Grid_Search::DEF_COLNAME].'" id="'.$search[Pft_Util_Grid_Search::DEF_COLNAME].'" value="'.h($search[Pft_Util_Grid_Search::DEF_VALUE]).'">'."\n";	
-					}
-				}
-				$output_searchs .= '</td>';
-				//$output_searchs .= '</div>';
-				$searchsCounter++;
-				if( $searchsCounter > 0 && $searchsCounter%$searchCols==0 )$output_searchs .= '</tr><tr>';
-			}
-
-			if( count( $searchs ) ){
-				//如果没有修改搜索条件，不会影响总记录的条数
-				$output_searchs .= '<td colspan="'.(( $searchCols-( $searchsCounter % $searchCols ) ) * 2).'">
-				<div style="clear:both;text-align:center">
-				<input type="submit" id="searchFormSubmit" value="'.Pft_I18n::trans("SEARCH").'" class="btn">
-				</div>
-				</td>'."\n";	
-			}			
-			$output_searchs .= '</tr></table>';
-			//$output_searchs .= '<div style="clear:both">&nbsp;</div>';
-			$output_searchs .= '</div>';
-
-			
-			/**
-			 * 如果有排序定义，输出排序表单域
-			 */
-			if( is_array( $grid[Pft_Util_Grid::GRID_SCHEMA_ORDERBYS] )
-			 && count( $grid[Pft_Util_Grid::GRID_SCHEMA_ORDERBYS][Pft_Util_Grid_Searchs::DEF_ORDERBYS] ) )
-			{
-				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Grid_Searchs::DEF_ORDERBYS.'" id="searchFormOrderBy" value="'.$grid[Pft_Util_Grid::GRID_SCHEMA_ORDERBYS][Pft_Util_Grid_Searchs::DEF_ORDERBYS][0].'">';
-				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Grid_Searchs::DEF_ORDERBYORDERS.'" id="searchFormOrderByOrder" value="'.$grid[Pft_Util_Grid::GRID_SCHEMA_ORDERBYS][Pft_Util_Grid_Searchs::DEF_ORDERBYORDERS][0].'">';
-				$orderByCols[$grid[Pft_Util_Grid::GRID_SCHEMA_ORDERBYS][Pft_Util_Grid_Searchs::DEF_ORDERBYS][0]] 
-				      = $grid[Pft_Util_Grid::GRID_SCHEMA_ORDERBYS][Pft_Util_Grid_Searchs::DEF_ORDERBYORDERS][0]==Pft_Util_Grid_Searchs::DESC?"↓":"↑";
-			}
-			else
-			{
-				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Grid_Searchs::DEF_ORDERBYS.'" id="searchFormOrderBy" value="">'."\n";
-				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Grid_Searchs::DEF_ORDERBYORDERS.'" id="searchFormOrderByOrder" value="">'."\n";
-			}
-			/**
-			 * 这是order by 的js脚本
-			 * //已写到 common.js 里了
-			 */
-//			$descSign = Pft_Util_Grid_Searchs::DESC;
-//			$ascSign  = Pft_Util_Grid_Searchs::ASC;
-//			$output_searchs .= <<<EOT
-//<script>
-//function orderby{$specSearchFormId}(colName){document.getElementById("searchFormOrderBy").value=colName;if(document.getElementById("searchFormOrderByOrder").value=="{$ascSign}"){document.getElementById("searchFormOrderByOrder").value="{$descSign}"}else{document.getElementById("searchFormOrderByOrder").value="{$ascSign}"}document.getElementById("searchform").submit();}
-//</script>
-//EOT;
-			/**
-			 * 如果有页码定义，输出页码表单域
-			 */
-			if( is_array( $grid[Pft_Util_Grid::GRID_SCHEMA_PAGER] ) )
-			{
-				//这是翻页的js脚本
-				//已写到 common.js 里了
-//				$output_searchs .= <<<EOT
-//						<script>function gotoPage(pn){document.getElementById("searchFormPageNum").value=pn;document.getElementById("searchform").submit();}</script>
-//EOT;
-				//这里不显示 PAGER_VAR_PAGE_NUM 是为了 按 search 后进入到第1页
-				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Pager::PAGER_VAR_PAGE_NUM.'" id="searchFormPageNum" value="">';
-				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Pager::PAGER_VAR_PAGE_SIZE.'" id="searchFormPageSize" value="'.$grid[Pft_Util_Grid::GRID_SCHEMA_PAGER][Pft_Util_Pager::PAGER_VAR_PAGE_SIZE].'">';
-				$output_searchs .= '<input type="hidden" name="'.Pft_Util_Pager::PAGER_VAR_TOTAL.'" id="searchFormPageTotal" value="'.$grid[Pft_Util_Grid::GRID_SCHEMA_PAGER][Pft_Util_Pager::PAGER_VAR_TOTAL].'">';
-				//var_dump( $output_searchs );				
-			}
-			$output_searchs .= "</div>\n";
-			$output_searchs .= "</div>\n";
-		}
-		$output_searchs .= '</form>';
-		
-		/**
-		 * 这里开始输出数据信息
-		 */
-		$output_body  = "";
-		$output_body .= '<div class="grid">'."\n";
-		$output_body .= '<table class="grid" cellspacing="1" '.($gridId?'id="'.$gridId.'"':'').' >'."\n";
-		
-		/**
-		 * 输出 header col 头信息
-		 */
-		$output_body .= "<thead>\n";
-		if( $isDefCols )
-		{
-			$output_body .= "<tr>";
-			foreach ( $cols as $col )
-			{
-				$col_title = ( is_null( $col["title"] ) )?Pft_I18n::trans($col["colname"]):$col["title"];
-				if( trim($col[Pft_Util_Grid::COL_COLNAME]) != "" && $col["sortable"] ){
-					$orderBySign = ( key_exists( $col[Pft_Util_Grid::COL_COLNAME], $orderByCols ) )?$orderByCols[$col[Pft_Util_Grid::COL_COLNAME]]:"";
-
-					if( $output_searchs )
-					{
-						//如果在 $col["sortable"] 中不是 boolean，那么就是填写的 order by 的值
-						if( is_bool( $col["sortable"] ) ){
-							$orderByColname = $col["colname"];
-						}else{
-							$orderByColname = $col["sortable"];
-						}
-						
-						//如果有search信息，则输出order by
-						$output_body .= "<th nowrap=\"true\"><a href=\"javascript:orderby('".addslashes($orderByColname)."')\">".$col_title."</a>".$orderBySign.$col["colext"]."</th>";
-					}
-					else
-					{
-						//否则不输出order by脚本
-						$output_body .= "<th nowrap=\"true\">".$col_title."</th>";
-					}
-					
-				}else{
-					$output_body .= "<th nowrap=\"true\">".$col_title.$col["colext"]."</th>";					
-				}
-			}
-			$output_body .= "</tr>\n";
-		}
-		else
-		{
-			if( count( $datas ) ){
-				$row = current( $datas );
-				if( is_array( $row ) )
-				{
-					$output_body .= "<tr>";
-					foreach ( $row as $key => $col )
-					{
-						$output_body .= "<th>".Pft_I18n::trans($key)."</th>";
-					}
-					$output_body .= "</tr>\n";
-				}			
-			}
-		}
-		$output_body .= "</thead>\n";
-		
-		/**
-		 * Body 信息
-		 */
-		$output_body .= "<tbody>\n";
-		if( is_array( $datas ) && count( $datas ) )
-		{
-			$output_arr = self::_getRenderedDataByGridData( $datas, $cols );
-			foreach ( $output_arr as $row ){
-				if( !is_array( $row ) )continue;
-				$output_body .= "<tr>";
-				if( $isDefCols ){
-					reset( $cols );
-					foreach ( $cols as $col ){
-						$output_body .= "<td {$col["coltags"]}>".current( $row )."</td>";
-						next( $row );
-					}
-				}else{
-					foreach ( $row as $col ){
-						$output_body .= "<td>". $col ."</td>";
-					}
-				}
-				$output_body .= "</tr>\n";
-			}
-			
-//			$showText = "";
-//			foreach ( $datas as $row )
-//			{
-//				if( !is_array( $row ) )continue;
-//				$output_body .= "<tr>";
-//				if( $isDefCols )
-//				{
-//					reset( $cols );
-//					foreach ( $cols as $col )
-//					{
-//						if( isset($col["render"]) && $col["render"] != "" )
-//						{
-//							$showText = "";
-//							@eval('$showText = '.$col["render"].';');
-//						}
-//						else
-//						{
-//							if( isset($col["colname"]) ){
-//								$showText = @$row[$col["colname"]];
-//							}else{
-//								$showText = "";
-//							}
-//						}
-//						$output_body .= "<td {$col["coltags"]}>".$showText."</td>";					
-//					}
-//				}
-//				else
-//				{
-//					foreach ( $row as $col )
-//					{
-//						$output_body .= "<td>". $col ."</td>";
-//					}
-//				}
-//				$output_body .= "</tr>\n";
-//			}
-		}//end if( is_array
-		$output_body .= "</tbody>\n";
-		$output_body .= "</table>\n";
-		$output_body .= "</div>\n";
-
-		$output_page = "";
-		//if( is_array( $grid[Pft_Util_Grid::GRID_SCHEMA_PAGER] ) && $grid[Pft_Util_Grid::GRID_SCHEMA_PAGER][Pft_Util_Pager::PAGER_VAR_PAGE_COUNT] > 1 ){
-		if( is_array( $grid[Pft_Util_Grid::GRID_SCHEMA_PAGER] ) && $grid[Pft_Util_Grid::GRID_SCHEMA_PAGER][Pft_Util_Pager::PAGER_VAR_PAGE_COUNT] > 0 ){	// 只要存在数据就显示 GRID FOOTER，具体显示哪些元素由 toHtml 函数内判断 //bobit Tue Dec 11 10:13:54 CST 200710:13:54
-			$output_page  = '<div class="search_container">'."\n";
-			$output_page .= Pft_View_Helper_Pager::toHtml( $grid[Pft_Util_Grid::GRID_SCHEMA_PAGER], '"javascript:gotoPage($pg)"' );
-			$output_page .= '</div>'."\n";
-		}
-		
-		$rev[Pft_Util_Grid::GRID_SCHEMA_SEARCHS] = $output_searchs;
-		$rev[Pft_Util_Grid::GRID_SCHEMA_DATAS] = $output_body;
-		$rev[Pft_Util_Grid::GRID_SCHEMA_PAGER] = $output_page;
-		return $rev;
-	}
 	/**
 	 * 将建立grid并输出到数组
 	 *
+	 * @param array $grid
 	 */
-	public static function buildGridToDataArray( $grid )
-	{
+	public static function buildGridToDataArray( $grid ){
 		/**
 		 * 这里判断数据是否符合规则
 		 * 应该根据 Shema 判断
 		 */
-		if( !is_array( $grid ) )
-		{
+		if( !is_array( $grid ) ){
 			$e = new Pft_Exception(Pft_I18n::trans("ERR_INVALID_DATATYPE"));
 			throw $e;
 		}
 
-		if( isset( $grid[ Pft_Util_Grid::GRID_SCHEMA_COLS ] )
-		 && count( $grid[ Pft_Util_Grid::GRID_SCHEMA_COLS ] ) > 0 )
-		{
+		if( isset( $grid[ Pft_Util_Grid::GRID_COLS ] )
+		 && count( $grid[ Pft_Util_Grid::GRID_COLS ] ) > 0 ){
 			$isDefCols = true;
-			$cols = $grid[ Pft_Util_Grid::GRID_SCHEMA_COLS ];
+			$cols = $grid[ Pft_Util_Grid::GRID_COLS ];
 		}else{
 			$isDefCols = false;
 			$cols = null;
 		}
 
-		$datas = $grid[ Pft_Util_Grid::GRID_SCHEMA_DATAS ];
+		$datas = $grid[ Pft_Util_Grid::GRID_DATAS ];
 
 		/**
 		 * 这里开始输出数据信息
@@ -1359,48 +928,49 @@ class Pft_View_Helper_Grid
 	}
 	
 	public static function clearHtml( $col ){
-		$rev = '';
-		//if( strpos( $col, '<a' ) !== false ){
-		if( strpos( $col, '<' ) !== false ){
-			if( stripos( $col, '<a' ) !== false
-			|| stripos( $col, '<div' ) !== false
-			|| stripos( $col, '<font' ) !== false
-			|| stripos( $col, '<span' ) !== false
-			|| stripos( $col, '<select' ) !== false
-			|| stripos( $col, '<input' ) !== false
-			|| stripos( $col, '<b' ) !== false
-			){
-				//$col='<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'.$col;
-				$divId = "clear_html_div_".mt_rand(1000,9999);
-				$col = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><div id="'.$divId.'">'.$col.'</div>';
-				$doc = DOMDocument::loadHTML($col);
-				if($doc){
-					//$bodyS = $doc->getElementsByTagName('a');
-					$bodyS = $doc->getElementsByTagName('div');
-					if( $bodyS && $bodyS->length > 0 ){
-						$body = $bodyS->item(0);
-						$rev = $body->textContent;
-					}
-					/**
-					 * 不知为何 getElementById 不起作用..
-					 * @author terry
-					 * @version 0.1.0
-					 * Tue Jun 10 11:27:18 CST 2008
-					 */
-					/*
-					$clearDiv = $doc->getElementById($divId);
-					if( $clearDiv ){
-					$thenewrow[] = htmlspecialchars($clearDiv->textContent);
-					}
-					*/
-				}
-			}else{
-				$rev = $col;
-			}
-		}else{
-			$rev = $col;
-		}
-		
-		return $rev;
+		return trim(strip_tags( $col ));
+//		$rev = '';
+//		//if( strpos( $col, '<a' ) !== false ){
+//		if( strpos( $col, '<' ) !== false ){
+//			if( stripos( $col, '<a' ) !== false
+//			|| stripos( $col, '<div' ) !== false
+//			|| stripos( $col, '<font' ) !== false
+//			|| stripos( $col, '<span' ) !== false
+//			|| stripos( $col, '<select' ) !== false
+//			|| stripos( $col, '<input' ) !== false
+//			|| stripos( $col, '<b' ) !== false
+//			){
+//				//$col='<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'.$col;
+//				$divId = "clear_html_div_".mt_rand(1000,9999);
+//				$col = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><div id="'.$divId.'">'.$col.'</div>';
+//				$doc = DOMDocument::loadHTML($col);
+//				if($doc){
+//					//$bodyS = $doc->getElementsByTagName('a');
+//					$bodyS = $doc->getElementsByTagName('div');
+//					if( $bodyS && $bodyS->length > 0 ){
+//						$body = $bodyS->item(0);
+//						$rev = $body->textContent;
+//					}
+//					/**
+//					 * 不知为何 getElementById 不起作用..
+//					 * @author terry
+//					 * @version 0.1.0
+//					 * Tue Jun 10 11:27:18 CST 2008
+//					 */
+//					/*
+//					$clearDiv = $doc->getElementById($divId);
+//					if( $clearDiv ){
+//					$thenewrow[] = htmlspecialchars($clearDiv->textContent);
+//					}
+//					*/
+//				}
+//			}else{
+//				$rev = $col;
+//			}
+//		}else{
+//			$rev = $col;
+//		}
+//		
+//		return $rev;
 	}
 }

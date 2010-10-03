@@ -11,8 +11,8 @@ if( !defined("DEBUG") )define("DEBUG",false);
 
 define("TQ_33",true);			//很重要，如不正确，消息会乱
 
-//ini_set("memory_limit","64M");	//提高内存限制
-ini_set("memory_limit","-1");	//提高内存限制
+ini_set("memory_limit","16M");	//提高内存限制
+//ini_set("memory_limit","-1");	//提高内存限制
 set_magic_quotes_runtime(0);	//关闭魔术引号
 
 if( defined("DEBUG") && DEBUG ){
@@ -35,17 +35,12 @@ $get_sid	= @$_GET[session_name()];
  */
 if( $post_sid ){
 	session_id($post_sid);
-//	print"<pre>Terry : get post sid";var_dump( $post_sid );print"</pre>";
-//	exit();
 }elseif ( $get_sid ){
 	session_id($get_sid);
-//	print"<pre>Terry : get get sid";var_dump( $get_sid );print"</pre>";
-//	exit();
 }
 //-------------------
 
 //session_cache_limiter('private');	//后退后保持上一次form的输入值	//很多情况下又引起数据不应该保留的保留，暂时先取消了
-
 session_start();
 
 // 调试 $get_sid 所用
@@ -92,19 +87,10 @@ if( isset( $_SESSION[MULTI_SITE_SESSION_NAME] ) ){
 
 require_once $config_path."/loader.php";
 //========================================
-
-if( defined("DEBUG") && DEBUG ){
-	//自动根据DEBUG设置进行Debug跟踪
-	//使用方式如下
-	//Pft_Debug::getDefaultDebug()->addInfo( "sourceName", "testDebugInfo");
-	Pft_Debug::getDefaultDebug()->begin();	
-}
-
-//========================================
 /**
  * 环境准备完毕 程序开始
  */
-
+Pft_Debug::addInfoToDefault('Pre dispatch.');
 try{
 	/**
 	 * 分发
@@ -130,13 +116,13 @@ try{
 		//header( "Location:?do=error&code=$code&msg=".$e->getMessage() );
 	}
 }
+Pft_Debug::addInfoToDefault('After dispatch.');
 
 if( defined("DEBUG") && DEBUG ){
 	/**
 	 * 程序结束 输出调试信息
 	 */
 	Pft_Debug::getDefaultDebug()->output();
-	//print"<pre>Terry :";print_r( get_included_files() );print"</pre>";
 }
 
 /**

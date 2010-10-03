@@ -325,7 +325,7 @@ class Pft_Db{
 		//}
 		$rev = mysql_query( $sql, $this->_conn );
 
-		Pft_Debug::addInfoToDefault( __FILE__, "Executed sql [<p> $sql </p>]" );
+		Pft_Debug::addInfoToDefault( __FILE__, "Executed sql [<div> $sql </div>]" );
 		if( mysql_errno() ){
 			//如果使用System级别会重复记录db日志，可能死循环。
 			Pft_Log::addLog('Execute sql ['.$sql.'] fail, error ['.mysql_errno().':'.mysql_error().']', Pft_Log::LEVEL_DEBUG);

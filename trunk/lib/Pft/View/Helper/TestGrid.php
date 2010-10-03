@@ -23,16 +23,16 @@ class Pft_View_Helper_TestGrid
 			throw $e;
 		}
 
-		if( isset( $grid[ Pft_Util_Grid::GRID_SCHEMA_COLS ] )
-		 && count( $grid[ Pft_Util_Grid::GRID_SCHEMA_COLS ] ) > 0 )
+		if( isset( $grid[ Pft_Util_Grid::GRID_COLS ] )
+		 && count( $grid[ Pft_Util_Grid::GRID_COLS ] ) > 0 )
 		{
 			$isDefCols = true;
-			$cols = $grid[ Pft_Util_Grid::GRID_SCHEMA_COLS ];
+			$cols = $grid[ Pft_Util_Grid::GRID_COLS ];
 		}else{
 			$isDefCols = false;
 		}
 
-		$datas = $grid[ Pft_Util_Grid::GRID_SCHEMA_DATAS ];
+		$datas = $grid[ Pft_Util_Grid::GRID_DATAS ];
 		$out = '<table border="0" align="center" cellpadding="3" cellspacing="1" bgcolor="#CCCCCC">';
 		if( $isDefCols )
 		{
