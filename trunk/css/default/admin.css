@@ -1,0 +1,108 @@
+body{
+	/*background-color: #c3babb;*/
+	background-color: #FFF;
+	font-size: 14px;
+	margin: 0 0 0 0;
+	padding: 0 0 0 0;
+}
+h1{color:#eb6100;font-size:21px;line-height:120%;}
+h2{color:#eb6100;font-size:18px;line-height:120%;}
+h3{color:#eb6100;font-size:15px;line-height:120%;}
+h4{color:#eb6100;font-size:14px;line-height:120%;}
+h5{color:#eb6100;font-size:13px;line-height:120%;}
+h6{color:#eb6100;font-size:12px;line-height:120%;}
+
+a{font-size: 14px;color:#3e6eac;  text-decoration: none; }
+a:hover{background-color:#f3af6f;}
+
+th,td,span{font-size: 14px;}
+
+#admin_top{
+	height: 35px;
+	background: url(top_bg.gif) repeat-x;
+	padding: 0 0 0 50px;
+	margin-bottom:5px;
+}
+
+#admin_logo{
+	height: 20px;
+	width: 20px;
+	/*background: url(logo.gif);*/
+}
+
+#admin_menu{
+	float: left;
+	width: 14%;
+}
+#admin_menu ul{
+	margin:0 0 0 0;
+	padding:0 0 0 20px;
+	list-style: none;
+	/*display: inline;*/
+}
+#admin_menu > ul{
+	margin-left:-20px;
+}
+#admin_menu ul li{
+	list-style: none;font-weight:bold;color:#3e6eac;height:22px;line-height:22px;
+}
+#admin_menu ul li a{
+	color:#3e6eac;font-weight:bold;height:22px;line-height:22px;display:block;
+	padding-left:5px;
+}
+#admin_menu ul li a:hover{}
+#admin_menu ul li a.sel{background-color:#f3af6f;}
+
+#admin_mainbody{
+	float: right;
+	width: 85%;
+	background: #FFF;
+	/*padding:10px 50px 10px 50px;*/
+	_height: 300px;
+	min-height: 300px;
+}
+
+#admin_footer{
+	background-color: #c3babb;
+	font-size: 12px;
+	color: #3e6eac;
+	clear: both;
+	height: 50px;
+	padding:20px 50px 10px 50px;
+}
+#footer a{font-size: 12px;}
+#footer .left{float:left;}
+#footer .right{float:right;font-weight:bold;}
+
+.col{float:left;}
+.cls{clear:both;line-height:0px;font-size:0px;}
+
+.content{
+	padding: 5px;
+	border: 1px dashed #333;
+	background-color: #CEF;
+	margin-bottom:2px;
+}
+
+.button_bar{
+	margin-top:5px;
+	margin-bottom:5px;
+	font-size:12px;
+	background-color: #EEE;
+}
+
+/*login*/
+#login_area{
+	margin: 20px auto;
+	width:400px;
+}
+#login_area *{
+	font-size:18px;
+}
+#login_area label{
+	width:60px;
+	display:block;
+}
+#login_area .input{
+	width: 200px;
+}

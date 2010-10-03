@@ -327,7 +327,7 @@ class Pft_Config{
 	 * @todo ->从配置里取
 	 */
 	public static function getDefaultZuId(){
-		return 'dc25325c-4172-905a-e3cb-45b5d39602b0';
+		return 1;
 	}
 
 	/**

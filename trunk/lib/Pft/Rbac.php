@@ -6,6 +6,16 @@
  * @package Pft
  */
 class Pft_Rbac{
+	/*
+	public	0	所有用户
+	login	1	所有登录用户
+	role	2	分配了该action权限的角色
+	specify	4	分配了该action权限的用户
+	*/
+	const LEVEL_PUBLIC  = 0;
+	const LEVEL_LOGIN   = 1;
+	const LEVEL_ROLE    = 2;
+	const LEVEL_SPECIFY = 4;
 	/**
 	 * 测试某个会话是否具有某个do的权限
 	 * 如果没有权限，则抛出一个异常
