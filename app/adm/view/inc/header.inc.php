@@ -15,17 +15,20 @@ if( !isset( $title ) ){
 <div id="admin_top">
 	<div id="admin_logo"></div>
 </div>
-<div id="admin_menu">
-	<ul>
-	<li><a href="?do=admin_index_index">首页</a></li>
-	<li><a href="?do=ps_user_index">用户中心</a></li>
-	<li>
-		<a href="?do=ps_user_index">处理订单</a>
-		<ul>
-			<li><a href="#">当前订单</a></li>
-			<li><a href="#">历史订单</a></li>
-		</ul>
-	</li>
-	</ul>
-</div>
+<!--mainbody-->
 <div id="admin_mainbody">
+	<div id="admin_menu">
+		<ul>
+		<li><a href="?do=adm_index_index">首页</a></li>
+		<li><a href="?do=adm_crm_mem_list">用户中心</a></li>
+		<li>
+			<a href="?do=adm_ec_order_list">处理订单</a>
+			<ul>
+				<li><a href="#">当前订单</a></li>
+				<li><a href="#">历史订单</a></li>
+			</ul>
+		</li>
+		</ul>
+	</div>
+	<div id="admin_content">
+	<!--content-->

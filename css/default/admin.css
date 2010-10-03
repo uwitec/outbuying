@@ -1,6 +1,5 @@
 body{
-	/*background-color: #c3babb;*/
-	background-color: #FFF;
+	background-color: #c3babb;
 	font-size: 14px;
 	margin: 0 0 0 0;
 	padding: 0 0 0 0;
@@ -18,7 +17,7 @@ a:hover{background-color:#f3af6f;}
 th,td,span{font-size: 14px;}
 
 #admin_top{
-	height: 35px;
+	height: 55px;
 	background: url(top_bg.gif) repeat-x;
 	padding: 0 0 0 50px;
 	margin-bottom:5px;
@@ -54,12 +53,15 @@ th,td,span{font-size: 14px;}
 #admin_menu ul li a.sel{background-color:#f3af6f;}
 
 #admin_mainbody{
-	float: right;
-	width: 85%;
+	clear: both;
 	background: #FFF;
 	/*padding:10px 50px 10px 50px;*/
-	_height: 300px;
-	min-height: 300px;
+	_height: 450px;
+	min-height: 450px;
+}
+#admin_content{
+	float: right;
+	width: 85%;	
 }
 
 #admin_footer{
@@ -67,12 +69,17 @@ th,td,span{font-size: 14px;}
 	font-size: 12px;
 	color: #3e6eac;
 	clear: both;
-	height: 50px;
-	padding:20px 50px 10px 50px;
+	height: 40px;
+	margin-top: 10px;
+	padding:10px 50px 0px 50px;
 }
-#footer a{font-size: 12px;}
-#footer .left{float:left;}
-#footer .right{float:right;font-weight:bold;}
+#admin_footer a{font-size: 12px;}
+#admin_footer .left{float:left;}
+#admin_footer .right{float:right;font-weight:bold;}
+
+#app_info{
+	text-align:center;font-size:9px;color:#666;
+}
 
 .col{float:left;}
 .cls{clear:both;line-height:0px;font-size:0px;}

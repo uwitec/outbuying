@@ -96,27 +96,36 @@ class Pft_Util_Grid_Searchs{
     /** "IS NOT NULL" null comparison */
     const ISNOTNULL = " IS NOT NULL ";
 
-	
-	const DEF_SEARCHS       = "searchs";
-	const DEF_ORDERBYS      = "orderbys";
-	const DEF_ORDERBYORDERS = "orderbyorders";
-	const DEF_PAGERINFO     = "pager";
-	const DEF_INITPARAMS	= "initparams";
+	const DEF_SEARCHS		= "searchs";
+	const DEF_SEARCHGROUP	= "searchgroup";
+	const DEF_ORDERBYS		= "orderbys";
+	const DEF_ORDERBYORDERS	= "orderbyorders";
+	const DEF_PAGERINFO		= "pager";
+	const DEF_INITPARAMS	= "initparams";	
+	const DEF_EXPORT		= "export";
+	const DEF_EXPORTFILE	= "exportfile";
+	const DEF_EXPORTFILE_NAME	= "exportfile_name";
+	const DEF_EXPORTFILE_FORMAT	= "exportfile_format";
 	
 	const DEF_SUM   = 'grid_sum';
 	const DEF_TOTAL = 'grid_total';
+	const DEF_SUM_FORMAT = 'grid_sum_format';
+	const DEF_SUM_TOTAL  = 'grid_sum_total';
+
 	/**
 	 * 搜索字段名使用的前缀
-	 *
 	 */
 	const SEARCH_NAME_PREFIX = "s";
 	const SEARCH_ADV_SIGN    = "searchGridAdv";
 	
-	private $_searchs       = array();
+	private $_searchs       = array();	
+	private $_searchgroup   = array();
 	private $_orderBys      = array();
 	private $_orderByOrders = array();
 	private $_sumCols       = array();	//小计列 其 value 与 row 的 key 一致
 	private $_totalCols     = array();	//总计列 其 value 与 row 的 key 一致
+	private $_sumFormat		= '';
+	private $_totalFormat	= '';
 	
 	private $_omPeerName;
 	private $_selectMethod;
@@ -132,23 +141,26 @@ class Pft_Util_Grid_Searchs{
 	private $_pager;
 	
 	private $_expressMode = false;
+	private $_viewandor = false;
 	
 	private $_con;
 	//所有条件使用 or 进行组合 默认为 false
 	private $_allIsOr = false;
 	
 	private $_usePager = true;	//是否分页
+
 	/**
 	 * 条件
-	 *
-	 * @var Criteria
+	 * @var Pft_Util_Grid_Criteria
 	 */
 	private $_criteria;
 	
 	private $_normal_criterion;
+	private $_group_criterion;
+
 	/**
 	 * Hidden search
-	 * @var Criterion
+	 * @var Pft_Util_Grid_Criterion
 	 */
 	private $_hidden_criterion;
 	
@@ -159,8 +171,13 @@ class Pft_Util_Grid_Searchs{
 	
 	//Sql mode 的Sql
 	private $_sql = null;
+	private $_export = false; //是否显示导出文件
+	private $_exportfile = null;
+	private $_exportfile_name = null;
 	private $_parsed_sql = null;
 	private $_count_sql = null;	 //获取总数的Sql
+	private $_export_col = null;
+	private $_export_format='csv';//默认导出格式为csv格式
 	//const SQL_WHERE_STANDER = ' *|Where|* ';
 	const SQL_WHERE_STANDER = ' /*|Where|*/ ';
 	const SQL_LIMIT_STANDER = ' /*|Limit|*/ ';
@@ -183,7 +200,7 @@ class Pft_Util_Grid_Searchs{
 		$this->_selectMethod = $selectMethod;
 		$this->_countMethod  = $countMethod;
 		$this->_con          = $con;
-		$this->_criteria     = new Criteria( "propel" );
+		$this->_criteria     = new Pft_Util_Grid_Criteria( "propel" );
 		//$this->_hidden_criterion = $this->_criteria->getNewCriterion();
 		//if( $userPager )
 		$this->_pager        = new Pft_Util_Pager();
@@ -200,6 +217,11 @@ class Pft_Util_Grid_Searchs{
 		}else{
 			//如果没有初始化参数,则将 $_GET 变成初始化参数。
 			$this->_initParams = $_GET;
+		}
+		//接收导出的格式
+		if(@$_REQUEST["exportformat"])
+		{
+			$this->_export_format=$_REQUEST["exportformat"];
 		}
 	}
 
@@ -232,14 +254,50 @@ class Pft_Util_Grid_Searchs{
 		return $this->_sql;
 	}
 	
+	public function setExport($v){
+		 $this->_export = $v;
+	}
+	public function getExport(){
+		return $this->_export;
+	}
+	
+	public function setExportfile($v){
+		 $this->_exportfile = $v;
+	}
+	public function getExportfile(){
+		return $this->_exportfile;
+	}	
+	
+	public function setExportfileName($v){
+		 $this->_exportfile_name = $v;
+	}
+	public function getExportfileName(){
+		return $this->_exportfile_name;
+	}
+	
+	public function setSearchgroup( $v ){
+		$this->_searchgroup = $v;
+	}
+	
+	public function getSearchgroup(){
+		return $this->_searchgroup;
+	}
+	public function setViewAndOr( $v ){
+		$this->_viewandor = $v;
+	}
+	
+	public function getViewAndOr(){
+		return $this->_viewandor;
+	}
 	/**
 	 * 增加小计列
 	 * @param array $arrCols
 	 * @return boolean
 	 */
-	public function setSumCols( $arrCols ){
+	public function setSumCols( $arrCols, $format='' ){
 		if( is_array( $arrCols ) ){
 			$this->_sumCols = $arrCols;
+			$this->_sumFormat = $format;
 			return true;
 		}else{
 			return false;
@@ -249,12 +307,14 @@ class Pft_Util_Grid_Searchs{
 	/**
 	 * 增加合计列
 	 * 注意，目前只有sql模式才支持合计列
+	 * format不合适,应该在显示层..此处暂时保留吧
 	 * @param array $arrCols
 	 * @return boolean
 	 */
-	public function setTotalCols( $arrCols ){
+	public function setTotalCols( $arrCols, $format='' ){
 		if( is_array( $arrCols ) ){
 			$this->_totalCols = $arrCols;
+			$this->_totalFormat = $format;
 			return true;
 		}else{
 			return false;
@@ -284,19 +344,23 @@ class Pft_Util_Grid_Searchs{
 	 * @param string $alias
 	 * @param Pft_Util_Grid_Searchs::Const $type
 	 * @param array $rels
-	 * @param mixed $value
+	 * @param mixed $value default value
 	 * @param boolean $isOr
 	 * @param int $showType
 	 * @param string $customTransformFunc 用户自定义值转换函数名
 	 */
 	public function addSearch( $sarchObjOrDbColName
 	                         , $alias = null
-	                         , $type  = self::LIKE	                         
+	                         , $type  = self::EQUAL                      
 	                         , $rels  = null
 	                         , $value = null
 	                         , $isOr  = null
 	                         , $showType = 0
 	                         , $customTransformFunc = null
+	                         , $extend = null
+	                         , $cond = null
+        					, $item =null
+        					, $isviewandor=false
 	                         ){
 //这是原有的顺序
 //	public function addSearch( $sarchObjOrDbColName
@@ -306,7 +370,7 @@ class Pft_Util_Grid_Searchs{
 //	                         , $rels  = null
 //	                         , $isOr  = null
 //	                         ){
-
+		
 		if( $sarchObjOrDbColName instanceof Pft_Util_Grid_Search ){
 			$search = $sarchObjOrDbColName;
 		}else{
@@ -318,7 +382,10 @@ class Pft_Util_Grid_Searchs{
 		                                        , $isOr
 		                                        , $showType
 		                                        , $customTransformFunc
-		                                        );
+		                                        , $extend
+		                                        , $cond
+	                        					, $item
+	                        					, $isviewandor);
 		}
 
 	    $searchViewName = self::SEARCH_NAME_PREFIX . count( $this->_searchs );	
@@ -357,6 +424,306 @@ class Pft_Util_Grid_Searchs{
 //			}
 //		}
 	}
+	/**
+	 * 带选择条件的查询
+	 * jute
+	 */
+	public function addSearchSelect( $sarchObjOrDbColName
+	                         , $alias = null
+	                         , $type  = self::LIKE	                         
+	                         , $rels  = null
+	                         , $value = null
+	                         , $isOr  = null
+	                         , $showType = 0
+	                         , $customTransformFunc = null
+	                         , $extend = null
+	                         , $cond = null 
+	                         , $item = null
+	                         , $isviewandor = null
+	                         ){
+		if( $sarchObjOrDbColName instanceof Pft_Util_Grid_Search ){
+			$search = $sarchObjOrDbColName;
+		}else{
+			
+			$search = new Pft_Util_Grid_Search( $sarchObjOrDbColName
+		                                        , $value
+		                                        , $type
+		                                        , $alias
+		                                        , $rels
+		                                        , $isOr
+		                                        , $showType
+		                                        , $customTransformFunc
+		                                        , $extend
+	                        					, $cond
+	                        					, $item
+	                        					, $isviewandor
+		                                        );
+		}
+	    $searchViewName = self::SEARCH_NAME_PREFIX . count( $this->_searchs );	
+		$search->setViewName( $searchViewName );
+
+		//setSearch的同时就从request获取一下数据
+		if( $this->_advMode && $this->_advSearchValue ){
+			//如果是高级搜索，则优先使用高级搜索
+			$search->setValue( $this->_advSearchValue );
+			//exit();
+		}elseif( isset( $_REQUEST[$searchViewName] ) ){
+			$search->setValue( $_REQUEST[$searchViewName] );
+		}
+//		print "<pre>";
+//		print_r($search);
+//		print_r($_REQUEST);
+//		print "</pre>";
+		
+		
+		//设置and or
+		if (isset($_REQUEST['isor_'.$searchViewName]) && $_REQUEST['isor_'.$searchViewName]){
+			$search->setIsOr(true);
+		}
+		//设置搜索项 jute 20080409
+		$theitem =$search->getItem();
+		if(is_array($theitem) && count($theitem) && isset( $_REQUEST['item_'.$searchViewName] ) ){
+			$search->setdbColName($_REQUEST['item_'.$searchViewName]);
+			if($theitem[$_REQUEST['item_'.$searchViewName]]){
+				$search->setAlias($theitem[$_REQUEST['item_'.$searchViewName]]);
+			}else{
+				$search->setAlias();
+			}			
+		}		
+		
+		//设置搜索条件
+		if( isset( $_REQUEST['cond_'.$searchViewName] ) ){
+			$search->setOprate( $_REQUEST['cond_'.$searchViewName] );
+		}
+		
+		$this->_searchs[] = $search;
+
+		$newCriterion = $search->toCriterion( $this->_criteria );
+		if( $newCriterion ){
+			if( $this->_normal_criterion ){
+				if( $this->_allIsOr || $search->getIsOr() ){
+					$this->_normal_criterion->addOr( $newCriterion );
+				}else{
+					$this->_normal_criterion->addAnd( $newCriterion );
+				}			
+			}else{
+				$this->_normal_criterion = $newCriterion;
+			}			
+		}
+		
+
+	}
+	/**
+	 * 组
+	 * jute
+	 */
+	public function addSearchGroup($item=null,$cond=null){
+
+		$array = $this->getSearchgroup();
+		$sql = $this->getSql();	
+		$duizhaobiao=$this->splitsql($sql);
+		if(is_array($array) && count($array)){
+			$i = 1;
+			foreach ($array as $key=>$val){
+				if(is_array($val['item']) && count($val['item'])){
+					$j = 1;
+					foreach ($val['item'] as $key1=>$val1){
+						if ($j == 1){							
+							$isviewandor = "第".$i."组";
+						}else{
+							$isviewandor = "Y";
+						}
+						$search = new Pft_Util_Grid_Search( $key1
+		                                        , null
+		                                        , null
+		                                        , null
+		                                        , null
+		                                        , null
+		                                        , 0
+		                                        , null
+		                                        , null
+	                        					, $cond
+	                        					, $item
+	                        					, $isviewandor
+		                                        );
+		                $searchViewName = self::SEARCH_NAME_PREFIX . count( $this->_searchs );	
+						$search->setViewName( $searchViewName );
+				
+						//setSearch的同时就从request获取一下数据
+						if( $this->_advMode && $this->_advSearchValue ){
+							//如果是高级搜索，则优先使用高级搜索
+							$search->setValue( $this->_advSearchValue );
+							//exit();
+						}elseif( isset( $_REQUEST[$searchViewName] ) ){
+							$search->setValue( $_REQUEST[$searchViewName] );
+						}
+						
+						//设置and or
+						if (isset($_REQUEST['isor_'.$searchViewName]) && $_REQUEST['isor_'.$searchViewName]){
+							$search->setIsOr(true);
+						}
+						//设置搜索项 jute 20080409
+						$theitem =$search->getItem();
+//						$thenewitem = array();
+//						if(is_array($theitem[0]) && count($theitem[0])){
+//							foreach ($theitem as $key=>$val){
+//								$thenewitem[key($val)] = current($val);						
+//							}
+//							$theitem = $thenewitem;
+//						}
+							
+						if(is_array($theitem) && count($theitem) && isset( $_REQUEST['item_'.$searchViewName] ) ){	
+							
+							$search->setdbColName($_REQUEST['item_'.$searchViewName]);
+							if($theitem[$_REQUEST['item_'.$searchViewName]]){
+								$search->setAlias($theitem[$_REQUEST['item_'.$searchViewName]]);
+							}else{
+								$search->setAlias();
+							}			
+						}
+								
+						//设置搜索条件
+						if( isset( $_REQUEST['cond_'.$searchViewName] ) ){
+							$search->setOprate( $_REQUEST['cond_'.$searchViewName] );
+						}
+						
+						//$groupjone =$search->getGroup();
+						$groupjone = $this->getSearchgroup();
+						//设置组的and or
+						if ($j == 1){
+							if(isset($_REQUEST['groupjone_'.$i])){
+								if($_REQUEST['groupjone_'.$i] == 'and'){
+									$groupjone[$i]['join'] = 'and';									
+								}else if($_REQUEST['groupjone_'.$i] == 'or'){
+									$groupjone[$i]['join'] = 'or';
+								}
+								//$itemarr = $groupjone;
+								//$search->setGroup($groupjone);
+								$this->setSearchgroup($groupjone);
+							}
+						}
+						
+						$this->_searchs[] = $search;
+						$thenewsearch = "";
+						
+						if($search->getValue()){						
+							if(array_key_exists( $search->getDbColName(),$duizhaobiao))
+							{
+								$dbcolname=$duizhaobiao[$search->getDbColName()];
+							}
+							else 
+							{
+								$dbcolname= $search->getDbColName();
+							}
+							if($search->getOprate() == Pft_Util_Grid_Searchs::LIKE){
+								//$thenewsearch = $search->getDbColName()." ".$search->getOprate()." '%".$search->getValue()."%'";
+								$thenewsearch = $dbcolname." ".$search->getOprate()." '%".$search->getValue()."%'";
+							}else {
+								//$thenewsearch = $search->getDbColName().$search->getOprate()."'".$search->getValue()."'";
+								$thenewsearch = $dbcolname.$search->getOprate()."'".$search->getValue()."'";
+							}
+						}
+						
+						if($thenewsearch){
+							if(isset($this->_group_criterion[$key]) && $this->_group_criterion[$key]){								
+								if($search->getIsOr()){
+									$this->_group_criterion[$key] .= ' or '.$thenewsearch; 
+								}else{
+									$this->_group_criterion[$key] .= ' and '.$thenewsearch; 
+								}
+							}else{
+								$this->_group_criterion[$key] = $thenewsearch;
+							}
+						}
+//						$newCriterion = $search->toCriterion( $this->_criteria );
+//						if( $newCriterion ){
+//							if( $this->_normal_criterion ){
+//								if( $this->_allIsOr || $search->getIsOr() ){
+//									$this->_normal_criterion->addOr( $newCriterion );
+//								}else{
+//									$this->_normal_criterion->addAnd( $newCriterion );
+//								}			
+//							}else{
+//								$this->_normal_criterion = $newCriterion;
+//							}			
+//						}
+						
+						
+		               $j++;
+					}
+				}
+				$i++;
+			}
+		}
+		
+		
+		//组合查询			
+		$search = $this->_searchs;
+				
+	
+		$itemarr  = $this->getSearchgroup();
+		$allcond = '';
+		if(is_array($this->_group_criterion) && count($this->_group_criterion)){
+			foreach ($this->_group_criterion as $key =>$val){
+				if($val){
+					$val = '('.$val.')';
+					if($allcond){
+						if($itemarr[$key]['join'] == 'and'){
+							$allcond .= ' and '.$val;
+						}else if($itemarr[$key]['join'] == 'or'){
+							$allcond .= ' or '.$val;
+						}
+					}else{
+						$allcond = $val;
+					}
+				}
+			}
+		}
+		
+		if($sql && $allcond){
+			
+			if( strpos($sql, self::SQL_WHERE_STANDER ) ){
+				$sql =  str_replace( self::SQL_WHERE_STANDER, ' and ('.$allcond.')', $sql );
+			}else{
+				if( strpos( $sql, 'where ' ) === false ){
+					$sql = $sql. ' where ('. $allcond .')';
+				}else{
+					$sql = $sql. ' and ('. $allcond .')';
+				}
+			}
+			$this->setSql($sql);
+		}	
+		
+	}
+	private function splitsql($sql)
+	{
+		if(strstr($sql,'from'))
+		{
+			$sql=explode('from',$sql);
+		}
+		else if(strstr($sql,'FROM'))
+		{
+			$sql=explode('FROM',$sql);
+		}
+		$sql=preg_replace("/\r|\n/",'',$sql[0]);
+		$pp=preg_split ("/select|,/i",$sql);
+		$temp=array();
+		foreach ($pp as $v)
+		{
+			$v=trim($v);
+			$pp1=preg_split ("/\sas\s/i",$v);
+			
+			
+			if(is_array($pp1)&&count($pp1)>1)
+			{
+				$temp[trim($pp1[1])]=trim($pp1[0]);
+			}
+			
+		}
+		return $temp;
+		
+	}
+	
 	/**
 	 * 高级模式
 	 * @var Boolean
@@ -463,10 +830,15 @@ class Pft_Util_Grid_Searchs{
 	 * @return boolean
 	 */
 	public function setPageSize( $pagesize )
-	{
+	{			
 		if( $this->_pager )
 		{
-			$this->_pager->setPageSize( $pagesize );
+			//以传递的参数为先 jute 20080417
+			if(isset($_REQUEST[Pft_Util_Pager::PAGER_VAR_PAGE_SIZE ]) && $_REQUEST[Pft_Util_Pager::PAGER_VAR_PAGE_SIZE ]){
+				$this->_pager->setPageSize( $_REQUEST[Pft_Util_Pager::PAGER_VAR_PAGE_SIZE ] );
+			}else{
+				$this->_pager->setPageSize( $pagesize );
+			}			
 			return true;
 		}
 		else 
@@ -569,11 +941,11 @@ class Pft_Util_Grid_Searchs{
 	}
 	
 	/**
-	 * 根据条件生成一个 Criteria 对象
+	 * 根据条件生成一个 Pft_Util_Grid_Criteria 对象
 	 *
-	 * @return Criteria
+	 * @return Pft_Util_Grid_Criteria
 	 */
-	public function toCriteria(){
+	public function toPft_Util_Grid_Criteria(){
 		/**
 		 * 注意，此项要在$this->autoGetRequest()前，否则会影响分页的数据
 		 */
@@ -603,13 +975,18 @@ class Pft_Util_Grid_Searchs{
 		return $this->_criteria;
 	}
 	
+	public function getParsedSql(){
+		$this->_parseSql();
+		$this->autoGetRequest();
+		return $this->_parsed_sql;
+	}
+	
 	private function _parseSql(){
 		$where = '';
 		
 		$maps =   $this->_criteria->getMap();
 		foreach ( $maps as $aCriterion ){		
 			$partWhere = $this->_createSqlFromCriterion( $aCriterion );
-			
 			if( $where ){
 				//$andOr = $this->_allIsOr?'or':'and';	//$this->_allIsOr 已经在 _criteria 生成的时候就完成了
 				//$where = '('. $where. " $andOr ".trim($table.$map->getColumn(),'.').$map->getComparison().$value .')';
@@ -656,7 +1033,7 @@ class Pft_Util_Grid_Searchs{
 		*/
 	}
 	
-	private function _createSqlFromCriterion( Criterion $aCriterion ){
+	private function _createSqlFromCriterion( Pft_Util_Grid_Criterion $aCriterion ){
 		//var_dump( $aCriterion );
 		//$this->_hidden_criterion->getTable()
 //		echo $aCriterion->getColumn();
@@ -677,9 +1054,18 @@ class Pft_Util_Grid_Searchs{
 				$value = '( NULL )';
 			}
 		}else{
-			if( !is_numeric( $value ) )$value = "'".chks($value)."'";			
+			if( !is_null($value) && !is_numeric( $value ) )$value = "'".chks($value)."'";			
 		}
-		$partWhere = trim($table.$aCriterion->getColumn(),'.').$aCriterion->getComparison().$value;
+		
+		if( is_null($value) ){
+			if( self::EQUAL == $aCriterion->getComparison() || self::ISNULL == $aCriterion->getComparison() || self::IN == $aCriterion->getComparison() ){
+				$partWhere = trim($table.$aCriterion->getColumn(),'.')." IS NULL";
+			}else{
+				$partWhere = trim($table.$aCriterion->getColumn(),'.')." IS NOT NULL";
+			}
+		}else{
+			$partWhere = trim($table.$aCriterion->getColumn(),'.').$aCriterion->getComparison().$value;
+		}
 		
 		$clauses = $aCriterion->getClauses();
 		if( is_array( $clauses ) && count( $clauses ) ){
@@ -702,12 +1088,15 @@ class Pft_Util_Grid_Searchs{
 	 */
 	public function toArray(){
 		$rev = array();
-		
 		$searchs = array();
 		for ( $i = 0;$i<count( $this->_searchs );$i++ )
 		{
+			
 			$this->_searchs[$i]->setViewName( self::SEARCH_NAME_PREFIX.$i );
 			$searchArr = $this->_searchs[$i]->toArray();
+			if($this->_viewandor){
+				$searchArr['isviewandor'] = true;
+			}
 			//如果是高级模式，且高级搜索有值，则每一个条件的值设为空
 			if( $this->_advMode && $this->_advSearchValue ){
 				$searchArr[Pft_Util_Grid_Search::DEF_VALUE] = '';
@@ -750,6 +1139,7 @@ class Pft_Util_Grid_Searchs{
 	 * @return array
 	 */
 	public function excuteAndReturnGridData( $expressMode = false ){
+		
 		return $this->excuteAndReturnGrid( $expressMode )->toArray();
 	}
 	
@@ -758,17 +1148,38 @@ class Pft_Util_Grid_Searchs{
 	 * @return Pft_Util_Grid
 	 */
 	public function excuteAndReturnGrid( $expressMode = false ){
-		Pft_Db::startUseReadonlyDb();	// 设置“开始使用只读数据库服务器”。Pft_Db 和 Propel 在执行操作时将检测此设置，如果“使用只读数据库”则强制连接到只读数据库服务器
+		//支持导出报表，如果是导出报表，设置为不使用分页		
+		if(isset($_REQUEST['searchFormExport']) && $_REQUEST['searchFormExport']){//导出报表
+			$this->_usePager = false;
+		}
+//			if($this->_sql && isset($_REQUEST['searchFormExport']) && $_REQUEST['searchFormExport']){//导出报表
+//				//导出报表
+//				$file=Pft_Util_Export::ExporttoCsv($datas,"baobiao");
+//				if($file){
+//					$this->_exportfile = $file;
+//				}
+//			}
+
+		Pft_Db::startUseReadonlyDb();	// 设置“开始使用只读数据库服务器”。Pft_Db 和 Propel 在执行操作时将检测此设置，如果“使用只读数据库”则强制连接到只读数据库服务器	
+		
 		
 		try {
+			
 			if( $this->_sql ){
-				$this->toCriteria();//这是为了执行 autoGetRequestVar
+//				if($this->_viewandor){
+//					
+//					print "<pre>";
+//					print_r($this->_searchs);
+//					print "</pre>";
+//				}
+				
+				$this->toPft_Util_Grid_Criteria();//这是为了执行 autoGetRequestVar
 				$datas = $this->_getAllWithSql();
 			}elseif( $this->_omPeerName ){
 				if( $expressMode ){
-					$datas = Pft_Util_Array::doSelectPeerToArray($this->_omPeerName, $this->toCriteria(), $this->_con );				
+					$datas = Pft_Util_Array::doSelectPeerToArray($this->_omPeerName, $this->toPft_Util_Grid_Criteria(), $this->_con );				
 				}else{
-					eval( "\$datas = Pft_Util_Array::toArray(".$this->_omPeerName."::".$this->_selectMethod."(\$this->toCriteria(), \$this->_con, \$this->_otherParam));" );
+					eval( "\$datas = Pft_Util_Array::toArray(".$this->_omPeerName."::".$this->_selectMethod."(\$this->toPft_Util_Grid_Criteria(), \$this->_con, \$this->_otherParam));" );
 				}
 			}
 
@@ -790,6 +1201,12 @@ class Pft_Util_Grid_Searchs{
 								$rowSum[ $colName ] += $datas[$i][$colName];
 							}
 						}
+						
+						if( $this->_sumFormat ){
+							foreach ( $this->_sumCols as $colName ) {
+								$rowSum[$colName] = sprintf($this->_sumFormat, $rowSum[$colName]);
+							}							
+						}
 					}
 					$datas[self::DEF_SUM] = $rowSum;
 				}
@@ -809,7 +1226,11 @@ class Pft_Util_Grid_Searchs{
 
 						$totalCols = "";
 						foreach ( $this->_totalCols as $colName ){
-							$totalCols .= "sum($colName) as $colName,";
+							$colName1 = str_replace('+','_tpma',$colName);
+							$colName1 = str_replace('-','_tpmb',$colName1);
+							$colName1 = str_replace('*','_tpmc',$colName1);
+							$colName1 = str_replace('/','_tpmd',$colName1);
+							$totalCols .= "sum($colName) as $colName1,";
 						}
 						$totalCols = trim( $totalCols, ',' );
 						
@@ -817,7 +1238,17 @@ class Pft_Util_Grid_Searchs{
 						
 						$rowTotalFromSelect = Pft_Db::getDb()->getRow( $totalSql );
 						foreach ( $this->_totalCols as $colName ){
-							$rowTotal[ $colName ] = @$rowTotalFromSelect[$colName];
+							$colName1 = str_replace('+','_tpma',$colName);
+							$colName1 = str_replace('-','_tpmb',$colName1);
+							$colName1 = str_replace('*','_tpmc',$colName1);
+							$colName1 = str_replace('/','_tpmd',$colName1);
+							$rowTotal[ $colName ] = @$rowTotalFromSelect[$colName1];
+						}
+
+						if( $this->_totalFormat ){
+							foreach ($this->_totalCols as $colName) {
+								$rowTotal[$colName] = sprintf($this->_totalFormat,$rowTotal[$colName]);
+							}							
 						}
 					}					
 					$datas[self::DEF_TOTAL] = $rowTotal;
@@ -826,14 +1257,34 @@ class Pft_Util_Grid_Searchs{
 				//如无 data ，则也无需小计合计
 				$datas = array();
 			}
-		
+			
 			$grid = new Pft_Util_Grid( $datas );
 			$searchsArray = $this->toArray();
+			//增加分组数据
+			if( $this->_sql && is_array( $this->_searchgroup ) && count( $this->_searchgroup ) ){
+				//$searchsArray[self::DEF_SEARCHGROUP] = $this->_searchgroup;
+				//$grid->setSearchgroup($this->_searchgroup);
+				$searchsArray[self::DEF_SEARCHS][self::DEF_SEARCHGROUP] = $this->_searchgroup;
+			}
+			//增加导出报表标识
+			
+			//生成报表,设置下载
+//			if($this->_sql && isset($_REQUEST['searchFormExport']) && $_REQUEST['searchFormExport']){//导出报表
+//				//导出报表
+//				$file=Pft_Util_Export::ExporttoCsv($datas,"baobiao");
+//				if($file){
+//					$this->_exportfile = $file;
+//				}
+//			}
+			
 			$grid->setSearchs( $searchsArray[self::DEF_SEARCHS] );
 			$grid->setOrderBys( $searchsArray[self::DEF_ORDERBYS] );
-	
 			if( $this->_usePager )$grid->setPager( $searchsArray[self::DEF_PAGERINFO] );
-		
+			if($this->_export)$grid->setExport($this->_export);			
+			if($this->_exportfile)$grid->setExportfile($this->_exportfile);
+			if($this->_exportfile_name)$grid->setExportfileName($this->_exportfile_name);
+			if($this->_export_col)$grid->setExportCol($this->_export_col);
+			if($this->_export_format)$grid->setExportFormat($this->_export_format);
 			Pft_Db::endUseReadonlyDb();	// 设置“停止使用只读数据库服务器”
 		}
 		catch ( Exception $e )
@@ -880,12 +1331,6 @@ class Pft_Util_Grid_Searchs{
 		}else{
 			$newsql = $this->_parsed_sql.$limitSql;
 		}
-//		echo "<pre>Terry at [".__FILE__."(line:".__LINE__.")]\nWhen [Thu Aug 02 21:19:30 CST 2007] :\n ";
-//		var_dump( $newsql );
-//		echo "</pre>";
-//		exit();
-		
-		//print $newsql;
 		
 		$data = Pft_Db::getDb()->getAll( $newsql );
 		return $data;
@@ -900,30 +1345,53 @@ class Pft_Util_Grid_Searchs{
 			$parsed_sql = str_replace( "\n", " ", $this->_parsed_sql );
 			if( stripos( $parsed_sql, 'group by' ) ){
 				$countSql = "select count(*) from (".$this->_parsed_sql.") as a";
-			}elseif( preg_match("/(select[\\s]+)([\\s\\S]*)([\\s]+from .*)/i", $parsed_sql, $match ) ){
+			}/*elseif( preg_match("/(select[\\s]+)([\\s\\S]*)([\\s]+from .*)/i", $parsed_sql, $match ) ){
 				//var_dump( $match );
 				$countSql = $match[1].' count(*) '.$match[3];
 				$countSql = str_replace( self::SQL_LIMIT_STANDER, '', $countSql );
 				//echo $countSql;
-			}else{
-				echo $this->_parsed_sql;
-				throw( new Exception('Sql is no select sql!') );
+				//用下边的方式基本足够了
+			}*/else{
+				$countSql = 'select count(*) from '.substr($this->_parsed_sql,stripos($this->_parsed_sql,'from')+4);
+				$countSql = str_replace( self::SQL_LIMIT_STANDER, '', $countSql );			
+				//echo $this->_parsed_sql;
+				//throw( new Exception('Sql is no select sql!') );
 			}
 			$this->_count_sql = $countSql;
 		}
 		return $this->_count_sql;
 	}
+	
+	/**
+	 * @param array $colArray
+	 */
+	public function setExportCol( $colArray ){
+		$this->_export_col = $colArray;
+	}
+
+	/*
+	* @说明：默认数据的导出格式
+	* @参数：
+	* @返回:
+	* @作者：John
+	* @时间：Tue Apr 27 09:31:48 CST 2010
+	*/
+	public function setExportFormat($eFormat){
+		$this->_export_format=$eFormat;
+	}
 }
 
-class Pft_Util_Grid_Search
-{
+class Pft_Util_Grid_Search{
 	const SHOW_TYPE_TEXT = 0;
 	const SHOW_TYPE_DATE = 1;
 	const SHOW_TYPE_TIMESTAMP = 2;
+	const SHOW_TYPE_TIMESEC=3;
 	const SHOW_TYPE_SELECTOR_PERSON = 1024;
 	const SHOW_TYPE_SELECTOR_DEPARTMENT = 1025;
 	const SHOW_TYPE_SELECTOR_GROUP = 1026;
 	const SHOW_TYPE_SELECTOR_DINGDAN = 1027;
+	const SHOW_TYPE_SEARCHTIP = 1028;
+
 	//const SEARCH_TYPE_PRE  = 2;
 	
 	const DEF_COLNAME   = 'colname';
@@ -932,7 +1400,12 @@ class Pft_Util_Grid_Search
 	const DEF_VALUE     = 'value';
 	const DEF_ISRANGE   = 'isrange';
 	const DEF_REFERENCE = 'reference';
+	const DEF_ISOR = 'isor';
 	const DEF_SHOWTYPE  = 'showtype';
+	const DEF_EXTEND = 'extend';	
+	const DEF_COND = 'cond';	
+	const DEF_ITEM = 'item';
+	const DEF_ISVIEWANDOR = 'isviewandor';
 	
 	private $_dbColName;
 	private $_alias;
@@ -943,6 +1416,10 @@ class Pft_Util_Grid_Search
 	private $_viewName;
 	private $_showType = self::SHOW_TYPE_TEXT;		//显示类型 默认为 0 
 	private $_customTransformFunc;
+	private $_extend;
+	private $_cond;
+	private $_item;
+	private $_isviewandor;
 	
 	public function setCustomTransformFunc( $v ){$this->_customTransformFunc = $v;}
 	public function getCustomTransformFunc(){return $this->_customTransformFunc;}
@@ -958,7 +1435,11 @@ class Pft_Util_Grid_Search
                         , $isOr      = null
                         , $showType  = self::SHOW_TYPE_TEXT
                         , $customTransformFunc = null
-						)
+						, $extend = null
+						, $cond = null
+						, $item = null
+						, $isviewandor = null
+                        )
 	{
 		$this->_dbColName = $dbColName;
 		$this->_value     = $value;
@@ -969,37 +1450,63 @@ class Pft_Util_Grid_Search
 		$this->_isOr      = $isOr;
 		$this->_showType  = $showType?$showType:self::SHOW_TYPE_TEXT;
 		$this->_customTransformFunc = $customTransformFunc;
+		$this->_extend = $extend;
+		$this->_cond = $cond;
+		$this->_item = $item;
+		$this->_isviewandor = $isviewandor;
 	}
 	
-	function toArray()
-	{
+	function toArray(){
 		$rev = array();
-		$rev[self::DEF_TITLE]     = $this->_alias;
+		$rev[self::DEF_TITLE]		= $this->_alias;
 		//这里小心 : 这里用了viewName！这是为了不暴露名称
-		$rev[self::DEF_COLNAME]   = $this->_viewName;
-		$rev[self::DEF_OPERATION] = $this->_oprate;
-		$rev[self::DEF_VALUE]     = $this->_value;
-		$rev[self::DEF_ISRANGE]   = 0;
-		$rev[self::DEF_REFERENCE] = $this->_rels;
-		$rev[self::DEF_SHOWTYPE]  = $this->_showType;
+		$rev[self::DEF_COLNAME]		= $this->_viewName;
+		$rev[self::DEF_OPERATION]	= $this->_oprate;
+		$rev[self::DEF_VALUE]		= $this->_value;
+		$rev[self::DEF_ISRANGE]		= 0;
+		$rev[self::DEF_REFERENCE]	= $this->_rels;
+		$rev[self::DEF_ISOR]		= $this->_isOr;
+		$rev[self::DEF_SHOWTYPE]	= $this->_showType;
+		$rev[self::DEF_EXTEND]		= $this->_extend;
+		$rev[self::DEF_COND]		= $this->_cond;
+		$rev[self::DEF_ITEM]		= $this->_item;
+		$rev[self::DEF_ISVIEWANDOR]	= $this->_isviewandor;
 		return $rev;
 	}
 	
 	function getIsOr(){
 		return $this->_isOr;
 	}
-	
+	function getItem(){
+		return $this->_item;
+	}
 	function getDbColName(){
 		return $this->_dbColName;
 	}
 	
 	function setValue( $v ){
-		//if( $this->_oprate == Criteria::LIKE && strpos( $v, "%" ) === false ) $v = "%".$v."%";
+		//if( $this->_oprate == Pft_Util_Grid_Criteria::LIKE && strpos( $v, "%" ) === false ) $v = "%".$v."%";
 		$this->_value = $v;
+	}
+	
+	function getValue(){
+		return $this->_value;
+	}
+	
+	function setOprate($v){
+		$this->_oprate = $v;
+		
+	}	
+	function getOprate(){
+		return $this->_oprate;		
 	}
 	
 	function setViewName( $v ){
 		$this->_viewName = $v;
+	}
+	
+	function setIsOr($v){
+		$this->_isOr = $v;
 	}
 	
 	function setAlias( $alias ){
@@ -1011,12 +1518,16 @@ class Pft_Util_Grid_Search
 		$this->_alias = $alias;
 	}
 	
+	function setdbColName( $name ){
+		$this->_dbColName = $name;		
+	}
+
 	/**
 	 * 将自己转化为一个 Criterion
 	 *
-	 * @param Criteria $c
+	 * @param Pft_Util_Grid_Criteria $c
 	 */
-	function toCriterion( Criteria $c ){
+	function toCriterion( Pft_Util_Grid_Criteria $c ){
 		//这里是规定，如果值为空(null)，则不生成条件
 		/**
 		 * 这是为了 0 的情况
@@ -1032,6 +1543,8 @@ class Pft_Util_Grid_Search
 			}
 			switch ( $this->_showType ){
 				case self::SHOW_TYPE_TIMESTAMP:
+				case self::SHOW_TYPE_TIMESEC:
+				case self::SHOW_TYPE_DATE:
 					//如果是时间戳，则转换为整数
 					if( !is_int( $v ) ) $v = strtotime( $v );					
 					break;
@@ -1046,5 +1559,92 @@ class Pft_Util_Grid_Search
 		}else{
 			return null;
 		}
+	}
+}
+
+class Pft_Util_Grid_Criteria{
+	private $_offset;
+	private $_limit;
+	private $_map = array();
+	public function getMap(){
+		return $this->_map;
+	}
+	
+	public function setOffset( $offset ){
+		$this->_offset = $offset;
+	}
+	
+	public function setLimit( $limit ){
+		$this->_limit = $limit;
+	}
+	
+	public function addAnd( Pft_Util_Grid_Criterion $criterion ){
+		$this->_map[] = $criterion;
+	}
+
+	public function addOr( Pft_Util_Grid_Criterion $criterion ){
+		$this->_map[] = $criterion;
+	}
+
+	public function getNewCriterion( $colName, $val, $op ){
+		return new Pft_Util_Grid_Criterion( $colName, $val, $op );
+	}
+}
+
+class Pft_Util_Grid_Criterion{
+	private $_colName;
+	private $_val;
+	private $_op;
+	private $_table;
+	private $_clauses = array();
+	private $_conjunctions = array();
+	
+	public function __construct( $colName, $val, $op ){
+		$this->_table = '';
+		$this->_colName = $colName;
+		if (strpos ( $colName, '.' ) !== false) {
+			$tempArr = explode ( '.', $colName );
+			if (count ( $tempArr ) > 1) {
+				$this->_table = $tempArr[0];
+				$this->_colName = $tempArr[1];
+			}
+		}
+
+		$this->_val = $val;
+		$this->_op = $op;
+	}
+	
+	public function getValue(){
+		return $this->_val;
+	}
+	
+	public function getTable(){
+		return $this->_table;
+	}
+
+	public function getColumn(){
+		return $this->_colName;
+	}
+	
+	public function getComparison(){
+		return $this->_op;
+	}
+	
+	public function getClauses(){
+		return $this->_clauses;
+	}
+	
+	public function getConjunctions(){
+		return $this->_conjunctions;
+	}
+	
+	public function addAnd( Pft_Util_Grid_Criterion $criterion ){
+		$this->_clauses[] = $criterion;
+		$this->_conjunctions[] = ' AND ';
+	}
+
+	public function addOr( Pft_Util_Grid_Criterion $criterion ){
+		$this->_clauses[] = $criterion;
+		$this->_conjunctions[] = ' OR ';
 	}
 }
