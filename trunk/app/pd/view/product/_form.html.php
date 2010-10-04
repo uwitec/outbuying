@@ -1,6 +1,9 @@
 <?
 //产品分类
 ?>
+<?
+include( Pft_Config::getCfg('PATH_ROOT').'inc/view/header.inc.php' );
+?>
 <script src=".js/jquery.min.js" ></script>
 <script>
 
@@ -41,3 +44,6 @@ body{font-size:12px}
 	</div>
 </div>
 </center>
+<?
+include( Pft_Config::getCfg('PATH_ROOT').'inc/view/footer.inc.php' );
+?>
