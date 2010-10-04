@@ -121,19 +121,30 @@ class Pft_Db{
 		}
 	}
 
+	private $_connCfg;
+	
 	public function reconnect( $con_name , $forceReconnect = false ){
 		if( $forceReconnect || $con_name != $this->getConnName() ){
-			$configuration = include( Pft_Config::getConfigPath()."db.conf.php" );
-			$cfg = $configuration['datasources'][$con_name]['connection'];
-			$this->_conn = mysql_connect($cfg["hostspec"].($cfg["port"]?":".$cfg["port"]:""), $cfg["username"], $cfg["password"]);
-			$this->_dsn = $cfg;
-			mysql_select_db( $cfg["database"], $this->_conn );
-			mysql_query( "set names 'utf8'" );
-			
-			$this->setConnName( $con_name );
-			if( defined("DEBUG") && DEBUG ){
-				Pft_Debug::addInfoToDefault( "Pft", "After connect [$con_name] use Pft_Db." );
-			}			
+			if(!$this->_connCfg){
+				$configuration = include( Pft_Config::getConfigPath()."db.conf.php" );
+				$this->_connCfg = $configuration;
+			}else{
+				$configuration = $this->_connCfg;
+			}
+			$cfg = @$configuration['datasources'][$con_name]['connection'];
+			if(is_array($cfg)){
+				$this->_conn = mysql_connect ( $cfg ["hostspec"] . ($cfg ["port"] ? ":" . $cfg ["port"] : ""), $cfg ["username"], $cfg ["password"] );
+				$this->_dsn = $cfg;
+				mysql_select_db ( $cfg ["database"], $this->_conn );
+				mysql_query ( "set names 'utf8'" );
+				
+				$this->setConnName ( $con_name );
+				if (defined ( "DEBUG" ) && DEBUG) {
+					Pft_Debug::addInfoToDefault ( "Pft", "After connect [$con_name] use Pft_Db." );
+				}
+			}else{
+				Pft_Debug::addInfoToDefault ( "Pft", "Connot connect [$con_name], use default Db." );
+			}	
 		}
 	}
 	
