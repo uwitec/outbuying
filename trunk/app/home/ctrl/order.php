@@ -16,10 +16,24 @@ class HomeOrderController extends Pft_Controller_Action{
 	*/
 	function listAction(){
 		//找出产品
-		$sql="select * from kinds where is_del<1";
+		$sql="select * from kinds where is_del<1 order by k_id asc";
 		$datas=Pft_Db::getDb()->getAll($sql);
-		$this->list=$datas;
-		
+		$this->list=$list=$datas;
+		//得到默认的产品  (分类中的第一个)
+		$k_id=null;
+		foreach ($list as $row)
+		{
+			$k_id=$row["k_id"];
+			break;
+		}
+		$this->products=null;
+		if($k_id)
+		{
+			$sql="select * from products where k_id='".$k_id."'";
+			$products=Pft_Db::getDb()->getAll($sql);
+			
+		}
+		$this->products=$products;
 		
 	}
 	/*

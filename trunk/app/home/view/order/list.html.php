@@ -12,6 +12,7 @@ include( Pft_Config::getCfg('PATH_ROOT').'inc/view/header.inc.php' );
 .imgDiv{width:72px;height:30px;float:left;overflow:hidden;background:url("./images/1-76+29.png");text-align:center;line-height:30px;color:#FFF;cursor:pointer;}
 .sImgDiv{width:72px;height:30px;float:left;overflow:hidden;text-align:center;line-height:30px;color:#F7841C;font-weight :bold;background-color:#F1F1F1;cursor:pointer;}
 #imgDivLine{width:100%;height:3px;background:url("./images/line-1.png") repeat-x;}
+#pStar{color:RED}
 </style>
 <script>
 function qianhuan(obDiv1,obDiv2)
@@ -38,7 +39,7 @@ function qianhuan(obDiv1,obDiv2)
         <div id="imgDivLine"></div>
        </td></tr>
        </table>
-       </div>
+</div>
 </td>
 <td width="30%"></td>
 </tr>
@@ -60,7 +61,66 @@ function qianhuan(obDiv1,obDiv2)
     <td width="55%" valign="top" align="left">
       <div id="productCenter">
        <div id="listBody">
-       
+       <?
+       if(is_array($products) && count($products))
+       {
+       	foreach ($products as $row)
+       	{
+       		?>
+       		
+       		<div id="prducts" class="plDiv">
+       		  <table width="100%" cellpadding="2" cellspacing="2" border="0">
+       		    <tr>
+       		      <td width="30%">
+       		       <div>
+       		        <b><?=$row["p_name"]?></b>
+       		       </div>
+       		      </td>
+       		      <td width="30%">
+       		       <div id="pStar">
+       		        <?
+       		        if($row["p_star"])
+       		        {
+       		        	for($i=0;$i<$row["p_star"];$i++)
+       		        	{
+       		        		echo "★";
+       		        	}
+       		        	for($i=0;$i<5-$row["p_star"];$i++)
+       		        	{
+       		        		echo "☆";
+       		        	}
+       		        }
+       		        else 
+       		        {
+       		        	echo "☆☆☆☆☆";
+       		        }
+       		        ?>
+       		        </div>
+       		      </td>
+       		      <td rowspan="2" align="right" width="40%">
+       		       <div>
+       		     <img src="./images/btn_buy.png" />&nbsp;
+       		     
+       		     </div>
+       		     <div ><img src="./images/btn_keep.gif" /></div>
+       		     <div>
+       		     </div>
+       		      </td>
+       		    </tr>
+       		    <tr>
+       		    <td colspan="2">
+       		    <?=$row["p_info"]?>
+       		    </td>
+       		    </tr>
+       		    <tr>
+       		    <td colspan="3"><hr /></td>
+       		    </tr>
+       		  </table>
+       		</div>
+       		<?
+       	}
+       }
+       ?>
        </div>
        <div id="imgBody">
        
