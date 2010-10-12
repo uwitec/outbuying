@@ -59,9 +59,10 @@ if( defined( "MULTI_SYSPATH_MODE" ) && MULTI_SYSPATH_MODE ){
 
 	}
 
-	set_include_path(implode(INC_SPLIT,$arr_path_model).INC_SPLIT.implode(INC_SPLIT,$arr_path_lib).INC_SPLIT.get_include_path());
+	//set_include_path(implode(INC_SPLIT,$arr_path_model).INC_SPLIT.implode(INC_SPLIT,$arr_path_lib).INC_SPLIT.get_include_path());
 	//set_include_path( $cfg["PATH_LIB"].INC_SPLIT.PATH_LIB."model/" );	
 }else{
+	set_include_path($cfg_pri["PATH_LIB"].INC_SPLIT.get_include_path());
 	//set_include_path($cfg_pri["PATH_LIB"].INC_SPLIT.$cfg_pri["PATH_MODEL"].INC_SPLIT.get_include_path());
 	//to reduce system load	
 }
