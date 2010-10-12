@@ -4,7 +4,7 @@ $beginTime = microtime(true);
 ini_set('display_errors','on');
 error_reporting(E_ALL);
 
-include_once(dirname(__FILE__)."/../../lib/Watt/Db.php");
+include_once(dirname(__FILE__)."/../lib/Pft/Db.php");
 /*$config_data=include_once(dirname(__FILE__)."/../../config/default/propel.conf.php");
 $cg_data=$config_data["datasources"]["propel"]["connection"];
 
@@ -22,7 +22,7 @@ $db_cfg['database'] = 'DEV_tpm_watt';
 
 $db_cfg['charset'] = 'utf8';
 
-$db = Watt_Db::getDb($db_cfg);
+$db = Pft_Db::getDb($db_cfg);
 
 $default_tables = "";
 //------------------------------

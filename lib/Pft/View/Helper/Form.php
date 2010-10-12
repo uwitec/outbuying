@@ -35,7 +35,7 @@ class Pft_View_Helper_Form
 	 * @param boolean $show = true
 	 * @return string HTML
 	 */
-	public static function buildFormWithDbData( $data, $action="", $method="post", $enable=true, $show=true, $dataDesc=array() )
+	public static function buildFormWithDbData( $data, $action="", $method="post", $enable=true, $show=true, $dataDesc=array(), $cols=2 )
 	{
 		//忽略列表应可动态增加
 		$formId = mt_rand ( 100, 999 );
@@ -50,7 +50,7 @@ class Pft_View_Helper_Form
 
 				if( $i == 0 ){
 					$out .= "<tr>";
-				}elseif ($i % 2 == 0){
+				}elseif ($i % $cols == 0){
 					$out .= "</tr>\n<tr>";
 				}
 				$i++;

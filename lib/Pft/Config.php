@@ -38,8 +38,7 @@ class Pft_Config{
 	 *
 	 * @param array $config
 	 */
-	public static function setPrimaryConfig( $config )
-	{
+	public static function setPrimaryConfig( $config ){
 		self::$_priCfg = $config;
 	}
 
@@ -48,8 +47,7 @@ class Pft_Config{
 	 *
 	 * @param array $config
 	 */
-	public static function setSecondaryConfig( $config )
-	{
+	public static function setSecondaryConfig( $config ){
 		self::$_secCfg = $config;
 	}
 	
@@ -66,8 +64,7 @@ class Pft_Config{
 	 * @param int $secondary
 	 * @return unknown
 	 */
-	public static function getMainDbConfig( $secondary = 0 )
-	{
+	public static function getMainDbConfig( $secondary = 0 ){
 		//未来可根据不同的登录用户获取不同的db配置
 		//return $db = include( PATH_CONFIG."db.cfg.php" );
 		return include( self::getConfigPath($secondary)."db.cfg.php" );
@@ -79,8 +76,7 @@ class Pft_Config{
 	 * @param integer $secondary
 	 * @return string
 	 */
-	public static function getRootPath( $secondary = 0 )
-	{
+	public static function getRootPath( $secondary = 0 ){
 		return self::_getCfgByName( "PATH_ROOT", $secondary );
 	}
 
@@ -90,8 +86,7 @@ class Pft_Config{
 	 * @param integer $secondary
 	 * @return string
 	 */
-	public static function getAppPath( $secondary = 0 )
-	{
+	public static function getAppPath( $secondary = 0 ){
 		return self::_getCfgByName( "PATH_APP", $secondary );
 	}
 
@@ -101,8 +96,7 @@ class Pft_Config{
 	 * @param integer $secondary
 	 * @return string
 	 */
-	public static function getLangPath( $secondary = 0 )
-	{
+	public static function getLangPath( $secondary = 0 ){
 		return self::_getCfgByName( "PATH_LANGUAGE", $secondary );
 	}
 
@@ -112,8 +106,7 @@ class Pft_Config{
 	 * @param integer $secondary
 	 * @return string
 	 */
-	public static function getLibPath( $secondary = 0 )
-	{
+	public static function getLibPath( $secondary = 0 ){
 		return self::_getCfgByName( "PATH_LIB", $secondary );
 	}
 
@@ -123,8 +116,7 @@ class Pft_Config{
 	 * @param integer $secondary
 	 * @return string
 	 */
-	public static function getConfigPath( $secondary = 0 )
-	{
+	public static function getConfigPath( $secondary = 0 ){
 		//这是为了多站点支持
 		if( defined( 'MULTI_SITE_SESSION_NAME' ) && isset( $_SESSION[MULTI_SITE_SESSION_NAME] ) ){
 			$site = $_SESSION[MULTI_SITE_SESSION_NAME];
@@ -145,8 +137,7 @@ class Pft_Config{
 	 * @param integer $secondary
 	 * @return string
 	 */
-	public static function getViewPath( $secondary = 0 )
-	{
+	public static function getViewPath( $secondary = 0 ){
 		return self::_getCfgByName( "PATH_VIEW", $secondary );
 	}
 
@@ -156,8 +147,7 @@ class Pft_Config{
 	 * @param integer $secondary
 	 * @return string
 	 */
-	public static function getModelPath( $secondary = 0 )
-	{
+	public static function getModelPath( $secondary = 0 ){
 		return self::_getCfgByName( "PATH_MODEL", $secondary );
 	}
 
@@ -167,8 +157,7 @@ class Pft_Config{
 	 * @param integer $secondary
 	 * @return string
 	 */
-	public static function getPropelConfFilename( $secondary = 0 )
-	{
+	public static function getPropelConfFilename( $secondary = 0 ){
 		return self::getConfigPath( $secondary )."propel.conf.php";
 	}
 
@@ -178,8 +167,7 @@ class Pft_Config{
 	 * @param int $secondary
 	 * @return string
 	 */
-	public static function getSiteRoot( $secondary = 0 )
-	{
+	public static function getSiteRoot( $secondary = 0 ){
 		return self::_getCfgByName( "SITE_ROOT", $secondary );
 	}
 
@@ -189,8 +177,7 @@ class Pft_Config{
 	 * @param integer $secondary
 	 * @return string
 	 */
-	public static function getLogPath( $secondary = 0 )
-	{
+	public static function getLogPath( $secondary = 0 ){
 		return self::_getCfgByName( "PATH_LOG", $secondary );
 	}
 	
@@ -200,8 +187,7 @@ class Pft_Config{
 	 * @param integer $secondary
 	 * @return string
 	 */
-	public static function getUploadPath( $secondary = 0 )
-	{
+	public static function getUploadPath( $secondary = 0 ){
 		return self::_getCfgByName( "PATH_UPLOAD", $secondary );
 	}
 
@@ -210,8 +196,7 @@ class Pft_Config{
 	 *
 	 * @return string
 	 */
-	public static function getHttpHost()
-	{
+	public static function getHttpHost(){
 		return "http://".$_SERVER['HTTP_HOST'].self::getSiteRoot();
 	}
 	
@@ -221,8 +206,7 @@ class Pft_Config{
 	 * 
 	 * @return string
 	 */
-	public static function getHttpHostOut()
-	{
+	public static function getHttpHostOut(){
 		$httpHost = self::getHttpHost();
 		return str_replace( "http://in", "http://", $httpHost);
 	}
@@ -253,8 +237,7 @@ class Pft_Config{
 	
 	public static function getLoginServer( $secondary = 0 ){return self::_getCfgByName( "LOGIN_SERVER", $secondary );}
 	
-	public static function getCfg( $cfgName, $secondary = 0 )
-	{
+	public static function getCfg( $cfgName, $secondary = 0 ){
 		return self::_getCfgByName( $cfgName, $secondary );
 	}
 	
@@ -271,11 +254,9 @@ class Pft_Config{
 	 * @param string $relPathFilename 相对路径文件名
 	 * @return string 完整的路径文件名
 	 */
-	public static function getAbsPathFilename( $sysPathName, $relPathFilename )
-	{
+	public static function getAbsPathFilename( $sysPathName, $relPathFilename ){
 		$pathFile = self::$_priCfg[$sysPathName].$relPathFilename;
-		if ( is_array(self::$_secCfg) && !Pft::isReadable( $pathFile ) )
-		{
+		if ( is_array(self::$_secCfg) && !Pft::isReadable( $pathFile ) ){
 			$pathFile = self::$_secCfg[$sysPathName].$relPathFilename;
 		}
 		return $pathFile;
@@ -299,22 +280,15 @@ class Pft_Config{
 	 * @param int $secondary
 	 * @return mix
 	 */
-	private static function _getCfgByName( $cfgName, $secondary = 0 )
-	{
-		if( $secondary > 0 )
-		{
-			if( is_array( self::$_secCfg ) )
-			{
+	private static function _getCfgByName( $cfgName, $secondary = 0 ){
+		if( $secondary > 0 ){
+			if( is_array( self::$_secCfg ) ){
 				return isset(self::$_secCfg[$cfgName])?self::$_secCfg[$cfgName]:null;
-			}
-			else
-			{
+			}else{
 				//return null;
 				return isset(self::$_priCfg[$cfgName])?self::$_priCfg[$cfgName]:null;
 			}
-		}
-		else
-		{
+		}else{
 			return isset(self::$_priCfg[$cfgName])?self::$_priCfg[$cfgName]:null;
 		}
 	}
@@ -337,14 +311,7 @@ class Pft_Config{
 	 * @param string $tablename
 	 * @return string
 	 */
-	public static function getCond( $tablename='' ){
-//		if( $tablename ){
-//			return ( " $tablename.ZU_ID = 'xxxxxx'" );
-//		}else{
-//			return ( " ZU_ID = 'xxxxxx'" );
-//		}
-		//return ( $tablename.ZU_ID = 'xxxxxx' )
-		
+	public static function getCond( $tablename='' ){	
 		$zu_id = Pft_Session::getSession()->getGroupId();
 		
 		//return " (1=1) ";
@@ -358,11 +325,9 @@ class Pft_Config{
 	 * @param unknown_type $option
 	 * @return unknown
 	 */
-	public static function sechof($string,$option=false)
-	{
+	public static function sechof($string,$option=false){
 		$num=2;
-		if($option)
-		{
+		if($option){
 			$num=$option;
 		}
 		return number_format($string,$num,'.',',');
@@ -406,5 +371,18 @@ class Pft_Config{
 			self::$_configFiles[$fileName] = @include( self::getConfigPath( $secondary ).$fileName );
 		}
 		return self::$_configFiles[$fileName];
+	}
+
+	/**
+	 * 设置配置
+	 * @author yan
+	 * @date 2010-10-12下午10:01:39
+	 */
+	public static function setCfg($cfgName, $val, $secondary = 0){
+		if($secondary > 0 ){
+			self::$_secCfg[$cfgName] = $val;
+		}else{
+			self::$_priCfg[$cfgName] = $val;
+		}
 	}
 }

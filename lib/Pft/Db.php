@@ -53,12 +53,25 @@ class Pft_Db{
 
 	private static $_dbx;
 
+	//是否允许调试 by terry at Thu Feb 19 11:30:39 CST 2009
+	private $_debug = false;
+	
+	//是否允许log by terry at Thu Feb 19 11:30:39 CST 2009
+	private $_log = false;
+
+	//是否允许多个读数据库 by terry at Thu Feb 19 11:51:27 CST 2009
+	private $_mutile_read_db = false;
+
 	/**
 	 * 禁止外部实例化
 	 *
 	 * @param string $con_name
 	 */
 	protected function __construct( $con_name ){
+		$this->_debug = ( defined("DEBUG") && DEBUG && class_exists('Pft_Debug') );
+		$this->_log = class_exists('Pft_Log');
+		$this->_mutile_read_db = class_exists('Pft_Config');
+
 		$this->reconnect( $con_name );
 	}
 	
@@ -100,8 +113,7 @@ class Pft_Db{
 	 */
 	public function reconnect_old( $con_name , $forceReconnect = false ){
 		if( $forceReconnect || $con_name != $this->getConnName() ){
-			if( defined("DEBUG") && DEBUG )
-			{
+			if( $this->_debug ){
 				Pft_Debug::addInfoToDefault( "Pft", "Before connect use Pft_Db." );
 			}
 			$this->_connection = Propel::getConnection( $con_name );
@@ -115,7 +127,7 @@ class Pft_Db{
 */	
 			$this->setConnName( $con_name );
 
-			if( defined("DEBUG") && DEBUG ){
+			if( $this->_debug ){
 				Pft_Debug::addInfoToDefault( "Pft", "After connect [$con_name] use Pft_Db." );
 			}
 		}
@@ -125,13 +137,18 @@ class Pft_Db{
 	
 	public function reconnect( $con_name , $forceReconnect = false ){
 		if( $forceReconnect || $con_name != $this->getConnName() ){
-			if(!$this->_connCfg){
-				$configuration = include( Pft_Config::getConfigPath()."db.conf.php" );
-				$this->_connCfg = $configuration;
-			}else{
-				$configuration = $this->_connCfg;
+			if (is_array ( $con_name )) {
+				$cfg = $con_name;
+			} else {
+				if(!$this->_connCfg){
+					$configuration = include( Pft_Config::getConfigPath()."db.conf.php" );
+					$this->_connCfg = $configuration;
+				}else{
+					$configuration = $this->_connCfg;
+				}
+				$cfg = @$configuration['datasources'][$con_name]['connection'];
 			}
-			$cfg = @$configuration['datasources'][$con_name]['connection'];
+
 			if(is_array($cfg)){
 				$this->_conn = mysql_connect ( $cfg ["hostspec"] . ($cfg ["port"] ? ":" . $cfg ["port"] : ""), $cfg ["username"], $cfg ["password"] );
 				$this->_dsn = $cfg;
@@ -327,6 +344,7 @@ class Pft_Db{
 		//return mysql_query( $sql, $this->_conn );
 		//如果return $rs 会慢 数十毫秒 @todo  再次验证
 		
+		if( $this->_mutile_read_db ){
 		//if ( is_object($this->_connection) && $this->_connection->getAutoCommit() ){
 			if( 'Pft_Dbx' == get_class( $this ) ){
 				self::superUpdateConnectionX();
@@ -334,16 +352,19 @@ class Pft_Db{
 				self::superUpdateConnection(); // 强制更新数据库连接，使只需只读的操作连接到“只读数据库服务器”				
 			}
 		//}
+		}
 		$rev = mysql_query( $sql, $this->_conn );
 
 		Pft_Debug::addInfoToDefault( __FILE__, "Executed sql [<div> $sql </div>]" );
 		if( mysql_errno() ){
 			//如果使用System级别会重复记录db日志，可能死循环。
-			Pft_Log::addLog('Execute sql ['.$sql.'] fail, error ['.mysql_errno().':'.mysql_error().']', Pft_Log::LEVEL_DEBUG);
+			if( $this->_log )
+				Pft_Log::addLog('Execute sql ['.$sql.'] fail, error ['.mysql_errno().':'.mysql_error().']', Pft_Log::LEVEL_DEBUG);
 			throw ( new Pft_Db_Exception( mysql_errno() . ": " . mysql_error() . "\n" ) );
 		}
 		if( $logSql ){
-			Pft_Log::logDbOprate($sql);
+			if( $this->_log )
+				Pft_Log::logDbOprate($sql);
 		}
 		return $rev;
 	}
