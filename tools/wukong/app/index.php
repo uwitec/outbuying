@@ -64,28 +64,46 @@ class IndexController extends Pft_Controller_Action{
 	 */
 	function buildCandVAction(){
 		$this->indexAction();
-		if( $this->getInputParameter( "op" ) ){
+		if( $this->in( "op" ) ){
 			//获得输入数据
-			$appPath = $this->getInputParameter( "AppPath" );
-			$viewPath = $this->getInputParameter( "ViewPath" );
+			$appPath = $this->in( "AppPath" );
+			$om_class_name = $this->in("om_class_name");
+			$ctrl_name = $this->in("ctrl_name");
+			$do = $ctrl_name;
 			
-			$package_name = trim( $this->getInputParameter( "package_name" ), "_" );
-			$table_name = $this->getInputParameter( "table_name" );
-			$CtrlName = $this->getInputParameter( "CtrlName" );
-			$PkName = $this->getInputParameter( "PkName" );
-			$pk_name = $this->getInputParameter( "pk_name" );
+			try{
+				class_exists($om_class_name);
+			}catch(Exception $e){
+				echo "Om Class : ".$om_class_name." is not exist.";
+				exit;
+			}
 			
-			$pre_fix = $this->getInputParameter( "pre_fix" );
+			$peerObj = Pft_Om_BaseObject::getPeer($om_class_name);
+			$desc = $peerObj->getDescription();
+			
+			//$viewPath = $this->in( "ViewPath" );
+			//$package_name = trim( $this->in( "package_name" ), "_" );
+			
+			//$table_name = $this->in( "table_name" );
+			//$CtrlName = $this->in( "CtrlName" );
+			$PkName = $desc["pk_name"];
+			$pk_name = $desc["pk_name"];
+			$pre_fix = Pft_Config::getCfg("DB_TB_PREFIX");
+			$table_name = $desc["table_name"];
+
+			$disp = new Pft_Dispatcher();
+			$ctrlArr = $disp->analyzeDoToControllerAndAction($do."_index");
+			$arrPackageName = explode(DIRECTORY_SEPARATOR, $ctrlArr[0]);
+
 			
 			//对变量进行格式化
-			$arrPackageName = split( "_", $package_name );
+			//$arrPackageName = split( "_", $package_name );
 			$PackageName = implode( array_map( "ucfirst", $arrPackageName ) );
 
 			$package_name = $package_name==""?"":rtrim( $package_name, "_" )."_";
 
 			$this->_tablePreFix = $pre_fix;
-			if( trim( $pre_fix ) != "" )
-			{
+			if( trim( $pre_fix ) != "" ){
 				$this->_tableOmPreFix = implode( array_map( "ucfirst", split( "_", $pre_fix ) ) );
 			}
 			
@@ -95,12 +113,9 @@ class IndexController extends Pft_Controller_Action{
 			$var_name = $table_name;
 			$VAR_NAME = strtoupper( $var_name );
 			
-			if( trim( $CtrlName ) == "" )
-			{
+			if( trim( $CtrlName ) == "" ){
 				$CtrlName = $TableName;
-			}
-			else
-			{
+			}else{
 				$CtrlName = ucfirst($CtrlName);
 			}
 			$ctrl_name = strtolower( $CtrlName );
@@ -123,21 +138,18 @@ class IndexController extends Pft_Controller_Action{
 
 			//检查路径是否存在，如不存在，则进行创建
 			$toAppPath = $this->_checkAndMakeAppFolder( $arrPackageName );	
-			$toViewPath = $this->_checkAndMakeViewFolder( $arrPackageName, $ctrl_name );		
-			
-			//这里检查数据表om对象是否存在
-			//如果存在om对象，则通过om对象读取字段列表
-			$omClassName = $this->_tableOmPreFix.$TableName.$this->_tableOmPostFix;
-			
+			//$toViewPath = $this->_checkAndMakeViewFolder( $arrPackageName, $ctrl_name );
+			$toViewPath = $toAppPath."view/";
+			@mkdir($toViewPath, 0777, true);
+			@chmod($toViewPath, 0777);
+		
 			$editForm    = "";	// editForm 是 输出变量
 			$detailTable = "";	// detailTable 是 输出变量
 			$gridCols    = "";  // gridCols 是 输出变量
 			$fieldList   = "";  // fieldList 是 输出变量
 			
-			if( strlen( $table_name ) > 0 && class_exists( $omClassName ) ){
-				$omObj = new $omClassName();
-				$fieldNames = $omObj->getFieldNames(BasePeer::TYPE_FIELDNAME);
-				//eval( '$nameMap = '.$omPeerClassName.'::getFieldNames(BasePeer::TYPE_FIELDNAME);' );
+			if( strlen( $table_name ) > 0 ){
+				$fieldNames = $desc["fields"];
 				$fieldList = implode( ",", $fieldNames );
 				//echo "<pre>";
 				foreach ( $fieldNames as $key => $val ){
@@ -167,8 +179,8 @@ class IndexController extends Pft_Controller_Action{
 					
 				}
 				*/
-				$editForm = Watt_View_Helper_Form::buildFormForWukong( $formDataArr,"","post",true, false, array(), array( $pk_name=>$pk_name) );
-				$detailTable = Watt_View_Helper_Form::buildFormForWukong( $formDataArr,"","post",false, false, array(), array( $pk_name=>$pk_name) );
+				$editForm = Pft_View_Helper_Form::buildFormForWukong( $formDataArr,"","post",true, false, array(), array( $pk_name=>$pk_name) );
+				$detailTable = Pft_View_Helper_Form::buildFormForWukong( $formDataArr,"","post",false, false, array(), array( $pk_name=>$pk_name) );
 				//echo $form;
 				//echo "</pre>";
 			}
@@ -181,7 +193,7 @@ class IndexController extends Pft_Controller_Action{
 			
 			//这里仅仅是为了输出
 			$this->output = $arrNames = compact( "table_name"
-						                        ,"TableName"
+						                        //,"TableName"
 						                        ,"var_name"
 						                        ,"VAR_NAME"
 						                        ,"package_name"
@@ -194,9 +206,8 @@ class IndexController extends Pft_Controller_Action{
 						                        ,"gridCols"
 						                        ,"fieldList"
 						                        ,"pk_name"
+						                        ,"om_class_name"
 						                       );
-			//print"<pre>";var_dump( $arrNames );print"</pre>";
-			//exit();
 			//用变量替换模板中的相关变量              
 			$this->_buildPhpFile( "controller.tpl.php", $toAppPath.strtolower($ctrl_name) . ".php"
 			                     ,$arrNames);
@@ -265,7 +276,7 @@ class IndexController extends Pft_Controller_Action{
 	function formbuilderAction()
 	{
 		$this->indexAction();
-		if( $this->getInputParameter( "op" ) ){
+		if( $this->in( "op" ) ){
 			
 		}else{
 			
@@ -322,7 +333,7 @@ class IndexController extends Pft_Controller_Action{
 		foreach ( $arrNames as $key => $varname ){
 			$tpl = str_replace( "\${{$key}}", $varname, $tpl);
 		}
-		
+
 		/**
 		 * $arrNames 应包含如下key
 		 * 
@@ -348,6 +359,8 @@ class IndexController extends Pft_Controller_Action{
 			//检验是否已存在输出文件，如果存在，则增加一个时间戳
 			$outFileName = $outFileName.".".date( "YmdHis", time() );
 		}
+		
+		
 		if( file_put_contents( $outFileName, $tpl ) ){
 			Pft_Debug::addInfoToDefault( get_class( $this ), "Create $outFileName success!" );
 		}else{
@@ -362,26 +375,22 @@ class IndexController extends Pft_Controller_Action{
 	 * @param 
 	 * @param 
 	 */
-	private function _checkAndMakeAppFolder( $arrPackage )
-	{
+	private function _checkAndMakeAppFolder( $arrPackage ){
 		//创建
 		$toCheckAppPath = Pft_Config::getAppPath();
 
-		foreach ( $arrPackage as $subFolder )
-		{
+		foreach ( $arrPackage as $subFolder ){
 			$toCheckAppPath .= $subFolder."/";
 			$this->_mkdir( $toCheckAppPath );
 		}
 		return $toCheckAppPath;
 	}
 	
-	private function _checkAndMakeViewFolder( $arrPackage, $ctrlName )
-	{
+	private function _checkAndMakeViewFolder( $arrPackage, $ctrlName ){
 		//创建
 		$toCheckViewPath = Pft_Config::getViewPath();
 
-		foreach ( $arrPackage as $subFolder )
-		{
+		foreach ( $arrPackage as $subFolder ){
 			$toCheckViewPath .= $subFolder."/";
 			$this->_mkdir( $toCheckViewPath );
 		}
@@ -391,10 +400,8 @@ class IndexController extends Pft_Controller_Action{
 		return $toCheckViewPath;
 	}
 	
-	private function _mkdir( $path )
-	{
-		if( !(file_exists( $path ) && is_dir( $path ) ) )
-		{
+	private function _mkdir( $path ){
+		if( !(file_exists( $path ) && is_dir( $path ) ) ){
 //			echo $path;
 			mkdir( $path );
 			chmod( $path, 0777 );

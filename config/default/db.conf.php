@@ -9,7 +9,7 @@ return array (
       array (
         'phptype' => 'mysql',
         'hostspec' => 'localhost',
-        'database' => 'yiding',
+        'database' => 'yiding100',
         'username' => 'root',
         'password' => '123456',
         'port' => '',
@@ -22,7 +22,7 @@ return array (
       array (
         'phptype' => 'mysql',
         'hostspec' => 'localhost',
-        'database' => 'yiding',
+        'database' => 'yiding100',
         'username' => 'root',
         'password' => '123456',
         'port' => '',
@@ -35,7 +35,7 @@ return array (
       array (
         'phptype' => 'mysql',
         'hostspec' => 'localhost',
-        'database' => 'yiding',
+        'database' => 'yiding100',
         'username' => 'root',
         'password' => '123456',
         'port' => '',
@@ -48,7 +48,7 @@ return array (
       array (
         'phptype' => 'mysql',
         'hostspec' => 'localhost',
-        'database' => 'yiding',
+        'database' => 'yiding100',
         'username' => 'root',
         'password' => '123456',
         'port' => '',
@@ -61,7 +61,7 @@ return array (
       array (
         'phptype' => 'mysql',
         'hostspec' => 'localhost',
-        'database' => 'yiding',
+        'database' => 'yiding100',
         'username' => 'root',
         'password' => '123456',
         'port' => '',

@@ -222,6 +222,15 @@ class Pft_Dispatcher
 
 		return $arrRev;
 	}
+	
+	/**
+	 * 用于其他地方对 do 进行分析
+	 * @author yan
+	 * @date 2010-10-19下午10:19:45
+	 */
+	public function analyzeDoToControllerAndAction( $do ){
+		return $this->_analyzeDoToControllerAndAction( $do );
+	}
 
 	/**
 	 * 获得controller 和 action 对应的默认 viewfile

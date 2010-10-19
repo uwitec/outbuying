@@ -372,6 +372,20 @@ class Pft_Om_BaseObject{
 	}
 
 	/**
+	 * @return array
+	 * @author yan
+	 * @date 2010-10-19下午08:36:33
+	 */
+	public function getDescription(){
+		return array(
+			"table_name" => $this->_tableName,
+			"pk_name" => $this->_pkName,
+			"autoinc_name" => $this->_autoincName,
+			"fields" => $this->_fields,
+		);
+	}
+	
+	/**
 	 * 单元测试方法
 	 * @author terry
 	 * Tue Aug 03 15:27:59 CST 2010
