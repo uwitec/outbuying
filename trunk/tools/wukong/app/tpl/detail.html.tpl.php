@@ -10,7 +10,7 @@
  * @author 
  */
 
-//Watt_View_Helper_Form::buildFormWithDbData( $${var_name}, "", "", false );
+//Pft_View_Helper_Form::buildFormWithDbData( $${var_name}, "", "", false );
 extract( $${var_name} );
 include( "_detailtable.html.php" );
 ?>

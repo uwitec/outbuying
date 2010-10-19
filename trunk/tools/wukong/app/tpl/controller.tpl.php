@@ -1,7 +1,7 @@
 <?
 /**
  * 功能：
- * ${TableName} controller
+ * ${om_class_name} controller
  * 
  * Actions:
  *
@@ -25,16 +25,14 @@
  * Wed Jun 06 14:44:47 CST 2007
  * 增加编辑后返回搜索前的列表
  */
-class ${PackageName}${CtrlName}Controller extends Watt_Controller_Action
-{
-	function indexAction()
-	{
+class ${PackageName}${CtrlName}Controller extends Pft_Controller_Action{
+	function indexAction(){
 		$this->redirectToSelfAction( "list" );
 	}
 	
 	/**
 	 * 功能：
-	 * 增加一个${TableName}
+	 * 增加一个${om_class_name}
      * 
 	 * 输入：
 	 * 
@@ -44,35 +42,33 @@ class ${PackageName}${CtrlName}Controller extends Watt_Controller_Action
 	 * 
 	 * @author 
 	 */
-	function addAction()
-	{
-		$${var_name} = new ${TableName}();
+	function addAction(){
+		$${var_name} = new ${om_class_name}();
 		//此处输出
 	
 		//自动获得对应名称的输入字段
 		//注意删掉不应该接受用户输入的字段
 		$${var_name}->autoGetRequestVar( "${fieldList}" );
 
-		if( $op = $this->getInputParameter( "op" ) )
-		{
+		if( $op = $this->in( "op" ) ){
 			//此处设置一些其他的值如
 			//$${var_name}->${table_name}_reg_time = time();
-			$nextUrl = Watt_Session::getSession()->getLastRefererPage()?Watt_Session::getSession()->getLastRefererPage():'?do=${package_name}${ctrl_name}_list';
+			$nextUrl = Pft_Session::getSession()->getLastRefererPage()?Pft_Session::getSession()->getLastRefererPage():'?do=${package_name}${ctrl_name}_list';
 			if( $${var_name}->save() ){
-				$this->addTip( Watt_I18n::trans('OPRATE_SUCCESS'), $nextUrl );
+				$this->addTip( Pft_I18n::trans('OPRATE_SUCCESS'), $nextUrl );
 				//$this->redirectToSelfAction( "list" );
 			}else{
-				$this->addTip( Watt_I18n::trans('OPRATE_FAIL') );
+				$this->addTip( Pft_I18n::trans('OPRATE_FAIL') );
 				//保存失败，做其它处理
 			}
 		}
-		Watt_Session::getSession()->recordRefererPage();
-		$this->${var_name} = $${var_name}->toArrayTpm();
+		Pft_Session::getSession()->recordRefererPage();
+		$this->${var_name} = $${var_name}->toArray();
 	}
 	
 	/**
 	 * 功能：
-	 * 提供编辑${TableName}所需的数据
+	 * 提供编辑${om_class_name}所需的数据
 	 * 
 	 * 输入：
 	 * ${pk_name}
@@ -82,13 +78,11 @@ class ${PackageName}${CtrlName}Controller extends Watt_Controller_Action
 	 * 
 	 * @author 
 	 */
-	function editAction()
-	{
-		$${var_name} = ${TableName}Peer::retrieveByPK( $this->getInputParameter( "${pk_name}" ) );
+	function editAction(){
+		$${var_name} = ${om_class_name}::getPeer()->retrieveByPK( $this->in( "${pk_name}" ) );
 		if( !$${var_name} ) $this->redirectTo404();
 
-		if( $op = $this->getInputParameter( "op" ) )
-		{
+		if( $op = $this->in( "op" ) ){
 			//这是在用户修改信息后返回的处理
 			
 			//自动获得对应名称的输入字段
@@ -96,26 +90,24 @@ class ${PackageName}${CtrlName}Controller extends Watt_Controller_Action
 			$${var_name}->autoGetRequestVar( "${fieldList}" );
 			
 			if( $${var_name}->save() ){
-				$nextUrl = Watt_Session::getSession()->getLastRefererPage()?Watt_Session::getSession()->getLastRefererPage():'?do=${package_name}${ctrl_name}_list';
-				$this->addTip( Watt_I18n::trans('OPRATE_SUCCESS'), $nextUrl );
+				$nextUrl = Pft_Session::getSession()->getLastRefererPage()?Pft_Session::getSession()->getLastRefererPage():'?do=${package_name}${ctrl_name}_list';
+				$this->addTip( Pft_I18n::trans('OPRATE_SUCCESS'), $nextUrl );
 				//$this->redirectToSelfAction( "list" );
 			}else{
-				$this->addTip( Watt_I18n::trans('OPRATE_FAIL') );
+				$this->addTip( Pft_I18n::trans('OPRATE_FAIL') );
 				//没有更新数据，做其它处理
 			}
-		}
-		else
-		{
+		}else{
 			//这是没有输入op的处理
 		}
-		Watt_Session::getSession()->recordRefererPage();
+		Pft_Session::getSession()->recordRefererPage();
 		//输出信息
-		$this->${var_name} = $${var_name}->toArrayTpm();
+		$this->${var_name} = $${var_name}->toArray();
 	}
 
 	/**
 	 * 功能：
-	 * 提供显示${TableName}所需的数据
+	 * 提供显示${om_class_name}所需的数据
 	 * 
 	 * 输入：
 	 * ${pk_name}
@@ -125,17 +117,16 @@ class ${PackageName}${CtrlName}Controller extends Watt_Controller_Action
 	 * 
 	 * @author 
 	 */
-	function detailAction()
-	{
-		$${var_name} = ${TableName}Peer::retrieveByPK( $this->getInputParameter( "${pk_name}" ) );
+	function detailAction(){
+		$${var_name} = ${om_class_name}::getPeer()->retrieveByPK( $this->in( "${pk_name}" ) );
 		if( !$${var_name} ) $this->redirectTo404();
 		//此处输出 detail信息
-		$this->${var_name} = $${var_name}->toArrayTpm();
+		$this->${var_name} = $${var_name}->toArray();
 	}
 	
 	/**
 	 * 功能：
-	 * 提供${TableName}列表数据
+	 * 提供${om_class_name}列表数据
 	 * 
 	 * 输入：
 	 * 
@@ -144,12 +135,11 @@ class ${PackageName}${CtrlName}Controller extends Watt_Controller_Action
 	 * 
 	 * @author 
 	 */
-	function listAction()
-	{
+	function listAction(){
 		/**
 		 * 下面是使用grid的形式
 		 */
-		$grid = new Watt_Util_Grid_Searchs( "${TableName}Peer" );
+		$grid = new Pft_Util_Grid_Searchs( "${om_class_name}Peer" );
 		//$grid->addSearch();
 		$this->${var_name}s = $grid->excuteAndReturnGridData();
 
@@ -157,8 +147,8 @@ class ${PackageName}${CtrlName}Controller extends Watt_Controller_Action
 		 * 下面是不使用grid的形式
 		 */
 		//$c = new Criteria();
-		//$${var_name}s = ${TableName}Peer::doSelect( $c );
-		//$this->${var_name}s = Watt_Util_Array::toArray( $${var_name}s );
+		//$${var_name}s = ${om_class_name}Peer::doSelect( $c );
+		//$this->${var_name}s = Pft_Util_Array::toArray( $${var_name}s );
 	}
 
 	/**
@@ -169,20 +159,19 @@ class ${PackageName}${CtrlName}Controller extends Watt_Controller_Action
 	 * 
 	 * 如成功，转到 $${var_name}_list
 	 */
-	function deleteAction()
-	{
-		$${var_name} = ${TableName}Peer::retrieveByPK( $this->getInputParameter( "${pk_name}" ) );
+	function deleteAction(){
+		$${var_name} = ${om_class_name}::getPeer()->retrieveByPK( $this->in( "${pk_name}" ) );
 		if( !$${var_name} ) $this->redirectTo404();
 		
-		Watt_Session::getSession()->recordRefererPage();
-		$nextUrl = Watt_Session::getSession()->getLastRefererPage()?Watt_Session::getSession()->getLastRefererPage():'?do=${package_name}${ctrl_name}_list';
+		Pft_Session::getSession()->recordRefererPage();
+		$nextUrl = Pft_Session::getSession()->getLastRefererPage()?Pft_Session::getSession()->getLastRefererPage():'?do=${package_name}${ctrl_name}_list';
 		
 		try{
 			$${var_name}->delete();
-			$this->addTip( Watt_I18n::trans('OPRATE_SUCCESS'), $nextUrl );
+			$this->addTip( Pft_I18n::trans('OPRATE_SUCCESS'), $nextUrl );
 			//$this->redirectToSelfAction( "list" );
 		}catch ( Exception $e ){
-			$this->addTip( Watt_I18n::trans('OPRATE_FAIL'), $nextUrl );
+			$this->addTip( Pft_I18n::trans('OPRATE_FAIL'), $nextUrl );
 			//保存失败，做其它处理
 		}
 	}
