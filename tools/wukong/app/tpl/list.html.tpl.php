@@ -1,4 +1,6 @@
 <?
+include Pft_Config::getRootPath()."inc/view/header.inc.php";
+
 //list.html.php
 /**
  * 功能：
@@ -22,4 +24,6 @@ ${gridCols}
 $${var_name}s_grid->addCol(Pft_I18n::trans("Opration"),"",true,'"<a href=\"?do=${package_name}${ctrl_name}_edit&${pk_name}=".$row["${pk_name}"]."\" class=\"btn\">".Pft_I18n::trans("EDIT")."</a> <a href=\"?do=${package_name}${ctrl_name}_delete&${pk_name}=".$row["${pk_name}"]."\" class=\"btn\" onclick=\"return confirm(\'".Pft_I18n::trans("CONFIRM_OPRATION")."\')\">".Pft_I18n::trans("DELETE")."</a>"');
                   
 $${var_name}s_grid->showMe();
+
+include Pft_Config::getRootPath()."inc/view/footer.inc.php"
 ?>
