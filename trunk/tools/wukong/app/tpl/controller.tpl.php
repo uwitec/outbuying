@@ -26,6 +26,11 @@
  * 增加编辑后返回搜索前的列表
  */
 class ${PackageName}${CtrlName}Controller extends Pft_Controller_Action{
+	function __construct(){
+		//$this->addPrivilegeMap();
+		//$this->setCtrlLevel(Pft_Rbac::LEVEL_PUBLIC);
+	}
+
 	function indexAction(){
 		$this->redirectToSelfAction( "list" );
 	}
@@ -139,16 +144,11 @@ class ${PackageName}${CtrlName}Controller extends Pft_Controller_Action{
 		/**
 		 * 下面是使用grid的形式
 		 */
-		$grid = new Pft_Util_Grid_Searchs( "${om_class_name}Peer" );
+		$sql = "select ${fieldList} from ${table_name}";
+		$grid = new Pft_Util_Grid_Searchs();
+		$grid->setSql($sql);
 		//$grid->addSearch();
-		$this->${var_name}s = $grid->excuteAndReturnGridData();
-
-		/**
-		 * 下面是不使用grid的形式
-		 */
-		//$c = new Criteria();
-		//$${var_name}s = ${om_class_name}Peer::doSelect( $c );
-		//$this->${var_name}s = Pft_Util_Array::toArray( $${var_name}s );
+		$this->${var_name}s_grid = $grid->excuteAndReturnGrid();
 	}
 
 	/**

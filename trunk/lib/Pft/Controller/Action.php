@@ -809,7 +809,7 @@ class Pft_Controller_Action{
 		{
 			$class = new $className();
 			$class->setScriptFile($toFile);
-			$class->setControllerName( str_replace( DIRECTORY_SEPARATOR, "_", $controllerName ) );
+			$class->setControllerName( str_replace( DIRECTORY_SEPARATOR, "_", str_replace("/ctrl/", "/", $controllerName) ) );
 			$class->setControllerPrivilegeMaps();
 			return $class;
 		}

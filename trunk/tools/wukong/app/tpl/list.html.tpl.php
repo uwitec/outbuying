@@ -15,7 +15,7 @@
 <a href="?do=${package_name}${ctrl_name}_add" class="btn add"><?=Pft_I18n::trans("${VAR_NAME}_ADD")?></a>
 </div>
 <?
-$${var_name}s_grid = new Pft_Util_Grid( $${var_name}s );
+//$${var_name}s_grid = new Pft_Util_Grid( $${var_name}s );
 $${var_name}s_grid->addCol(" ","${pk_name}",true
                   ,'"<input type=checkbox value=\"".$row["${pk_name}"]."\">"');
 ${gridCols}
