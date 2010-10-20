@@ -68,8 +68,8 @@ class IndexController extends Pft_Controller_Action{
 			//获得输入数据
 			$appPath = $this->in( "AppPath" );
 			$om_class_name = $this->in("om_class_name");
-			$ctrl_name = $this->in("ctrl_name");
-			$do = $ctrl_name;
+			$pkg_ctrl_name = $this->in("pkg_ctrl_name");
+			$do = $pkg_ctrl_name;
 			
 			try{
 				class_exists($om_class_name);
@@ -92,15 +92,15 @@ class IndexController extends Pft_Controller_Action{
 			$table_name = $desc["table_name"];
 
 			$disp = new Pft_Dispatcher();
-			$ctrlArr = $disp->analyzeDoToControllerAndAction($do."_index");
+			$ctrlArr = $disp->analyzeDoToControllerAndAction($do);
 			$arrPackageName = explode(DIRECTORY_SEPARATOR, $ctrlArr[0]);
-
-			
+	
 			//对变量进行格式化
 			//$arrPackageName = split( "_", $package_name );
-			$PackageName = implode( array_map( "ucfirst", $arrPackageName ) );
-
-			$package_name = $package_name==""?"":rtrim( $package_name, "_" )."_";
+			$tmpArr = $arrPackageName;
+			unset($tmpArr[1]);//去掉ctrl
+			$PackageName = implode( array_map( "ucfirst", $tmpArr ) );
+			$package_name = implode( $tmpArr, "_" )."_";
 
 			$this->_tablePreFix = $pre_fix;
 			if( trim( $pre_fix ) != "" ){
@@ -113,8 +113,8 @@ class IndexController extends Pft_Controller_Action{
 			$var_name = $table_name;
 			$VAR_NAME = strtoupper( $var_name );
 			
-			if( trim( $CtrlName ) == "" ){
-				$CtrlName = $TableName;
+			if( !isset($CtrlName) || trim( $CtrlName ) == "" ){
+				$CtrlName = ucfirst($ctrlArr[1]);
 			}else{
 				$CtrlName = ucfirst($CtrlName);
 			}
@@ -138,11 +138,8 @@ class IndexController extends Pft_Controller_Action{
 
 			//检查路径是否存在，如不存在，则进行创建
 			$toAppPath = $this->_checkAndMakeAppFolder( $arrPackageName );	
-			//$toViewPath = $this->_checkAndMakeViewFolder( $arrPackageName, $ctrl_name );
-			$toViewPath = $toAppPath."view/";
-			@mkdir($toViewPath, 0777, true);
-			@chmod($toViewPath, 0777);
-		
+			$toViewPath = $this->_checkAndMakeViewFolder( $arrPackageName, $ctrl_name );
+
 			$editForm    = "";	// editForm 是 输出变量
 			$detailTable = "";	// detailTable 是 输出变量
 			$gridCols    = "";  // gridCols 是 输出变量
@@ -208,31 +205,33 @@ class IndexController extends Pft_Controller_Action{
 						                        ,"pk_name"
 						                        ,"om_class_name"
 						                       );
-			//用变量替换模板中的相关变量              
-			$this->_buildPhpFile( "controller.tpl.php", $toAppPath.strtolower($ctrl_name) . ".php"
+
+			//用变量替换模板中的相关变量
+			$info = $this->_buildPhpFile( "controller.tpl.php", $toAppPath.strtolower($ctrl_name) . ".php"
 			                     ,$arrNames);
 			if( strlen( $table_name ) > 0 ){
 				//只有对数据表的操作才有 增删改查
-				$this->_buildPhpFile( "add.html.tpl.php", $toViewPath."add.html.php"
+				$info .= "\n".$this->_buildPhpFile( "add.html.tpl.php", $toViewPath."add.html.php"
 				                     ,$arrNames);
-		        $this->_buildPhpFile( "detail.html.tpl.php", $toViewPath."detail.html.php"
+		        $info .= "\n".$this->_buildPhpFile( "detail.html.tpl.php", $toViewPath."detail.html.php"
 				                     ,$arrNames);
-		        $this->_buildPhpFile( "edit.html.tpl.php", $toViewPath."edit.html.php"
+		        $info .= "\n".$this->_buildPhpFile( "edit.html.tpl.php", $toViewPath."edit.html.php"
 				                     ,$arrNames);
-		        $this->_buildPhpFile( "list.html.tpl.php", $toViewPath."list.html.php"
+		        $info .= "\n".$this->_buildPhpFile( "list.html.tpl.php", $toViewPath."list.html.php"
 				                     ,$arrNames);
-				$this->_buildPhpFile( "_editform.html.tpl.php", $toViewPath."_editform.html.php"
+				$info .= "\n".$this->_buildPhpFile( "_editform.html.tpl.php", $toViewPath."_editform.html.php"
 				                     ,$arrNames);
-				$this->_buildPhpFile( "_detailtable.html.tpl.php", $toViewPath."_detailtable.html.php"
+				$info .= "\n".$this->_buildPhpFile( "_detailtable.html.tpl.php", $toViewPath."_detailtable.html.php"
 				                     ,$arrNames);
 			}
+			$info .= "\n<a href=\"?do={$pkg_ctrl_name}_index\">?do={$pkg_ctrl_name}_index</a>";
 			//输出本页再次显示的数据
 			$inputForm = array(
 			             "AppPath"      => $appPath
 			            //,"ViewPath"     => $viewPath
 			            //,"package_name" => $package_name	//(wukong_other)
 			            //,"CtrlName"     => $CtrlName
-			            ,"ctrl_name" 			=> $ctrl_name
+			            ,"pkg_ctrl_name" 			=> $pkg_ctrl_name
 			            ,"om_class_name"	=> $om_class_name
 			            //,"pre_fix"      => $pre_fix
 			            //,"table_name"   => preg_replace( "/^$pre_fix/", "", $table_name )	    //(tpm_user)
@@ -245,12 +244,13 @@ class IndexController extends Pft_Controller_Action{
 		}
 		else
 		{
+			$info = "";
 			$inputForm = array(
 			             "AppPath"      => Pft_Config::getAppPath(1)
 			            //,"ViewPath"     => Pft_Config::getViewPath()
 			            //,"package_name" => ""
 			            //,"CtrlName"     => ""
-			            ,"ctrl_name" => ""
+			            ,"pkg_ctrl_name" => ""
 			            ,"om_class_name"     => ""
 			            //,"pre_fix"      => $this->_tablePreFix
 			            //,"table_name"   => ""
@@ -258,6 +258,7 @@ class IndexController extends Pft_Controller_Action{
 			            //,"pk_name"       => ""
 			            );
 		}
+		$this->info = $info;
 		$this->inputForm = $inputForm;
 		$this->inputFormDescc = array(
 					             "AppPath"      => "系统app路径，一般不用修改"
@@ -269,7 +270,7 @@ class IndexController extends Pft_Controller_Action{
 					            //,"PkName"       => ""
 					            ,"pk_name"       => "表的主关键字名称，如果主关键字是 表名_id 的形式则无须填写。如表名是 yonghu, 如pk是 yonghu_id，则无须填写，如pk是 yh_id，则需要填写。 "
 					            ,"om_class_name" => "om对象的名称，如Yd_Order。 "
-					            ,"ctrl_name" => "包含package名称的controller的名称，即do的去掉action后的内容，如ec_order。 "
+					            ,"pkg_ctrl_name" => "包含package名称的controller的名称，即do的去掉action后的内容，如ec_order。 "
 					            );
 	}
 	
@@ -362,11 +363,13 @@ class IndexController extends Pft_Controller_Action{
 		
 		
 		if( file_put_contents( $outFileName, $tpl ) ){
-			Pft_Debug::addInfoToDefault( get_class( $this ), "Create $outFileName success!" );
+			$info = "Create $outFileName success!";
 		}else{
-			Pft_Debug::addInfoToDefault( get_class( $this ), "Create $outFileName fail!" );
+			"Create $outFileName fail!";
 		}
+		Pft_Debug::addInfoToDefault( get_class( $this ), $info );
 		chmod ( $outFileName, 0777 );
+		return $info;
 	}
 	
 	/**
@@ -388,9 +391,11 @@ class IndexController extends Pft_Controller_Action{
 	
 	private function _checkAndMakeViewFolder( $arrPackage, $ctrlName ){
 		//创建
-		$toCheckViewPath = Pft_Config::getViewPath();
+		//$toCheckViewPath = Pft_Config::getViewPath();
+		$toCheckViewPath = Pft_Config::getAppPath();
 
 		foreach ( $arrPackage as $subFolder ){
+			if( $subFolder == 'ctrl' )$subFolder = "view";
 			$toCheckViewPath .= $subFolder."/";
 			$this->_mkdir( $toCheckViewPath );
 		}

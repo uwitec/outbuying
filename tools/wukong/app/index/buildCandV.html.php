@@ -16,6 +16,7 @@ include dirname(__FILE__).'/../../inc/header.inc.php';
 <?
 include( "_functionList.html.php" );
 ?>
+<div class="notice"><?=nl2br($info)?></div>
 <div>
 <?
 Pft_View_Helper_Form::buildFormWithDbData( $inputForm,"" ,"post" ,true , true, $inputFormDescc, 1 );
