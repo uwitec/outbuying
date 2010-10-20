@@ -184,6 +184,13 @@ class Pft_Om_BaseObject{
 		return $rev;
 	}
 	
+	/**
+	 * @return int affectrows
+	 */
+	public function delete(){
+		return $this->deleteByPk( $this->_data[$this->_pkName] );
+	}
+	
 	private function _isFieldName( $fieldName ){
 		return in_array( $fieldName, $this->_fields );
 	}
@@ -365,7 +372,7 @@ class Pft_Om_BaseObject{
 	 */
 	private function _execute($sql){
 		if(method_exists($this->_db,'execute')){
-			return $this->_execute( $sql );
+			return $this->_db->execute( $sql );
 		}else{
 			return $this->_db->query( $sql );
 		}

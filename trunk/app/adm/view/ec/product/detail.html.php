@@ -4,16 +4,16 @@ include Pft_Config::getRootPath()."inc/view/header.inc.php";
 //detail.html.php
 /**
  * 功能：
- * 显示 ${var_name} 明细的界面
+ * 显示 products 明细的界面
  * 
  * 输入：
- * $${var_name}
+ * $products
  * 
  * @author 
  */
 
-//Pft_View_Helper_Form::buildFormWithDbData( $${var_name}, "", "", false );
-extract( $${var_name} );
+//Pft_View_Helper_Form::buildFormWithDbData( $products, "", "", false );
+extract( $products );
 include( "_detailtable.html.php" );
 
 include Pft_Config::getRootPath()."inc/view/footer.inc.php"
