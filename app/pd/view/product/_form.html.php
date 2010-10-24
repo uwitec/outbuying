@@ -4,46 +4,72 @@
 <?
 include( Pft_Config::getCfg('PATH_ROOT').'inc/view/header.inc.php' );
 ?>
+<style>
+._grid{border:1px solid #D4E8FC;}
+._td{border-left-color:##D4E8FC;border-top-color:#fff;border-right-color:#fff;border-bottom-color :#fff;}
+.pDiv{padding-left:10px;}
+</style>
 <script src=".js/jquery.min.js" ></script>
 <script>
 
 
 </script>
-<style>
-/**
-D4E8FC
-**/
-body{font-size:12px}
-#mainDiv{width:700px;height:500px;border:1px solid #FF6600;margin:0 auto}
-#leftDiv{width:500px;height:500px;float:left;clear:left;overflow:hidden;border-style: solid;border-width: 1px ;border-left-color:#fff;border-top-color:#fff;border-right-color:#D4E8FC;border-bottom-color :#fff;}
-#rightDiv{width:200px;height:500px;float:right;clear:right;overflow:hidden;}
-#rightDiv_top{width:230px;height:350px;border-style: solid;border-width: 1px ;border-left-color:#fff;border-top-color:#fff;border-right-color:#fff;border-bottom-color :#FF6600;}
-#rightDiv_bottom{width:230px;height:150px;}
-#bodyDiv{text-align:left;}
-#AddCategorie{text-align:left}
-#imgTitleBody{width:500px;height:25px;background-color:#FFF7E6;border-style: solid;border-width: 1px ;border-left-color:#fff;border-top-color:#fff;border-right-color:#fff;border-bottom-color :#FF6600;}/*background-image:url("./images/box690bg.gif")*/
-.imgTitleTop{width:230px;height:25px;background-color:#FFF7E6;border-style: solid;border-width: 1px ;border-left-color:#fff;border-top-color:#fff;border-right-color:#fff;border-bottom-color :#FF6600;}/*background-image:url("./images/box260bg.gif")*/
-</style>
-<center>
-<div id="mainDiv">
-	<div id="leftDiv"><!--------为分类添加产品--------->
-		 <div id="bodyDiv">
-			 <div id="imgTitleBody"><span style="padding-left:20px;line-height:25px">产品</span></div>
-		 </div>
-	</div>
-	<div id="rightDiv" align="top"><!--------添加分类--------->
-		<div id="rightDiv_top">
-			<div class="imgTitleTop"><span style="padding-left:10px;line-height:25px">产品分类</span></div>
-		</div>
-		<div id="rightDiv_bottom">
-			<div class="imgTitleTop"><span style="padding-left:10px;line-height:25px">添加分类</span></div>
-			<div id="AddCategorie">
-				<input type="text" name="categorie" id="categorie"><input type='button' onclick="addCategorie()" value="添加">
-			</div>
-		</div>
-	</div>
+<table width="90%" align="center" cellpadding="0" cellspacing="0" class="_grid">
+<tr>
+<td width="70%" height="400px" valign="top" >
+<!---------------添加产品----------------------->
+<div class="pDiv">
+  <div><b>添加产品</b></div>
+  <div>
+    <div>
+      <table width="100%" cellpadding="0" cellspacing="0" border="1">
+        <tr>
+          <td width="20%">名称</td>
+          <td width="40%"><input type="text" id="p_name" name="p_name"></td>
+          <td width="40%"></td>
+        </tr>
+         <tr>
+          <td>价格</td>
+          <td><input type="text" id="p_price" name="p_price"></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>市场价格</td>
+          <td><input type="text" id="p_market_price" name="p_market_price"></td>
+          <td></td>
+        </tr>
+         <tr>
+          <td>会员价格</td>
+          <td><input type="text" id="p_mem_price" name="p_mem_price"></td>
+          <td></td>
+        </tr>
+         <tr>
+          <td>单位</td>
+          <td><input type="text" id="p_unit" name="p_unit"></td>
+          <td></td>
+        </tr>
+         <tr>
+          <td>产品图片</td>
+          <td><input type="text" id="p_img_link" name="p_img_link"></td>
+          <td></td>
+        </tr>
+         <tr>
+          <td>产品说明</td>
+          <td><textarea id="p_info" name="p_info" rows="2" cols="20"></textarea></td>
+          <td></td>
+        </tr>
+      </table>
+    </div>
+  </div>
 </div>
-</center>
+</td>
+<td width="30%" height="400px" valign="top" class="_grid _td">
+<div  class="pDiv">
+aaaaaaaaa
+</div>
+</td>
+</tr>
+</table>
 <?
 include( Pft_Config::getCfg('PATH_ROOT').'inc/view/footer.inc.php' );
 ?>
