@@ -8,26 +8,54 @@ body{font-size:10px}
 #productCenter{padding-left:3px;}
 #productRight{padding-left:15px}
 .pDiv{width:20px;float:left;overflow:hidden;}
-.cDiv{width:162px;height:25px;/*border:1px solid #000;*/text-align:center;line-height:30px;background:url("./images/buy-title.png") repeat-x;/*background:#FF902A*/}
+.cDiv{width:162px;height:25px;/*border:1px solid #000;*/text-align:center;line-height:30px;background:url("./images/web-page/buy-title.png") repeat-x;/*background:#FF902A*/}
 .plDiv{padding-left:3px}
 .plDiv-buy{border:1px solid #FF6600;}
-.imgDiv{width:72px;height:30px;float:left;overflow:hidden;background:url("./images/1-76+29.png");text-align:center;line-height:30px;color:#FFF;cursor:pointer;}
+.imgDiv{width:72px;height:30px;float:left;overflow:hidden;background:url("./images/web-page/1-76+29.png");text-align:center;line-height:30px;color:#FFF;cursor:pointer;}
 .sImgDiv{width:72px;height:30px;float:left;overflow:hidden;text-align:center;line-height:30px;color:#F7841C;font-weight :bold;background-color:#F1F1F1;cursor:pointer;clear:right}
-#imgDivLine{width:100%;height:3px;background:url("./images/line-1.png") repeat-x;}
+#imgDivLine{width:100%;height:3px;background:url("./images/web-page/line-1.png") repeat-x;}
 #pStar{color:RED}
 #productRight{padding-left:5px}
 #prducts{border-style: solid;border-width: 1px ;border-left-color:#fff;border-top-color:#fff;border-right-color:#fff;border-bottom-color :#D4E8FC;}
 
-#buyTitle{width:100%;height:25px;/*background:url("./images/buy-title.png") repeat-x;*/}
+#buyTitle{width:100%;height:25px;/*background:url("./images/web-page/buy-title.png") repeat-x;*/}
 #pZongji{text-align:left;padding-left:35px;padding-top:10px}
 </style>
 <script>
-function qianhuan(obDiv1,obDiv2)
+function qianhuan(obDiv1,obDiv2,bj)
 {
 	var _Div=document.getElementById(obDiv1);
 	var _Div1=document.getElementById(obDiv2);
 	_Div.className='imgDiv';
 	_Div1.className='sImgDiv';
+	if(bj==1)
+	{
+		isDisplay('n');
+	}
+	else
+	{
+		isDisplay('y');
+	}
+}
+function isDisplay(isCheck)
+{
+	var pids=document.getElementsByName("p_id[]");
+	if(isCheck=='y')
+	{
+		for(var i=0;i<pids.length;i++)
+		{
+			var caixi=document.getElementById("caixi_"+pids[i].value);
+			caixi.style.display='';
+		}
+	}
+	else
+	{
+		for(var i=0;i<pids.length;i++)
+		{
+			var caixi=document.getElementById("caixi_"+pids[i].value);
+			caixi.style.display='none';
+		}
+	}
 }
 function addbuy(pId)
 {
@@ -98,12 +126,12 @@ function addbuy(pId)
 	d1.appendChild(ob);
 	/*var ob=document.createElement("img");
 	ob.id='imgAdd1_'+p_id.value;
-	ob.src='./images/add-1.png';
+	ob.src='./images/web-page/add-1.png';
 	ob.title='增加该菜品';
 	d1.appendChild(ob);
 	var ob=document.createElement("img");
 	ob.id='imgAdd2_'+p_id.value;
-	ob.src='./images/add-2.png';
+	ob.src='./images/web-page/add-2.png';
 	ob.title='减少该菜品';
 	d1.appendChild(ob);
 	*/
@@ -122,10 +150,10 @@ function addbuy(pId)
 	d1.innerHTML=p_price.value
 	var d1=_tr.insertCell(4);
 	d1.id='caozuo_'+p_id.value;
-	d1.innerHTML="<div style='cursor:pointer' onclick='delBuy("+p_id.value+")'><img title='删除该菜品' src='./images/ico_delete.gif' /></div>";
+	d1.innerHTML="<div style='cursor:pointer' onclick='delBuy("+p_id.value+")'><img title='删除该菜品' src='./images/web-page/ico_delete.gif' /></div>";
 	/*var ob=document.createElement("img");
 	ob.id='img_'+p_id.value;
-	ob.src='./images/ico_delete.gif';
+	ob.src='./images/web-page/ico_delete.gif';
 	ob.title='删除该菜品';
 	d1.appendChild(ob);
 	*/
@@ -283,12 +311,12 @@ function delBuy(pId)
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
        <tr>
        <td align="left" valign="bottom">
-        <div class="imgDiv" id='fristImgDiv' onclick="qianhuan('fristImgDiv','secondImgDiv');">菜系列表</div>
-        <div  id="secondImgDiv" class="sImgDiv"  onclick="qianhuan('secondImgDiv','fristImgDiv');">菜系图示</div>
+        <div class="imgDiv" id='fristImgDiv' onclick="qianhuan('fristImgDiv','secondImgDiv','1');">菜系列表</div>
+        <div  id="secondImgDiv" class="sImgDiv"  onclick="qianhuan('secondImgDiv','fristImgDiv','2');">菜系图示</div>
         
        </td>
        <td align="right">
-       <input type="text" id="manSearch" name="manSearch"><img width="50px" height="25px" align="absmiddle" src="./images/sousuo.png" />
+       <input type="text" id="manSearch" name="manSearch"><img width="50px" height="25px" align="absmiddle" src="./images/web-page/sousuo.png" />
        </td>
        </tr>
        <tr style="display:none">
@@ -331,7 +359,9 @@ function delBuy(pId)
        		    <tr>
        		      <td width="30%">
        		       <div>
-       		        <b><?=$row["p_name"]?></b>
+       		       <div style="display:none" id="caixi_<?=$row["p_id"]?>"> <img align="absmiddle" src="<?=$row["p_img_link"]?>" /></div>
+       		      
+       		        <div><b><?=$row["p_name"]?></b></div>
        		       </div>
        		       <div id="hiddenData">
        		       <input type="hidden" id="p_id_<?=$row["p_id"]?>" name="p_id[]" value="<?=$row["p_id"]?>">
@@ -373,9 +403,9 @@ function delBuy(pId)
        		    </td>
        		    <td align="right" valign="bottom">
        		     <span onclick="addbuy('<?=$row["p_id"]?>')">
-       		     <img src="./images/btn_buy1.gif" />&nbsp;
+       		     <img src="./images/web-page/btn_buy1.gif" />&nbsp;
        		     </span>
-       		     <span><img src="./images/btn_keep.gif" /></span>
+       		     <span><img src="./images/web-page/btn_keep.gif" /></span>
        		    </td>
        		    </tr>
        		  </table>

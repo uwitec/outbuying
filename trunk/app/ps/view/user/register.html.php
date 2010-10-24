@@ -50,14 +50,14 @@ function checkvalue(obS)
 		if(u_name.value.length<5 || u_name.value.length>20)
 		{
 			document.getElementById("nameImg").style.display='';
-			document.getElementById("nameImg").src="./images/ico_delete.gif";
+			document.getElementById("nameImg").src="./images/web-page/ico_delete.gif";
 			document.getElementById("nameImg").title="错误";
 			return false;
 		}
 		else if(!/^[A-Za-z0-9\u0391-\uFFE5-_]+$/.test(u_name.value))
 		{
 			document.getElementById("nameImg").style.display='';
-			document.getElementById("nameImg").src="./images/ico_delete.gif";
+			document.getElementById("nameImg").src="./images/web-page/ico_delete.gif";
 			document.getElementById("nameImg").title="错误";
 			return false;
 		}
@@ -65,7 +65,7 @@ function checkvalue(obS)
 		{
 			document.getElementById('nameDiv').style.display='none';
 			document.getElementById("nameImg").style.display='';
-			document.getElementById("nameImg").src="./images/ico_check.gif";document.getElementById("nameImg").title="正确";
+			document.getElementById("nameImg").src="./images/web-page/ico_check.gif";document.getElementById("nameImg").title="正确";
 		}
 		
 	}
@@ -76,14 +76,14 @@ function checkvalue(obS)
 		if(u_nickname.value=='')
 		{
 			document.getElementById("nicknameImg").style.display='';
-			document.getElementById("nicknameImg").src="./images/ico_delete.gif";
+			document.getElementById("nicknameImg").src="./images/web-page/ico_delete.gif";
 			document.getElementById("nicknameImg").title="错误";
 			return false;
 		}
 		else if(!/^[A-Za-z0-9\u0391-\uFFE5-_]+$/.test(u_nickname.value))
 		{
 			document.getElementById("nicknameImg").style.display='';
-			document.getElementById("nicknameImg").src="./images/ico_delete.gif";
+			document.getElementById("nicknameImg").src="./images/web-page/ico_delete.gif";
 			document.getElementById("nicknameImg").title="错误";
 			return false;
 		}
@@ -91,7 +91,7 @@ function checkvalue(obS)
 		{
 			document.getElementById('nicknameDiv').style.display='none';
 			document.getElementById("nicknameImg").style.display='';
-			document.getElementById("nicknameImg").src="./images/ico_check.gif";
+			document.getElementById("nicknameImg").src="./images/web-page/ico_check.gif";
 			document.getElementById("nicknameImg").title="正确";
 		}
 	}
@@ -102,14 +102,14 @@ function checkvalue(obS)
 		if(yh_mima=='')
 		{
 			document.getElementById("pwdImg").style.display='';
-			document.getElementById("pwdImg").src="./images/ico_delete.gif";
+			document.getElementById("pwdImg").src="./images/web-page/ico_delete.gif";
 			document.getElementById("pwdImg").title="错误";
 			return false;
 		}
 		else if(yh_mima == '' || yh_mima.length<5 ||yh_mima.length<20 || !( /[0-9]+/.test(yh_mima) && /[a-zA-Z]+/.test(yh_mima) ) )
 		{
 			document.getElementById("pwdImg").style.display='';
-			document.getElementById("pwdImg").src="./images/ico_delete.gif";
+			document.getElementById("pwdImg").src="./images/web-page/ico_delete.gif";
 			document.getElementById("pwdImg").title="错误";
 			return false;
 		}
@@ -117,7 +117,7 @@ function checkvalue(obS)
 		{
 			document.getElementById('pwdDiv').style.display='none';
 			document.getElementById("pwdImg").style.display='';
-			document.getElementById("pwdImg").src="./images/ico_check.gif";
+			document.getElementById("pwdImg").src="./images/web-page/ico_check.gif";
 			document.getElementById("pwdImg").title="正确";
 		}
 	}
@@ -129,14 +129,14 @@ function checkvalue(obS)
 		if(yh_mima2=='')
 		{
 			document.getElementById("pwd_1Img").style.display='';
-			document.getElementById("pwd_1Img").src="./images/ico_delete.gif";
+			document.getElementById("pwd_1Img").src="./images/web-page/ico_delete.gif";
 			document.getElementById("pwd_1Img").title="错误";
 			return false;
 		}
 		else if(yh_mima!=yh_mima2)
 		{
 			document.getElementById("pwd_1Img").style.display='';
-			document.getElementById("pwd_1Img").src="./images/ico_delete.gif";
+			document.getElementById("pwd_1Img").src="./images/web-page/ico_delete.gif";
 			document.getElementById("pwd_1Img").title="错误";
 			return false;
 		}
@@ -144,7 +144,7 @@ function checkvalue(obS)
 		{
 			document.getElementById('pwd_1Div').style.display='none';
 			document.getElementById("pwd_1Img").style.display='';
-			document.getElementById("pwd_1Img").src="./images/ico_check.gif";
+			document.getElementById("pwd_1Img").src="./images/web-page/ico_check.gif";
 			document.getElementById("pwd_1Img").title="正确";
 		}
 		
@@ -156,7 +156,7 @@ function checkvalue(obS)
 		if(!/^(([0\+]\d{2,3}-)?(0\d{2,3})-)?(\d{7,8})(-(\d{3,}))?$|^1[35]\d{9}$/.test(u_phone))
 		{
 			document.getElementById("phoneImg").style.display='';
-			document.getElementById("phoneImg").src="./images/ico_delete.gif";
+			document.getElementById("phoneImg").src="./images/web-page/ico_delete.gif";
 			document.getElementById("phoneImg").title="错误";
 			return false;
 		}
@@ -164,7 +164,7 @@ function checkvalue(obS)
 		{
 			document.getElementById('phoneDiv').style.display='none';
 			document.getElementById("phoneImg").style.display='';
-			document.getElementById("phoneImg").src="./images/ico_check.gif";
+			document.getElementById("phoneImg").src="./images/web-page/ico_check.gif";
 			document.getElementById("phoneImg").title="正确";
 		}
 	}
@@ -175,14 +175,14 @@ function checkvalue(obS)
 		if(u_mobile=='')
 		{
 			document.getElementById("mobileImg").style.display='';
-			document.getElementById("mobileImg").src="./images/ico_delete.gif";
+			document.getElementById("mobileImg").src="./images/web-page/ico_delete.gif";
 			document.getElementById("mobileImg").title="错误";
 			return false;
 		}
 		else if(!/^((\(\d{3}\))|(\d{3}\-))?(13|15|18)\d{9}$/.test(u_mobile))
 		{
 			document.getElementById("mobileImg").style.display='';
-			document.getElementById("mobileImg").src="./images/ico_delete.gif";
+			document.getElementById("mobileImg").src="./images/web-page/ico_delete.gif";
 			document.getElementById("mobileImg").title="错误";
 			return false;
 		}
@@ -190,7 +190,7 @@ function checkvalue(obS)
 		{
 			document.getElementById('mobileDiv').style.display='none';
 			document.getElementById("mobileImg").style.display='';
-			document.getElementById("mobileImg").src="./images/ico_check.gif";
+			document.getElementById("mobileImg").src="./images/web-page/ico_check.gif";
 			document.getElementById("mobileImg").title="正确";
 		}
 	}
@@ -205,7 +205,7 @@ function checkvalue(obS)
 		if(!/^\w+([-+.]\w+)*@\w+([-.]\\w+)*\.\w+([-.]\w+)*$/.test(u_email))
 		{
 			document.getElementById("emailImg").style.display='';
-			document.getElementById("emailImg").src="./images/ico_delete.gif";
+			document.getElementById("emailImg").src="./images/web-page/ico_delete.gif";
 			document.getElementById("emailImg").title="错误";
 			return false;
 		}
@@ -213,7 +213,7 @@ function checkvalue(obS)
 		{
 			document.getElementById('emailDiv').style.display='none';
 			document.getElementById("emailImg").style.display='';
-			document.getElementById("emailImg").src="./images/ico_check.gif";
+			document.getElementById("emailImg").src="./images/web-page/ico_check.gif";
 			document.getElementById("emailImg").title="正确";
 		}
 	}
@@ -224,7 +224,7 @@ function checkvalue(obS)
 		if(u_yanzhengma=='')
 		{
 			document.getElementById("yanzhengmaImg").style.display='';
-			document.getElementById("yanzhengmaImg").src="./images/ico_delete.gif";
+			document.getElementById("yanzhengmaImg").src="./images/web-page/ico_delete.gif";
 			document.getElementById("yanzhengmaImg").title="错误";
 			return false;
 		}
@@ -232,7 +232,7 @@ function checkvalue(obS)
 		{
 			document.getElementById('yanzhengmaDiv').style.display='none';
 			document.getElementById("yanzhengmaImg").style.display='';
-			document.getElementById("yanzhengmaImg").src="./images/ico_check.gif";
+			document.getElementById("yanzhengmaImg").src="./images/web-page/ico_check.gif";
 			document.getElementById("yanzhengmaImg").title="正确";
 		}
 	}
