@@ -2,15 +2,28 @@
 //产品分类
 ?>
 <?
-include( Pft_Config::getCfg('PATH_ROOT').'inc/view/header.inc.php' );
+//include( Pft_Config::getCfg('PATH_ROOT').'inc/view/header.inc.php' );
 ?>
 <style>
 ._grid{border:1px solid #D4E8FC;}
 ._td{border-left-color:##D4E8FC;border-top-color:#fff;border-right-color:#fff;border-bottom-color :#fff;}
 .pDiv{padding-left:10px;}
 </style>
-<script src=".js/jquery.min.js" ></script>
+<script src="js/jquery.min.js" ></script>
 <script>
+$(document).ready(function(){
+	$.ajax({
+	   type: "POST",
+	   url: "?do=tools_uploader_upload",
+	   data: "",
+	   success: function(msg){
+		 $('#imgDiv').append(msg);
+		 
+	   }
+	}
+	)
+}
+);
 
 
 </script>
@@ -50,7 +63,7 @@ include( Pft_Config::getCfg('PATH_ROOT').'inc/view/header.inc.php' );
         </tr>
          <tr>
           <td>产品图片</td>
-          <td><input type="text" id="p_img_link" name="p_img_link"></td>
+          <td><div id="imgDiv"></div></td>
           <td></td>
         </tr>
          <tr>
@@ -71,5 +84,5 @@ aaaaaaaaa
 </tr>
 </table>
 <?
-include( Pft_Config::getCfg('PATH_ROOT').'inc/view/footer.inc.php' );
+//include( Pft_Config::getCfg('PATH_ROOT').'inc/view/footer.inc.php' );
 ?>

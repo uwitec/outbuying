@@ -20,7 +20,7 @@ Swiff.Uploader = new Class({
 		path: 'Swiff.Uploader.swf',
 		
 		target: null,
-		zIndex: 9999,
+		zIndex: 5000,
 		
 		height: 30,
 		width: 100,
