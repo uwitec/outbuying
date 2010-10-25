@@ -124,7 +124,7 @@ FancyUpload3.Attach.File = new Class({
 		
 		this.ui.element = new Element('li', {'class': 'file', id: 'file-' + this.id});
 		this.ui.title = new Element('span', {'class': 'file-title',id:'filename-'+this.id, text: this.name});
-		this.ui.size = new Element('span', {'class': 'file-size',id:'filesize-'+this.id, text: Swiff.Uploader.formatUnit(this.size, 'b')});
+		this.ui.size = new Element('span', {'class': 'file-size',id:'filesize-'+this.id, text: "["+Swiff.Uploader.formatUnit(this.size, 'b')+"]"});
 		
 		
 		this.ui.documentName = new Element('input', {'type': 'hidden',name:'dName[]', value: this.name});

@@ -13,6 +13,7 @@ if( $post_size <= $file_size ){
 }
 ?>
 <style>
+.file-size{padding-left:10px}
 
 </style>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
