@@ -23,7 +23,7 @@ FancyUpload3.Attach = new Class({
 	initialize: function(list, selects, options) {
 		this.list = $(list);
 		this.selects = $(selects) ? $$($(selects)) : $$(selects);
-				
+			
 		options.target = this.selects[0];
 		options.fileClass = options.fileClass || FancyUpload3.Attach.File;
 		
@@ -63,9 +63,12 @@ FancyUpload3.Attach = new Class({
 	onSelectSuccess: function() {
 		if (this.fileList.length > 0) {
 			this.selects[0].setStyle('display', 'none');
+			
 			this.selects[1].setStyle('display', 'inline');
 			this.target = this.selects[1];
 			this.reposition();
+			
+			
 		}
 	},
 	
@@ -124,10 +127,10 @@ FancyUpload3.Attach.File = new Class({
 		this.ui.size = new Element('span', {'class': 'file-size',id:'filesize-'+this.id, text: Swiff.Uploader.formatUnit(this.size, 'b')});
 		
 		
-		this.ui.wenjianname = new Element('input', {'type': 'hidden',name:'wenjianname[]', value: this.name});
-		this.ui.wenjiansize = new Element('input', {'type': 'hidden',name:'wenjiansize[]', value: Swiff.Uploader.formatUnit(this.size, 'b')});
+		this.ui.documentName = new Element('input', {'type': 'hidden',name:'dName[]', value: this.name});
 		
-		this.ui.cancel = new Element('a', {'class': 'file-cancel', text: 'Cancel', href: '#'});
+		//this.ui.cancel = new Element('a', {'class': 'file-cancel', text: 'Cancel', href: '#'});
+		this.ui.cancel=new Element('img', {'class': 'file-progress', src: './images/web-page/ico_delete.gif'});
 		this.ui.cancel.addEvent('click', function() {
 			this.remove();
 			return false;
@@ -136,16 +139,17 @@ FancyUpload3.Attach.File = new Class({
 		this.ui.element.adopt(
 			this.ui.title,
 			this.ui.size,
-			this.ui.wenjianname,
-			this.ui.wenjiansize,
+			this.ui.documentName,
 			this.ui.cancel
 		).inject(this.base.list).highlight();
 		
-		var progress = new Element('img', {'class': 'file-progress', src: './assets/progress-bar/bar.gif'}).inject(this.ui.size, 'after');
+		/*var progress = new Element('img', {'class': 'file-progress', src: './assets/progress-bar/bar.gif'}).inject(this.ui.size, 'after');
+		
 		this.ui.progress = new Fx.ProgressBar(progress, {
 			fit: true
 		}).set(0);
-					
+		*/	
+		this.ui.progress =null;
 		this.base.reposition();
 
 		return this.parent();
