@@ -50,6 +50,31 @@ class PdProductController extends Pft_Controller_Action{
 		echo json_encode($returnData);
 		exit;
 	}
+	/*
+	*options: 添加术语
+	*param:  
+	*author:df      
+	*date:Wed Oct 27 06:24:41 CST 2010
+	*/
+	function addTermsAction()
+	{
+		$returnData=array();
+		$biaoqian=$this->getInputParameter("biaoqian");
+		if($biaoqian)
+		{
+			$terms=new Yd_Terms();
+			$terms->term_name=$biaoqian;
+			if($terms->save())
+			{
+				$returnData["term_id"]=$terms->term_id;
+			    $returnData["term_name"]=$terms->term_name;
+			}
+			
+
+		}
+		echo json_encode($returnData);
+		exit;
+	}
 	
 }
 ?>
