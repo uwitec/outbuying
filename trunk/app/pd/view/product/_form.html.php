@@ -2,96 +2,145 @@
 //产品分类
 ?>
 <?
-include( Pft_Config::getCfg('PATH_ROOT').'inc/view/header.inc.php' );
+//include( Pft_Config::getCfg('PATH_ROOT').'inc/view/header.inc.php' );
 ?>
 <style>
 ._grid{border:1px solid #D4E8FC;}
 ._td{border-left-color:##D4E8FC;border-top-color:#fff;border-right-color:#fff;border-bottom-color :#fff;}
 .pDiv{padding-left:10px;}
+#listFenlei{height:200px}
 </style>
 <script src="js/jquery.min.js" ></script>
+<script src="js/jquery.form.js" ></script>
 <script>
 $(document).ready(function(){
-	/*$.ajax({
-	   type: "POST",
-	   url: "?do=tools_uploader_upload",
-	   data: "",
-	   success: function(msg){
-		 $('#imgDiv').append(msg);
-		 
-	   }
-	}
-	);
-	*/
-	
-	/*$("#s_Submit").bind('click',function(){
-		alert();
-		alert($("#p_name").val());
+	var jQ=jQuery.noConflict();//解决load页面中的冲突
+	jQ('#imgDiv').load('?do=tools_uploader_upload');//加载上传文件页面
+
+	//添加产品
+	jQ("#s_Submit").bind('click',function(){
+		if(jQ("#p_name").val()=="")
+		{
+			jQ("#pPname").empty();
+			jQ("#pPname").append("请输入名称");
+			return false;
+		}
+		else
+		{
+			jQ("#pPname").empty();
+		}
+		if(jQ("#p_price").val()=="")
+		{
+			jQ("#pPrice").empty();
+			jQ("#pPrice").append("请输入价格");
+			return false;
+		}
+		else
+		{
+			jQ("#pPrice").empty();
+		}
+		if(jQ("#p_market_price").val()=="")
+		{
+			jQ("#pMarketPrice").empty();
+			jQ("#pMarketPrice").append("请输入市场价格");
+			return false;
+		}
+		else
+		{
+			jQ("#pMarketPrice").empty();
+		}
+		if(jQ("#p_mem_price").val()=="")
+		{
+			jQ("#pMemPrice").empty();
+			jQ("#pMemPrice").append("请输入会员价格");
+			return false;
+		}
+		else
+		{
+			jQ("#pMemPrice").empty();
+		}
+		if(jQ("#p_unit").val()=="")
+		{
+			jQ("#pUnit").empty();
+			jQ("#pUnit").append("请输入单位");
+			return false;
+		}
+		else
+		{
+			jQ("#pUnit").empty();
+		}
+		//取上传的图片(一个产品只能对应一个图片)
+		var imgs=jQ("input[name*='dNames']");
+		if(imgs.length>1)
+		{
+			jQ("#pImg").empty();
+			jQ("#pImg").append("一个产品对应一个图片");
+			return false;
+		}
+		else
+		{
+			jQ("#pImg").empty();
+		}
+		var options={
+			target:'#ajaxProductDiv',
+			url:'?do=pd_product_addCategories',
+			type:'POST',
+			success: function(){
+				alert(jQ("#ajaxProductDiv").text());
+			}
+		};
+		jQ("#pForm").ajaxForm(options);
+		return false;
+
+
+	});
+	//添加分类
+	jQ("#addCg").bind("click",function(){
+		var kindFenlei=jQ("#kindFenlei").val();
+		if(kindFenlei!='')
+		{
+			//调用AJAX 添加分类
+			jQ.ajax(
+			{
+				type:"GET",
+				url:"?do=pd_product_addCategories",
+				data:"kindFenlei="+encodeURIComponent(kindFenlei),
+				success: function (response){
+					//jQ("#listFenlei")
+					eval("var ob="+response);
+					
+					var _div="<div><input type='checkbox' name='kinds[]' id='kind_"+ob.k_id+"' value='"+ob.k_id+"'>"+ob.k_name+"</div>";
+					jQ("#listFenlei").append(_div);
+				}
+			}
+			);
+		}
 		
 	});
-	*/
-	$('#imgDiv').load('?do=tools_uploader_upload');//加载上传文件页面
+	//添加标签
+	jQ("#addBq").bind("click",function(){
+		var biaoqian=jQ("#biaoqian").val();
+		if(biaoqian!='')
+		{
+			//调用AJAX 添加分类
+			jQ.ajax(
+			{
+				type:"GET",
+				url:"?do=pd_product_addCategories",
+				data:"biaoqian="+encodeURIComponent(biaoqian),
+				success: function (response){
+					//jQ("#listFenlei")
+					eval("var ob="+response);
+					
+					var _div="<div><input type='checkbox' name='kinds[]' id='kind_"+ob.k_id+"' value='"+ob.k_id+"'>"+ob.k_name+"</div>";
+					jQ("#listFenlei").append(_div);
+				}
+			}
+			);
+		}
+	});
 }
 );
-function saveProduct()
-{
-	var p_name=document.getElementById("p_name");
-	var pPname=document.getElementById("pPname");
-	if(p_name.value=="")
-	{
-		pPname.innerHTML="请输入名称";
-		return false;
-	}
-	else
-	{
-		pPname.innerHTML="";
-	}
-	var p_price=document.getElementById("p_price");
-	var pPrice=document.getElementById("pPrice");
-	if(p_price.value=="")
-	{
-		pPrice.innerHTML="请输入价格";
-		return false;
-	}
-	else
-	{
-		pPrice.innerHTML="";
-	}
-	var p_market_price=document.getElementById("p_market_price");
-	var pMarketPrice=document.getElementById("pMarketPrice");
-	if(p_market_price.value=="")
-	{
-		pMarketPrice.innerHTML="请输入市场价格";
-		return false;
-	}
-	else
-	{
-		pMarketPrice.innerHTML="";
-	}
-	var p_mem_price=document.getElementById("p_mem_price");
-	var pMemPrice=document.getElementById("pMemPrice");
-	if(p_mem_price.value=="")
-	{
-		pMemPrice.innerHTML="请输入会员价格";
-		return false;
-	}
-	else
-	{
-		pMemPrice.innerHTML="";
-	}
-	var p_unit=document.getElementById("p_unit");
-	var pUnit=document.getElementById("pUnit");
-	if(p_unit.value=="")
-	{
-		pUnit.innerHTML="请输入会员价格";
-		return false;
-	}
-	else
-	{
-		pUnit.innerHTML="";
-	}
-	
-}
 </script>
 <table width="90%" align="center" cellpadding="0" cellspacing="0" class="_grid">
 <tr>
@@ -101,7 +150,7 @@ function saveProduct()
   <div><b>添加产品</b></div>
   <div>
     <div>
-    <form action="" method="get">
+    <form action="" method="get" id="pForm">
       <table width="100%" cellpadding="2" cellspacing="2" border="0">
         <tr>
           <td width="20%">名称</td>
@@ -140,9 +189,10 @@ function saveProduct()
         </tr>
         <tr>
         <td colspan="3" align="center">
+		<div id="ajaxProductDiv" style="display:none"></div>
         <input type="submit" style="display:none" id="Submit">
         <input type="hidden" name="op" value="1">
-        <input type="button" id="s_Submit" onclick="saveProduct();"  value="<?=Watt_I18n::trans("保存")?>"> 
+        <input type="button" id="s_Submit"   value="<?=Watt_I18n::trans("保存")?>"> 
         </td>
         </tr>
       </table>
@@ -153,11 +203,37 @@ function saveProduct()
 </td>
 <td width="30%" height="400px" valign="top" class="_grid _td">
 <div  class="pDiv">
-aaaaaaaaa
+	<div id="pFenlei">
+		<div>
+		产品分类
+		</div>
+		<div id="listFenlei">
+			
+		</div>
+	</div>
+	<div id="addFenlei">
+		<div>
+		 添加分类
+		</div>
+		<div>
+		<input type="text" id="kindFenlei" name="kindFenlei">
+		<input type="button" id="addCg" value="添加">
+		</div>
+	</div>
+	<br>
+	<div id="addBiaoqian">
+		<div>
+		添加标签
+		</div>
+		<div>
+		<input type="text" id="biaoqian" name="biaoqian">
+		<input type="button" value="添加" id="addBq">
+		</div>
+	</div>
 </div>
 </td>
 </tr>
 </table>
 <?
-include( Pft_Config::getCfg('PATH_ROOT').'inc/view/footer.inc.php' );
+//include( Pft_Config::getCfg('PATH_ROOT').'inc/view/footer.inc.php' );
 ?>
