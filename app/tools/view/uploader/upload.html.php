@@ -58,7 +58,10 @@ window.addEvent('domready', function() {
 			}, this);	
 		},
 		
-		
+		onFileSuccess: function(file) {
+			//new Element('input', {type: 'text',name:'wenjian[]'}).inject(file.ui.element, 'top');
+			
+		},
  
 		onFileError:function(file) {
 			/*file.ui.cancel.set('html', 'Retry').removeEvents().addEvent('click', function() {

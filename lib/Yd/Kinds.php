@@ -18,6 +18,7 @@ class Yd_Kinds extends Pft_Om_BaseObject{
 						'k_root_id',
 						'k_name',
 						'k_info',
+						'k_count',
 						'created_at',
 						'updated_at',
 						'is_del',

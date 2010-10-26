@@ -127,7 +127,7 @@ FancyUpload3.Attach.File = new Class({
 		this.ui.size = new Element('span', {'class': 'file-size',id:'filesize-'+this.id, text: "["+Swiff.Uploader.formatUnit(this.size, 'b')+"]"});
 		
 		
-		this.ui.documentName = new Element('input', {'type': 'hidden',name:'dName[]', value: this.name});
+		this.ui.documentName = new Element('input', {'type': 'hidden',name:'dNames[]', value: this.name});
 		
 		//this.ui.cancel = new Element('a', {'class': 'file-cancel', text: 'Cancel', href: '#'});
 		this.ui.cancel=new Element('img', {'class': 'file-progress', src: './images/web-page/ico_delete.gif'});
