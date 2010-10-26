@@ -2,7 +2,7 @@
 //产品分类
 ?>
 <?
-//include( Pft_Config::getCfg('PATH_ROOT').'inc/view/header.inc.php' );
+include( Pft_Config::getCfg('PATH_ROOT').'inc/view/header.inc.php' );
 ?>
 <style>
 ._grid{border:1px solid #D4E8FC;}
@@ -126,14 +126,15 @@ $(document).ready(function(){
 			jQ.ajax(
 			{
 				type:"GET",
-				url:"?do=pd_product_addCategories",
+				url:"?do=pd_product_addTerms",
 				data:"biaoqian="+encodeURIComponent(biaoqian),
 				success: function (response){
+					alert(response);
 					//jQ("#listFenlei")
 					eval("var ob="+response);
 					
-					var _div="<div><input type='checkbox' name='kinds[]' id='kind_"+ob.k_id+"' value='"+ob.k_id+"'>"+ob.k_name+"</div>";
-					jQ("#listFenlei").append(_div);
+					var _div="<div><input type='checkbox' name='terms[]' id='term_"+ob.term_id+"' value='"+ob.term_id+"'>"+ob.term_name+"</div>";
+					jQ("#listbiaoqian").append(_div);
 				}
 			}
 			);
@@ -230,10 +231,15 @@ $(document).ready(function(){
 		<input type="button" value="添加" id="addBq">
 		</div>
 	</div>
+	<div>
+	   <div id="listbiaoqian">
+	   
+	   </div>
+	</div>
 </div>
 </td>
 </tr>
 </table>
 <?
-//include( Pft_Config::getCfg('PATH_ROOT').'inc/view/footer.inc.php' );
+include( Pft_Config::getCfg('PATH_ROOT').'inc/view/footer.inc.php' );
 ?>
