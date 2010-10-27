@@ -62,12 +62,26 @@ class PdProductController extends Pft_Controller_Action{
 		$biaoqian=$this->getInputParameter("biaoqian");
 		if($biaoqian)
 		{
-			$terms=new Yd_Terms();
-			$terms->term_name=$biaoqian;
-			if($terms->save())
+			$biaoqians=explode(',',$biaoqian);
+			$i=0;
+			foreach($biaoqians as $bq)
 			{
-				$returnData["term_id"]=$terms->term_id;
-			    $returnData["term_name"]=$terms->term_name;
+				
+				$sql="select * from terms where term_name='".addslashes($bq)."'";
+				$data=Pft_Db::getDb()->getOne($sql);
+				if(!$data)
+				{
+					$terms=new Yd_Terms();
+					$terms->term_name=$bq;
+					if($terms->save())
+					{
+						$returnData[$i]["term_id"]=$terms->term_id;
+						$returnData[$i]["term_name"]=$terms->term_name;
+						$i++;
+					}
+				}
+				
+				
 			}
 			
 

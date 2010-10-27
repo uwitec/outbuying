@@ -1,6 +1,6 @@
 <?
 if( !isset( $title ) ){
-	$title = '方便快捷的订餐平台';
+	$title = '';//'方便快捷的订餐平台';
 }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -13,7 +13,12 @@ if( !isset( $title ) ){
 <!-- InstanceBeginEditable name="head" -->
 <!-- InstanceEndEditable -->
 <link href="css/default/pft.css" rel="stylesheet" type="text/css" />
+
+<link rel="stylesheet" type="text/css" href="js/jDialog/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="js/jDialog/themes/icon.css">
 <script src="js/jquery.min.js"></script>
+<script src="js/jquery.form.js" ></script>
+<script type="text/javascript" src="js/jDialog/jquery.easyui.min.js"></script>
 </head>
 <body>
 <div id="top">
