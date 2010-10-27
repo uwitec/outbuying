@@ -10,8 +10,7 @@ include( Pft_Config::getCfg('PATH_ROOT').'inc/view/header.inc.php' );
 .pDiv{padding-left:10px;}
 #listFenlei{height:200px}
 </style>
-<script src="js/jquery.min.js" ></script>
-<script src="js/jquery.form.js" ></script>
+
 <script>
 $(document).ready(function(){
 	var jQ=jQuery.noConflict();//解决load页面中的冲突
@@ -109,7 +108,7 @@ $(document).ready(function(){
 					//jQ("#listFenlei")
 					eval("var ob="+response);
 					
-					var _div="<div><input type='checkbox' name='kinds[]' id='kind_"+ob.k_id+"' value='"+ob.k_id+"'>"+ob.k_name+"</div>";
+					var _div="<div><input type='checkbox' checked name='kinds[]' id='kind_"+ob.k_id+"' value='"+ob.k_id+"'>"+ob.k_name+"</div>";
 					jQ("#listFenlei").append(_div);
 				}
 			}
@@ -119,6 +118,7 @@ $(document).ready(function(){
 	});
 	//添加标签
 	jQ("#addBq").bind("click",function(){
+		//jQ.messager.alert("aaaa");
 		var biaoqian=jQ("#biaoqian").val();
 		if(biaoqian!='')
 		{
@@ -129,12 +129,20 @@ $(document).ready(function(){
 				url:"?do=pd_product_addTerms",
 				data:"biaoqian="+encodeURIComponent(biaoqian),
 				success: function (response){
-					alert(response);
-					//jQ("#listFenlei")
-					eval("var ob="+response);
 					
-					var _div="<div><input type='checkbox' name='terms[]' id='term_"+ob.term_id+"' value='"+ob.term_id+"'>"+ob.term_name+"</div>";
-					jQ("#listbiaoqian").append(_div);
+					//jQ("#listFenlei")
+					
+					eval("var ob="+response);
+					var _k;
+					for(_k in ob)
+					{
+						if(ob[_k].term_id)
+						{
+
+							var _div="<span><input type='checkbox' checked name='terms[]' id='term_"+ob[_k].term_id+"' value='"+ob[_k].term_id+"'>"+ob[_k].term_name+"</span>";
+							jQ("#listbiaoqian").append(_div);
+						}
+					}
 				}
 			}
 			);
