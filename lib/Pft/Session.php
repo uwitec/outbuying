@@ -296,19 +296,19 @@ class Pft_Session{
 	/**
 	 * 设置用户信息
 	 *
-	 * @param TpmYonghu $user
+	 * @param array $user
 	 * @todo update set user function
 	 */
 	//public function setUser( $userId, $userName )
 	public function setUser( $user, $roleid = "" )
 	{
-		$this->_obj_real_user = $user;	// 每次setUser时都将将用户对象设置到 real_user 中，因此如果存在岗位时需要在 setUser 之后再次设置 real_user
-		$this->_userId   = $user->getYhId();
-		$this->_userName = $user->getYhZhanghu();
-		$this->_groupId  = $user->getZuId();
-		$this->_userAutoId = $user->getYhAutoId();
-		$this->_departmentId = $user->getBmId();
-		$this->_subDepartmentIds = TpmBumenPeer::getSubDepartmentIdsByBmId( $this->_departmentId );
+		//$this->_obj_real_user = $user;	// 每次setUser时都将将用户对象设置到 real_user 中，因此如果存在岗位时需要在 setUser 之后再次设置 real_user
+		$this->_userId   = $user['u_id'];
+		$this->_userName = $user['u_name'];
+		//$this->_groupId  = $user->getZuId();
+		//$this->_userAutoId = $user->getYhAutoId();
+		//$this->_departmentId = $user->getBmId();
+		//$this->_subDepartmentIds = TpmBumenPeer::getSubDepartmentIdsByBmId( $this->_departmentId );
 		
 		//print"<pre>Terry :";var_dump( $user );print"</pre>";
 		//exit();
@@ -316,65 +316,65 @@ class Pft_Session{
 		$this->setEMail( $user->getYhYouxiang() );
 		$this->setMobilePhone( TpmYonghuPeer::getYhShoujiByYhId( $this->_userId ) );
 		
-		$juese_rels = $user->getTpmYonghu2juesesJoinTpmJuese();
-		$to_sel_id = "";
-		if( $juese_rels && count( $juese_rels ) )
-		{
-			$this->_roleCount = count( $juese_rels );
-			//$juese = new TpmJuese();			
-			
-			// 选择角色 如果存在首要角色，则使用首要角色，否则使用第一个角色 jute 20070813			
-			$shouyao_juese = false;
-			foreach ($juese_rels as $key =>$val){
-				if ($val->getShifouShouyao() == 'y'){
-					$shouyao_juese = $val;
-				}
-			}		
-			reset($juese_rels);//将数组的内部指针指向第一个单元,为了正确使用current函数 jute 20071106
-			if($shouyao_juese ){
-				$juese = $shouyao_juese->getTpmJuese();
-			}else {					
-				/**
-				 * 默认使用第一个角色
-				 */
-				$shouyao_juese = current( $juese_rels );			
-				
-//				$shouyao_juese = current( $juese_rels );
-				$juese = $shouyao_juese?$shouyao_juese->getTpmJuese():null;
-			}
-			// 选择角色结束
-			
-			if( $juese ){
-				$this->_roleName = $juese->getJsMingcheng();
-				$this->_roleShortname = $juese->getJsJiancheng();
-				$to_sel_id       = $juese->getJsId();
-	
-				if( $roleid != "" )
-				{
-					foreach ( $juese_rels as $juese_rel )
-					{
-						if( $roleid	== $juese_rel->getTpmJuese()->getJsId() )
-						{
-							$to_sel_id = $roleid;
-							$this->_roleName = $juese_rel->getTpmJuese()->getJsMingcheng();	
-							$this->_roleShortname = $juese_rel->getTpmJuese()->getJsJiancheng();
-							break;
-						}
-					}				
-				}
-			}
-		}
-		$this->_roleId = $to_sel_id;
-		
-		/**
-		 * 超时订单检测
-		 * select yh_id from tpm_yonghuzhaoquanxian
-		 * where qx_id = '55df2b32-88c3-9367-d3ba-45fb6dd80782'
-		 */
-		$chaoshidingdan_qx_id = '55df2b32-88c3-9367-d3ba-45fb6dd80782';
-		if( TpmJuesePeer::existJueseQuanxian( $this->_roleId, $chaoshidingdan_qx_id ) ){
-			$this->setPreProcessOrderChecker( true );
-		}
+//		$juese_rels = $user->getTpmYonghu2juesesJoinTpmJuese();
+//		$to_sel_id = "";
+//		if( $juese_rels && count( $juese_rels ) )
+//		{
+//			$this->_roleCount = count( $juese_rels );
+//			//$juese = new TpmJuese();			
+//			
+//			// 选择角色 如果存在首要角色，则使用首要角色，否则使用第一个角色 jute 20070813			
+//			$shouyao_juese = false;
+//			foreach ($juese_rels as $key =>$val){
+//				if ($val->getShifouShouyao() == 'y'){
+//					$shouyao_juese = $val;
+//				}
+//			}		
+//			reset($juese_rels);//将数组的内部指针指向第一个单元,为了正确使用current函数 jute 20071106
+//			if($shouyao_juese ){
+//				$juese = $shouyao_juese->getTpmJuese();
+//			}else {					
+//				/**
+//				 * 默认使用第一个角色
+//				 */
+//				$shouyao_juese = current( $juese_rels );			
+//				
+////				$shouyao_juese = current( $juese_rels );
+//				$juese = $shouyao_juese?$shouyao_juese->getTpmJuese():null;
+//			}
+//			// 选择角色结束
+//			
+//			if( $juese ){
+//				$this->_roleName = $juese->getJsMingcheng();
+//				$this->_roleShortname = $juese->getJsJiancheng();
+//				$to_sel_id       = $juese->getJsId();
+//	
+//				if( $roleid != "" )
+//				{
+//					foreach ( $juese_rels as $juese_rel )
+//					{
+//						if( $roleid	== $juese_rel->getTpmJuese()->getJsId() )
+//						{
+//							$to_sel_id = $roleid;
+//							$this->_roleName = $juese_rel->getTpmJuese()->getJsMingcheng();	
+//							$this->_roleShortname = $juese_rel->getTpmJuese()->getJsJiancheng();
+//							break;
+//						}
+//					}				
+//				}
+//			}
+//		}
+//		$this->_roleId = $to_sel_id;
+//		
+//		/**
+//		 * 超时订单检测
+//		 * select yh_id from tpm_yonghuzhaoquanxian
+//		 * where qx_id = '55df2b32-88c3-9367-d3ba-45fb6dd80782'
+//		 */
+//		$chaoshidingdan_qx_id = '55df2b32-88c3-9367-d3ba-45fb6dd80782';
+//		if( TpmJuesePeer::existJueseQuanxian( $this->_roleId, $chaoshidingdan_qx_id ) ){
+//			$this->setPreProcessOrderChecker( true );
+//		}
 	}
 	
 	/**
